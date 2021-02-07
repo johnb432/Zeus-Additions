@@ -12,7 +12,7 @@ class CfgPatches {
             "zen_main",
             "zen_modules"
         };
-        author = "johnb43";
+        authors[] = {"johnb43", "cineafx"};
         VERSION_CONFIG;
     };
 };
