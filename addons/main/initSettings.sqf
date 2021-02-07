@@ -1,7 +1,7 @@
 [
     QGVAR(blacklistSettings),
     "EDITBOX",
-    ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate. Must be an array of strings."],
+    ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only works for the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],
     [COMPONENT_NAME, MAGAZINES_DESC],
     "[]",
     false,

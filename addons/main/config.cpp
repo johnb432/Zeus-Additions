@@ -17,17 +17,14 @@ class CfgPatches {
     };
 };
 
-/*
 class CfgMods {
     class PREFIX {
-        dir = "@tao";
-        name = "Tao's folding map";
+        name = "Zeus Additions";
         hideName = "true";
         actionName = "GitHub";
-        action = "https://github.com/johnb432/TAO_rewrite";
-        description = "Tao's folding map";
+        action = "https://github.com/johnb432/Zeus-Additions";
+        description = "Zeus Additions";
     };
 };
-*/
 
 #include "CfgEventHandlers.hpp"
