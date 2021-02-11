@@ -18,15 +18,15 @@
     params ["", "_unit"];
 
     ["Create injuries", [
-        ["SLIDER", ["Damage Head", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
-        ["SLIDER", ["Damage Torso", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
-        ["SLIDER", ["Damage Left Arm", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
+        ["SLIDER", ["Damage Head", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
+        ["SLIDER", ["Damage Torso", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
+        ["SLIDER", ["Damage Left Arm", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
         ["CHECKBOX", ["Set Fracture to Left Arm", "Forces a fracture to occur. However fractures also occur if the right damage sort and value is given."], false],
-        ["SLIDER", ["Damage Right Arm", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
+        ["SLIDER", ["Damage Right Arm", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
         ["CHECKBOX", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right damage sort and value is given."], false],
-        ["SLIDER", ["Damage Left Leg", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
+        ["SLIDER", ["Damage Left Leg", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
         ["CHECKBOX", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right damage sort and value is given."], false],
-        ["SLIDER", ["Damage Right Leg", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0.5, 2]],
+        ["SLIDER", ["Damage Right Leg", "Not all damage types will apply wounds to the selected bodyparts."], [0, 5, 0, 2]],
         ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur. However fractures also occur if the right damage sort and value is given."], false],
         ["LIST", ["Damage Type", "Various types of damages produce different results. Use 'Drowning' if you want to apply fractures only as it doesn't cause any damage."], [
             ["bullet","grenade","explosive","shell","vehiclecrash","collision","backblast","stab","punch","falling","ropeburn","drowning"],

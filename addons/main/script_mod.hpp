@@ -13,8 +13,4 @@
 #define REQUIRED_VERSION 1.96
 #define REQUIRED_CBA_VERSION {3,12,2}
 
-#ifdef COMPONENT_BEAUTIFIED
-    #define COMPONENT_NAME QUOTE(Zeus Additions - COMPONENT_BEAUTIFIED)
-#else
-    #define COMPONENT_NAME QUOTE(Zeus Additions - COMPONENT)
-#endif
+#define COMPONENT_NAME QUOTE(Zeus Additions)

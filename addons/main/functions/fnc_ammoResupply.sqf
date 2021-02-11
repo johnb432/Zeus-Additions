@@ -140,7 +140,7 @@
 
         private _blackList = if !(_allowBlackList) then {GVAR(blacklist)} else {[]};
 
-        if (_numPrim > 0) then {
+        if (_numPrim > 0 && {!isNil {primaryWeapon _unit}}) then {
             private _magsPrim = [primaryWeapon _unit, _allowUGL] call CBA_fnc_compatibleMagazines;
             _magsPrim = _magsPrim - _blackList;
             {
@@ -148,7 +148,7 @@
             } forEach _magsPrim;
         };
 
-        if (_numHand > 0) then {
+        if (_numHand > 0 && {!isNil {handgunWeapon _unit}}) then {
             private _magsHand = [handgunWeapon _unit] call CBA_fnc_compatibleMagazines;
             _magsHand = _magsHand - _blackList;
             {
@@ -156,7 +156,7 @@
             } forEach _magsHand;
         };
 
-        if (_numSec > 0) then {
+        if (_numSec > 0 && {!isNil {secondaryWeapon _unit}}) then {
             private _magsSec = [secondaryWeapon _unit] call CBA_fnc_compatibleMagazines;
             {
                 _object addItemCargoGlobal [_x, _numSec];

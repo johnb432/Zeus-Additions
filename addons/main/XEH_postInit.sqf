@@ -41,5 +41,7 @@ private _temp2 = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
 
 call FUNC(ammoResupply);
 call FUNC(createInjuries);
+//call FUNC(dogAttack);
 call FUNC(gearScriptModules);
 call FUNC(medicalResupply);
+//call FUNC(radioDistance);
