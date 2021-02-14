@@ -24,25 +24,27 @@
         ["EDIT", ["AK/RPK 7.62x39mm", RESUPPLY_TEXT], 0],
         ["EDIT", ["PKM/SVD 7.62x54mmR", RESUPPLY_TEXT], 0],
         ["EDIT", ["Odd BLUFOR", RESUPPLY_TEXT], 0],
-        ["EDIT", ["STANAG 5.56x45mm", RESUPPLY_TEXT], 0],
+        ["EDIT", ["STANAG 5.56x45mm", RESUPPLY_TEXT], 0], // 5
         ["EDIT", ["Misc 5.56x45mm", RESUPPLY_TEXT], 0],
         ["EDIT", ["Belts/C-Mags 5.56x45mm", RESUPPLY_TEXT], 0],
         ["EDIT", ["QBZ 5.8x42/KH2002 6.5x39", RESUPPLY_TEXT], 0],
         ["EDIT", ["MX 6.5x39mm", RESUPPLY_TEXT], 0],
-        ["EDIT", ["ACE/FAL/SCAR 7.62x51mm", RESUPPLY_TEXT], 0],
+        ["EDIT", ["ACE/FAL/SCAR 7.62x51mm", RESUPPLY_TEXT], 0], // 10
         ["EDIT", ["Belts 7.62x51mm", RESUPPLY_TEXT], 0],
         ["EDIT", ["12 Gauge", RESUPPLY_TEXT], 0],
         ["EDIT", ["Pistol BLUFOR", RESUPPLY_TEXT], 0],
         ["EDIT", ["Pistol REDFOR", RESUPPLY_TEXT], 0],
-        ["EDIT", ["UGL BLUFOR", RESUPPLY_TEXT], 0],
+        ["EDIT", ["UGL BLUFOR", RESUPPLY_TEXT], 0], // 15
         ["EDIT", ["UGL REDFOR", RESUPPLY_TEXT], 0],
         ["EDIT", ["LAT BLUFOR", RESUPPLY_TEXT], 0],
         ["EDIT", ["LAT REDFOR", RESUPPLY_TEXT], 0],
         ["EDIT", ["MAT BLUFOR", RESUPPLY_TEXT], 0],
-        ["EDIT", ["MAT REDFOR", RESUPPLY_TEXT], 0],
-        ["EDIT", ["HAT BLUFOR", RESUPPLY_TEXT], 0],
+        ["EDIT", ["MAT REDFOR", RESUPPLY_TEXT], 0], // 20
+        ["EDIT", ["HAT BLUFOR (Ammo)", RESUPPLY_TEXT], 0],
+        ["EDIT", ["HAT BLUFOR (Launcher)", RESUPPLY_TEXT], 0],
+        ["EDIT", ["CLU for BAF Javelin", "Spawns x amount of BAF CLUs."], 0],
         ["EDIT", ["HAT REDFOR", RESUPPLY_TEXT], 0],
-        ["EDIT", ["AA BLUFOR", RESUPPLY_TEXT], 0],
+        ["EDIT", ["AA BLUFOR", RESUPPLY_TEXT], 0], // 25
         ["EDIT", ["AA REDFOR", RESUPPLY_TEXT], 0]
     ],
     {
@@ -54,10 +56,12 @@
         } forEach allCurators;
         clearItemCargoGlobal _object;
 
-        private _numAT = [_results select 16, _results select 17, _results select 20];
+        private _numAT = [_results select 16, _results select 17, _results select 21, _results select 22];
 
         _results deleteRange [16, 2];
-        _results deleteAt 18;
+        _results deleteRange [19, 2];
+
+        private _num = 0;
 
         {
             _num = parseNumber _x;
@@ -74,10 +78,6 @@
                 {
                     _object addWeaponCargoGlobal [_x, _num];
                 } forEach (GVAR(weaponsTotal) select _forEachIndex);
-
-                if (_forEachIndex == 2) then {
-                    _object addWeaponCargoGlobal ["UK3CB_BAF_Javelin_CLU", 2];
-                };
             };
         } forEach _numAT;
 

@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 14.2.2021
+
+- Added "Force consciousness change" module: Forces a unit to go unconscious or to wake up, depending on their previous state. This does not take stable vitals into account.
+- Added "Change grass rendering" module: It allows you to change grass rendering on selected sides/groups/players.
+
 # Changelog for Zeus Additions 11.2.2021
 
 - Fixed and updated gear script modules to work better
@@ -18,7 +23,9 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
 <h3>HOW TO</h3>
 <h4>Modules</h4>
 
+* **Change grass rendering:** Allows the Zeus to change grass rendering on clients. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
 * **Create Injuries:** Allows the Zeus to create injuries on any types of unit, be it AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
+* **Force consciousness change:** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals.
 * **Loadout: Apply to group:** Applies a predetermined loadout to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role it isn't very precise).
 * **Loadout: Apply to single unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
 * **Loadout: Set:** Allows you to set loadouts for the "Loadout: Apply to group" and "Loadout: Apply to single unit" modules. These are saved on a profile basis, which means they stick around, allowing you to use them on various servers.

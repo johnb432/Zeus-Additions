@@ -1,6 +1,10 @@
 PREPFNC(ammoResupply);
 PREPFNC(createInjuries);
+PREPFNC(createInjuriesNew);
 PREPFNC(dogAttack);
+PREPFNC(forceWakeUp);
 PREPFNC(gearScriptModules);
+PREPFNC(grassRender);
 PREPFNC(medicalResupply);
 PREPFNC(radioDistance);
+PREPFNC(woundsHandler);

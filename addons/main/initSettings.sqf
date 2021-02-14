@@ -174,9 +174,17 @@
 ] call CBA_fnc_addSetting;
 
 [
+    QGVAR(BLUFORHATAMMO),
+    "EDITBOX",
+    ["BLUFOR HAT (Ammo)", RESUPPY_DESC],
+    [COMPONENT_NAME, MAGAZINES_DESC],
+    str GVAR(HATBLUAMMO)
+] call CBA_fnc_addSetting;
+
+[
     QGVAR(BLUFORHAT),
     "EDITBOX",
-    ["BLUFOR HAT", RESUPPY_DESC],
+    ["BLUFOR HAT (Launcher)", RESUPPY_DESC],
     [COMPONENT_NAME, MAGAZINES_DESC],
     str GVAR(HATBLU)
 ] call CBA_fnc_addSetting;

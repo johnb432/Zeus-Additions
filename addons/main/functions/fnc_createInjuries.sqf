@@ -1,3 +1,4 @@
+#include "script_component.hpp"
 /*
  * Author: johnb43
  * Adds a module that can create injuries on units.
@@ -55,10 +56,6 @@
                     [_unit, _x, _bodyPart, _damageType] call ace_medical_fnc_addDamageToUnit;
                 } else {
                     [_unit, _x, _bodyPart, _damageType] remoteExec ["ace_medical_fnc_addDamageToUnit", _unit/*, true*/];
-
-                    if (isPlayer _unit) then {
-                        ["Zeus has injured you using a module."] remoteExec ["hint", _unit];
-                    };
                 };
             };
 
@@ -67,6 +64,10 @@
                 _runUpdateEffects = true;
             };
         } forEach [_damageHead, _damageBody, _damageLeftArm, _damageRightArm, _damageLeftLeg, _damageRightLeg];
+
+        if (isPlayer _unit) then {
+            ["Zeus has injured you using a module.", false, 10, 3] remoteExec ["ace_common_fnc_displayText", _unit];
+        };
 
         if (_runUpdateEffects) then {
             _unit setVariable ["ace_medical_fractures", _fractures, true];
