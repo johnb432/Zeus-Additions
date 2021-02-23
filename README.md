@@ -32,7 +32,7 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
 * **Change grass rendering:** Allows the Zeus to change grass rendering on clients. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
 * **Create injuries:** Allows the Zeus to create injuries on any types of unit, be it AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Create random injuries:** Creates random wounds, taking a damage value and type you are able to set.
-* **End mission with player invincibilit:** Ends the mission with all player becoming invulnerable. You can choose if it's a mission fail or success and whether they are invulnerable, but nothing else.
+* **End mission with player invincibility:** Ends the mission with all player becoming invulnerable. You can choose if it's a mission fail or success and whether they are invulnerable, but nothing else.
 * **Force consciousness change:** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals.
 * **Loadout: Apply to group:** Applies a predetermined loadout to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role it isn't very precise).
 * **Loadout: Apply to single unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
