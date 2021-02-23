@@ -11,12 +11,12 @@
  * None
  *
  * Example:
- * call zeus_additions_main_dogAttack;
+ * call zeus_additions_main_fnc_dogAttack;
  *
  * Public: No
  */
 
-["Zeus Additions", "Spawn Attack Dog", {
+["Zeus Additions", "[WIP] Spawn Attack Dog", {
     params ["_pos"];
 
     ["Side Selector", [
@@ -39,11 +39,11 @@
         private _dog = _grp createUnit ["Fin_random_F", [_pos select 0, _pos select 1, 0.3], [], 0, "CAN_COLLIDE"];
 
         [_grp] joinSilent _dog;
-        //[_dog, ["dog_spawn_in", 50]] remoteExec ["say3D", 0, true]; //Find Zeus lightning bolt sounds
+
 
         if (_spawnLightning) then {
             private _lightning = createVehicle ["Lightning1_F", [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
-
+            //[_dog, ["dog_spawn_in", 50]] remoteExec ["say3D", -2, true]; //Find Zeus lightning bolt sounds
             [{deleteVehicle _this}, _lightning, 1] call CBA_fnc_waitAndExecute;
         };
 
@@ -62,15 +62,15 @@
         	   params ["_unit", "_anim"];
 
             if (GVAR(distanceEnemy) > 10) then {
-                _unit playMove "Dog_Sprint";
+                _unit playMoveNow "Dog_Sprint";
             };
 
             if (GVAR(distanceEnemy) > 6 && {GVAR(distanceEnemy) < 10}) then {
-                _unit playMove "Dog_Run";
+                _unit playMoveNow "Dog_Run";
             };
 
             if (GVAR(distanceEnemy) > 3 && {GVAR(distanceEnemy) < 6}) then {
-                _unit playMove "Dog_Walk";
+                _unit playMoveNow "Dog_Walk";
             };
 
             _unit setDir (_unit getDir GVAR(dogNearestEnemy));
@@ -88,7 +88,7 @@
                 [_handleID] call CBA_fnc_removePerFrameHandler;
             };
 
-            // Look for the clostest enemy: Exclude invalid classes
+            // Look for the closest enemy: Exclude invalid classes
             private _dogNearestEnemy = (((getPos _dog) nearEntities ["Man", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
             GVAR(dogNearestEnemy) = _dogNearestEnemy;
 

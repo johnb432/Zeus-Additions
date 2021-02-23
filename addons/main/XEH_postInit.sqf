@@ -42,11 +42,10 @@ private _temp2 = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
 GVAR(weaponsTotal) pushBack ["UK3CB_BAF_Javelin_CLU"];
 
 call FUNC(ammoResupply);
-//call FUNC(createInjuries);
-call FUNC(createInjuriesNew);
-//call FUNC(dogAttack);
+call FUNC(createInjuries);
+call FUNC(dogAttack);
 call FUNC(forceWakeUp);
 call FUNC(gearScriptModules);
 call FUNC(grassRender);
 call FUNC(medicalResupply);
-//call FUNC(radioDistance);
+call FUNC(radioDistance);

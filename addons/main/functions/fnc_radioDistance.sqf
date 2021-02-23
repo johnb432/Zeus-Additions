@@ -1,3 +1,5 @@
+#include "script_component.hpp"
+
 /*
  * Author: johnb43
  * Adds a module that can alter a unit's TFAR radio range.
@@ -9,15 +11,17 @@
  * None
  *
  * Example:
- * call zeus_additions_main_radioDistance;
+ * call zeus_additions_main_fnc_radioDistance;
  *
  * Public: No
  */
 
-["Zeus Additions", "TFAR Radio Range Multiplier", {
+//JIP ?
+
+["Zeus Additions", "[WIP] TFAR Radio Range Multiplier", {
     params ["", "_unit"];
 
-    ["Radio range", [
+    ["Radio range (NOT TESTED; DOES NOT ACCOUNT FOR PLAYERS JOINING AFTER HAVING PLACED THE MODULE)", [
         ["OWNERS", ["Player selected", "Select a player from the list to determine which ammunition to spawn. If multiple are chosen only the first one selected will be looked at."], [[], [], [], 2], true],
         ["SLIDER", ["Range Multiplier", "Determines how far a radio can transmit. Default is 1.0."], [0, 5, 1, 2]]
     ],
@@ -26,14 +30,14 @@
         _results params ["_selected", "_multiplier"];
         _selected params ["_sides", "_groups", "_players"];
 
-        if  (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []} && {isNull _unit}) exitWith {
-            ["Select a side/group/unit!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
-        };
-
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
-            _unit setVariable ["tf_sendingDistanceMultiplicator", _multiplier];
-            ["Multiplier set on unit"] call zen_common_fnc_showMessage;
+        if  (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
+            if (isNull _unit) then {
+                ["Select a side/group/unit!"] call zen_common_fnc_showMessage;
+                playSound "FD_Start_F";
+            } else {
+                _unit setVariable ["tf_sendingDistanceMultiplicator", _multiplier];
+                ["Multiplier set on unit"] call zen_common_fnc_showMessage;
+            };
         };
 
         private _side = "";

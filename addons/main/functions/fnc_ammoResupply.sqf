@@ -11,7 +11,7 @@
  * None
  *
  * Example:
- * call zeus_additions_main_createInjuries;
+ * call zeus_additions_main_fnc_createInjuries;
  *
  * Public: No
  */

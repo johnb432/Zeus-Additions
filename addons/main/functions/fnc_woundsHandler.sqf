@@ -1,4 +1,5 @@
 #include "script_component.hpp"
+
 /*
  * Author: Glowbal, commy2, johnb43
  * Handling of the open wounds & injuries upon the handleDamage eventhandler.
@@ -14,22 +15,26 @@
  *
  * Example:
  * [player,
- *    ["Minor", 4, false, "Minor", 0, false, "Minor", 0, false, "Minor", 0, false, "Minor", 0, false, "Minor", 0, false],
- * "Avulsion"] call zeus_additions_main_fnc_woundsHandler
+ *    [0, 4, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false],
+ * 1] call zeus_additions_main_fnc_woundsHandler
+ * --> 4 Minor avulsions to the Head
  *
  * Public: No
  */
 
-params ["_unit", "_args", "_damageType"];
+params ["_unit", "_args", "_woundClassIDToAdd"];
 
 private _local = local _unit;
 
 // Administration for open wounds and ids
 private _openWounds = _unit getVariable ["ace_medical_openWounds", []];
 
+// Get wound information (since only 1 type of wound can be applied at a time)
+private _damageType = ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","VelocityWound","PunctureWound"] select _woundClassIDToAdd;
 private _injuryBleedingRate = getNumber(configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "bleeding");
 private _injuryPain = getNumber(configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "pain");
 
+// Various things to update after having taken damage and fractures
 private _updateDamageEffects = false;
 private _painLevel = 0;
 private _critialDamage = false;
@@ -37,8 +42,7 @@ private _bodyPartDamage = _unit getVariable ["ace_medical_bodyPartDamage", [0,0,
 private _bodyPartVisParams = [_unit, false, false, false, false]; // params array for EFUNC(medical_engine,updateBodyPartVisuals);
 private _fractures = _unit getVariable ["ace_medical_fractures", [0,0,0,0,0,0]];
 
-private _woundTypes = ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","VelocityWound","PunctureWound"];
-
+// For every bunch of 3 arguments
 for "_i" from 0 to (count _args - 3) step 3 do {
     private _woundSize = _args select _i;
     private _woundNumber = _args select (_i + 1);
@@ -47,34 +51,10 @@ for "_i" from 0 to (count _args - 3) step 3 do {
     private _bodyPartNToAdd = _i / 3;
 
     if (_woundNumber > 0) then {
-        private _woundDamage = 0;
-        private _category = -1;
-
-        // wound category (minor [0.25-0.5], medium [0.5-0.75], large [0.75+])
-        switch (_woundSize) do {
-            case "Minor": {
-                _woundDamage = 0.25;
-                _category = 0;
-            };
-            case "Medium": {
-                _woundDamage = 0.5;
-                _category = 1;
-            };
-            case "Large": {
-                _woundDamage = 0.75;
-                _category = 2;
-            };
-            default {};
-        };
+        private _woundDamage = 0.25 + (_woundSize * 0.25); // wound category (minor [0.25-0.5], medium [0.5-0.75], large [0.75+])
 
         _bodyPartDamage set [_bodyPartNToAdd, (_bodyPartDamage select _bodyPartNToAdd) + _woundDamage];
         _bodyPartVisParams set [[1,2,3,3,4,4] select _bodyPartNToAdd, true]; // Mark the body part index needs updating
-
-        private _woundClassIDToAdd = _woundTypes findIf {_x isEqualTo _damageType};
-
-        if (_woundClassIDToAdd isEqualTo -1) exitWith {
-            systemChat format ["%1 is not a valid wound class ID", _woundClassIDToAdd];
-        };
 
         // Damage to limbs/head is scaled higher than torso by engine
         // Anything above this value is guaranteed worst wound possible
@@ -91,7 +71,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         private _bleeding = _injuryBleedingRate * _bleedModifier;
         _painLevel = _painLevel + (_injuryPain * _painModifier);
 
-        private _classComplex = 10 * _woundClassIDToAdd + _category;
+        private _classComplex = 10 * _woundClassIDToAdd + _woundSize;
 
         // Create a new injury. Format [0:classComplex, 1:bodypart, 2:amountOf, 3:bleedingRate, 4:woundDamage]
         private _injury = [_classComplex, _bodyPartNToAdd, _woundNumber, _bleeding, _woundDamage];
@@ -141,7 +121,7 @@ if (_updateDamageEffects) then {
     if (_local) then {
         [_unit] call ace_medical_engine_fnc_updateDamageEffects;
     } else {
-        [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit/*, true*/];
+        [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit];
     };
 };
 
@@ -153,8 +133,8 @@ if (_local) then {
     _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
     ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
 } else {
-    [_unit] remoteExec ["ace_medical_status_fnc_updateWoundBloodLoss", _unit/*, true*/];
-    _bodyPartVisParams remoteExec ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit/*, true*/];
+    [_unit] remoteExec ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
+    _bodyPartVisParams remoteExec ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
     ["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
 };
 
@@ -162,6 +142,6 @@ if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
     if (_local) then {
         [_unit] call ace_medical_damage_fnc_handleIncapacitation;
     } else {
-        [_unit] remoteExec ["ace_medical_damage_fnc_handleIncapacitation", _unit/*, true*/];
+        [_unit] remoteExec ["ace_medical_damage_fnc_handleIncapacitation", _unit];
     };
 };
