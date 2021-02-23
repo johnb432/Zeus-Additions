@@ -1,4 +1,4 @@
-# Changelog for Zeus Additions 14.2.2021
+# Changelog for Zeus Additions 23.2.2021
 
 - Added "TFAR Range multiplier" module (see HOW TO below)
 - Added "Invincibility at end of mission" modules (see HOW TO below)
