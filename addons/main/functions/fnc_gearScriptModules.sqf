@@ -1,3 +1,5 @@
+#include "script_component.hpp"
+
 /*
  * Author: johnb43, cineafx
  * cineafx's gearscript updated and modified by johnb43
@@ -9,30 +11,29 @@
  * None
  *
  * Example:
- * call zeus_additions_main_gearScriptModules;
+ * call zeus_additions_main_fnc_gearScriptModules;
  *
  * Public: No
  */
 
 ["Zeus Additions", "Loadout: Set", {
     ["Set Loadout (Uses ACE arsenal export format)", [
-        ["EDIT", ["Default", "Riflemen, Medics, etc. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearDefault", "[]"], true],
-        ["EDIT", ["Leader", "Squad leaders, Team leaders. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearLeader", "[]"], true],
-        ["EDIT", ["AT", "Anti-tank gunners, Anti-tank assistants. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearAT", "[]"], true],
-        ["EDIT", ["AA", "Anti-air operators, Anti-air assistants. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearAA", "[]"], true],
-        ["EDIT", ["AR", "Autoriflemen, Machine Gunners. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearAR", "[]"], true],
-        ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], profileNamespace getVariable ["gearSingle", "[]"], true],
+        ["EDIT", ["Default", "Riflemen, Crew, etc. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearDefault),"[]"), true],
+        ["EDIT", ["Leader", "Squad leaders, Team leaders. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearLeader),"[]"), true],
+        ["EDIT", ["AT", "Anti-tank gunners, Anti-tank assistants. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAT),"[]"), true],
+        ["EDIT", ["AA", "Anti-air operators, Anti-air assistants. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAA),"[]"), true],
+        ["EDIT", ["AR", "Autoriflemen, Machine Gunners. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAR),"[]"), true],
+        ["EDIT", ["Medic", "Medics, Combat Life Savers. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearMedic),"[]"), true],
+        ["EDIT", ["Engineer", "Engineers, Demo. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearEngineer),"[]"), true],
+        ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearSingle),"[]"), true],
         ["CHECKBOX", ["Reset saved loadouts", "Resets saved loadouts (clears window on next open)."], false, true]
     ], {
         params ["_results"];
 
         if (_results select (count _results - 1)) exitWith {
-            profileNamespace setVariable ["gearDefault", "[]"];
-            profileNamespace setVariable ["gearLeader", "[]"];
-            profileNamespace setVariable ["gearAT", "[]"];
-            profileNamespace setVariable ["gearAA", "[]"];
-            profileNamespace setVariable ["gearAR", "[]"];
-            profileNamespace setVariable ["gearSingle", "[]"];
+            {
+                SETPRVAR(_x,"[]");
+            } forEach [QGVAR(gearDefault), QGVAR(gearLeader), QGVAR(gearAT), QGVAR(gearAA), QGVAR(gearAR), QGVAR(gearMedic), QGVAR(gearEngineer), QGVAR(gearSingle)];
 
             ["Loadouts reset"] call zen_common_fnc_showMessage;
         };
@@ -45,12 +46,9 @@
             };
         } forEach _results;
 
-        profileNamespace setVariable ["gearDefault", _results select 0];
-        profileNamespace setVariable ["gearLeader", _results select 1];
-        profileNamespace setVariable ["gearAT", _results select 2];
-        profileNamespace setVariable ["gearAA", _results select 3];
-        profileNamespace setVariable ["gearAR", _results select 4];
-        profileNamespace setVariable ["gearSingle", _results select 5];
+        {
+            SETPRVAR(_x, _results select _forEachIndex);
+        } forEach [QGVAR(gearDefault), QGVAR(gearLeader), QGVAR(gearAT), QGVAR(gearAA), QGVAR(gearAR), QGVAR(gearMedic), QGVAR(gearEngineer), QGVAR(gearSingle)];
 
         ["Loadouts saved"] call zen_common_fnc_showMessage;
     }, {
@@ -60,84 +58,55 @@
 }] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions", "Loadout: Apply to single unit", {
-    params ["", "_object"];
+    params ["", "_unit"];
 
-    if (isNull _object) exitWith {
+    if (isNull _unit) exitWith {
         ["No unit was selected!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
-    private _loadoutString = profileNamespace getVariable ["gearSingle", "[]"];
+    private _loadoutString = GETPRVAR(QGVAR(gearSingle),"[]");
 
     if (_loadoutString == "[]") then {
-        private _gearDefault = profileNamespace getVariable ["gearDefault", "[]"];
-        private _gearLeader = profileNamespace getVariable ["gearLeader", "[]"];
-        private _gearAT = profileNamespace getVariable ["gearAT", "[]"];
-        private _gearAA = profileNamespace getVariable ["gearAA", "[]"];
-        private _gearAR = profileNamespace getVariable ["gearAR", "[]"];
+        _loadoutString =
+        [
+            GETPRVAR(QGVAR(gearDefault),"[]"),
+            GETPRVAR(QGVAR(gearLeader),"[]"),
+            GETPRVAR(QGVAR(gearAT),"[]"),
+            GETPRVAR(QGVAR(gearAA),"[]"),
+            GETPRVAR(QGVAR(gearAR),"[]"),
+            GETPRVAR(QGVAR(gearMedic),"[]"),
+            GETPRVAR(QGVAR(gearEngineer),"[]")
+        ] select (_unit call FUNC(getRole));
+     };
 
-        private _loadouts = [_gearDefault, _gearLeader, _gearAT, _gearAA, _gearAR];
-
-        private _unitType = typeOf _x;
-        private _type = 0;
-
-        if ("AR" in _unitType) then {
-            _type = 4;
-        };
-        if ("AA" in _unitType) then {
-            _type = 3;
-        };
-        if ("AT" in _unitType) then {
-            _type = 2;
-        };
-        if ("SL" in _unitType || {"TL" in _unitType}) then {
-            _type = 1;
-        };
-
-        _loadoutString = _loadouts select _type;
-    };
-
-    _object setUnitLoadout (parseSimpleArray (_loadoutString splitString " " joinString ""));
+    _unit setUnitLoadout (parseSimpleArray (_loadoutString splitString " " joinString ""));
 
     ["Loadout applied"] call zen_common_fnc_showMessage;
 }] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions", "Loadout: Apply to group", {
-    params ["", "_object"];
+    params ["", "_unit"];
 
-    if (isNull _object) exitWith {
+    if (isNull _unit) exitWith {
         ["No unit was selected!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
-    private _units = units group _object;
+    private _units = units group _unit;
 
-    private _gearDefault = profileNamespace getVariable ["gearDefault", "[]"];
-    private _gearLeader = profileNamespace getVariable ["gearLeader", "[]"];
-    private _gearAT = profileNamespace getVariable ["gearAT", "[]"];
-    private _gearAA = profileNamespace getVariable ["gearAA", "[]"];
-    private _gearAR = profileNamespace getVariable ["gearAR", "[]"];
-
-    private _loadouts = [_gearDefault, _gearLeader, _gearAT, _gearAA, _gearAR];
+    private _loadouts = [
+        GETPRVAR(QGVAR(gearDefault),"[]"),
+        GETPRVAR(QGVAR(gearLeader),"[]"),
+        GETPRVAR(QGVAR(gearAT),"[]"),
+        GETPRVAR(QGVAR(gearAA),"[]"),
+        GETPRVAR(QGVAR(gearAR),"[]"),
+        GETPRVAR(QGVAR(gearMedic),"[]"),
+        GETPRVAR(QGVAR(gearEngineer),"[]")
+    ];
 
     {
-        private _unitType = typeOf _x;
-        private _type = 0;
-
-        if ("AR" in _unitType) then {
-            _type = 4;
-        };
-        if ("AA" in _unitType) then {
-            _type = 3;
-        };
-        if ("AT" in _unitType) then {
-            _type = 2;
-        };
-        if ("SL" in _unitType || {"TL" in _unitType}) then {
-            _type = 1;
-        };
-
-        _x setUnitLoadout (parseSimpleArray ((_loadouts select _type) splitString " " joinString ""));
+        _x setUnitLoadout (parseSimpleArray ((_loadouts select (_x call FUNC(getRole))) splitString " " joinString ""));
     } forEach _units;
 
     ["Loadouts applied"] call zen_common_fnc_showMessage;

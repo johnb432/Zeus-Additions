@@ -1,6 +1,10 @@
 #include "\x\cba\addons\main\script_macros_common.hpp"
 #include "\x\cba\addons\xeh\script_xeh.hpp"
 
+//This part includes parts of the CBA and ACE3 macro libraries
+#define GETPRVAR(var1,var2) (profileNamespace getVariable [ARR_2(var1,var2)])
+#define SETPRVAR(var1,var2) (profileNamespace setVariable [ARR_2(var1,var2)])
+
 #define FUNC_PATHTO_SYS(var1,var2,var3) \MAINPREFIX\var1\SUBPREFIX\var2\functions\var3.sqf
 
 #ifdef DISABLE_COMPILE_CACHE

@@ -1,3 +1,5 @@
+#include "script_component.hpp"
+
 /*
  * Author: johnb43
  * Adds a module that spawns a medical resupply crate.
@@ -9,7 +11,7 @@
  * None
  *
  * Example:
- * call zeus_additions_main_medicalResupply;
+ * call zeus_additions_main_fnc_medicalResupply;
  *
  * Public: No
  */
@@ -18,53 +20,53 @@
     params ["_pos"];
 
     ["Spawn Medical Resupply Crate", [
-        ["EDIT", "Bandages (Elastic)", profileNamespace getVariable ["elastic", 200], true],
-        ["EDIT", "Bandages (Packing)", profileNamespace getVariable ["packing", 200], true],
-        ["EDIT", "Bandages (Quickclot)", profileNamespace getVariable ["quickclot", 50], true],
-        ["EDIT", "Bandages (Basic)", profileNamespace getVariable ["basic", 0], true],
-        ["EDIT", "1000ml Blood", profileNamespace getVariable ["blood1000", 25], true],
-        ["EDIT", "500ml Blood", profileNamespace getVariable ["blood500", 50], true],
-        ["EDIT", "250ml Blood", profileNamespace getVariable ["blood250", 0], true],
-        ["EDIT", "1000ml Plasma", profileNamespace getVariable ["plasma1000", 0], true],
-        ["EDIT", "500ml Plasma", profileNamespace getVariable ["plasma500", 30], true],
-        ["EDIT", "250ml Plasma", profileNamespace getVariable ["plasma250", 0], true],
-        ["EDIT", "1000ml Saline", profileNamespace getVariable ["saline1000", 0], true],
-        ["EDIT", "500ml Saline", profileNamespace getVariable ["saline500", 30], true],
-        ["EDIT", "250ml Saline", profileNamespace getVariable ["saline250", 0], true],
-        ["EDIT", "Epinephrine autoinjector", profileNamespace getVariable ["epinephrine", 30], true],
-        ["EDIT", "Morphine autoinjector", profileNamespace getVariable ["morphine", 30], true],
-        ["EDIT", "Adenosine autoinjector", profileNamespace getVariable ["adenosine", 10], true],
-        ["EDIT", "Splint", profileNamespace getVariable ["splint", 50], true],
-        ["EDIT", "Tourniquet (CAT)", profileNamespace getVariable ["tourniquet", 40], true],
-        ["EDIT", "Bodybag", profileNamespace getVariable ["bodybag", 20], true],
-        ["EDIT", "Surgical Kit", profileNamespace getVariable ["surgical", 0], true],
-        ["EDIT", "Personal Aid Kit", profileNamespace getVariable ["surgical", 0], true],
+        ["EDIT", "Bandages (Elastic)", GETPRVAR(QGVAR(elastic),200), true],
+        ["EDIT", "Bandages (Packing)", GETPRVAR(QGVAR(packing),200), true],
+        ["EDIT", "Bandages (Quickclot)", GETPRVAR(QGVAR(quickclot),50), true],
+        ["EDIT", "Bandages (Basic)", GETPRVAR(QGVAR(basic),0), true],
+        ["EDIT", "1000ml Blood", GETPRVAR(QGVAR(blood1000),25), true],
+        ["EDIT", "500ml Blood", GETPRVAR(QGVAR(blood500),50), true],
+        ["EDIT", "250ml Blood", GETPRVAR(QGVAR(blood250),0), true],
+        ["EDIT", "1000ml Plasma", GETPRVAR(QGVAR(plasma1000),0), true],
+        ["EDIT", "500ml Plasma", GETPRVAR(QGVAR(plasma500),30), true],
+        ["EDIT", "250ml Plasma", GETPRVAR(QGVAR(plasma250),0), true],
+        ["EDIT", "1000ml Saline", GETPRVAR(QGVAR(saline1000),0), true],
+        ["EDIT", "500ml Saline", GETPRVAR(QGVAR(saline500),30), true],
+        ["EDIT", "250ml Saline", GETPRVAR(QGVAR(saline250),0), true],
+        ["EDIT", "Epinephrine autoinjector", GETPRVAR(QGVAR(epinephrine),30), true],
+        ["EDIT", "Morphine autoinjector", GETPRVAR(QGVAR(morphine),30), true],
+        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),10), true],
+        ["EDIT", "Splint", GETPRVAR(QGVAR(splint),50), true],
+        ["EDIT", "Tourniquet (CAT)", GETPRVAR(QGVAR(tourniquet),40), true],
+        ["EDIT", "Bodybag", GETPRVAR(QGVAR(bodybag),20), true],
+        ["EDIT", "Surgical Kit", GETPRVAR(QGVAR(surgical),0), true],
+        ["EDIT", "Personal Aid Kit", GETPRVAR(QGVAR(PAK),0), true],
         ["CHECKBOX", ["Reset to default"], false, true]
     ], {
         params ["_results", "_pos"];
 
         if (_results select (count _results - 1)) exitWith {
-            profileNamespace setVariable ["elastic", 200];
-            profileNamespace setVariable ["packing", 200];
-            profileNamespace setVariable ["quickclot", 50];
-            profileNamespace setVariable ["basic", 0];
-            profileNamespace setVariable ["blood1000", 25];
-            profileNamespace setVariable ["blood500", 50];
-            profileNamespace setVariable ["blood250", 0];
-            profileNamespace setVariable ["plasma1000", 0];
-            profileNamespace setVariable ["plasma500", 30];
-            profileNamespace setVariable ["plasma250", 0];
-            profileNamespace setVariable ["saline1000", 0];
-            profileNamespace setVariable ["saline500", 30];
-            profileNamespace setVariable ["saline250", 0];
-            profileNamespace setVariable ["epinephrine", 30];
-            profileNamespace setVariable ["morphine", 30];
-            profileNamespace setVariable ["adenosine", 10];
-            profileNamespace setVariable ["splint", 50];
-            profileNamespace setVariable ["tourniquet", 40];
-            profileNamespace setVariable ["bodybag", 20];
-            profileNamespace setVariable ["surgical", 0];
-            profileNamespace setVariable ["PAK", 0];
+            SETPRVAR(QGVAR(elastic),200);
+            SETPRVAR(QGVAR(packing),200);
+            SETPRVAR(QGVAR(quickclot),50);
+            SETPRVAR(QGVAR(basic),0);
+            SETPRVAR(QGVAR(blood1000),25);
+            SETPRVAR(QGVAR(blood500),50);
+            SETPRVAR(QGVAR(blood250),0);
+            SETPRVAR(QGVAR(plasma1000),0);
+            SETPRVAR(QGVAR(plasma500),30);
+            SETPRVAR(QGVAR(plasma250),0);
+            SETPRVAR(QGVAR(saline1000),0);
+            SETPRVAR(QGVAR(saline500),30);
+            SETPRVAR(QGVAR(saline250),0);
+            SETPRVAR(QGVAR(epinephrine),30);
+            SETPRVAR(QGVAR(morphine),30);
+            SETPRVAR(QGVAR(adenosine),10);
+            SETPRVAR(QGVAR(splint),50);
+            SETPRVAR(QGVAR(tourniquet),40);
+            SETPRVAR(QGVAR(bodybag),20);
+            SETPRVAR(QGVAR(surgical),0);
+            SETPRVAR(QGVAR(PAK),0);
 
             ["Reset to default completed"] call zen_common_fnc_showMessage;
         };
@@ -102,30 +104,17 @@
         ];
 
         {
-            _object addItemCargoGlobal [_items select _forEachIndex, parseNumber _x];
-        } forEach _results;
-
-        profileNamespace setVariable ["elastic", _results select 0];
-        profileNamespace setVariable ["packing", _results select 1];
-        profileNamespace setVariable ["quickclot", _results select 2];
-        profileNamespace setVariable ["basic", _results select 3];
-        profileNamespace setVariable ["blood1000", _results select 4];
-        profileNamespace setVariable ["blood500", _results select 5];
-        profileNamespace setVariable ["blood250", _results select 6];
-        profileNamespace setVariable ["plasma1000", _results select 7];
-        profileNamespace setVariable ["plasma500", _results select 8];
-        profileNamespace setVariable ["plasma250", _results select 9];
-        profileNamespace setVariable ["saline1000", _results select 10];
-        profileNamespace setVariable ["saline500", _results select 11];
-        profileNamespace setVariable ["saline250", _results select 12];
-        profileNamespace setVariable ["epinephrine", _results select 13];
-        profileNamespace setVariable ["morphine", _results select 14];
-        profileNamespace setVariable ["adenosine", _results select 15];
-        profileNamespace setVariable ["splint", _results select 16];
-        profileNamespace setVariable ["tourniquet", _results select 17];
-        profileNamespace setVariable ["bodybag", _results select 18];
-        profileNamespace setVariable ["surgical", _results select 19];
-        profileNamespace setVariable ["PAK", _results select 20];
+            _object addItemCargoGlobal [_items select _forEachIndex, parseNumber (_results select _forEachIndex)];
+            SETPRVAR(_x, _results select _forEachIndex);
+        } forEach [
+            QGVAR(elastic), QGVAR(packing), QGVAR(quickclot), QGVAR(basic),
+            QGVAR(blood1000), QGVAR(blood500), QGVAR(blood250),
+            QGVAR(plasma1000), QGVAR(plasma500), QGVAR(plasma250),
+            QGVAR(saline1000), QGVAR(saline500), QGVAR(saline250),
+            QGVAR(epinephrine), QGVAR(morphine), QGVAR(adenosine),
+            QGVAR(splint), QGVAR(tourniquet),
+            QGVAR(bodybag), QGVAR(surgical), QGVAR(PAK)
+        ];
 
         [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setDraggable", 0, true];
         [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setCarryable", 0, true];
