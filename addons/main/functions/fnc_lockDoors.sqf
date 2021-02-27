@@ -24,11 +24,12 @@
         ["SLIDER", ["Radius", "Determines how far out the module takes affect from the placement point."], [0, 100, 20, 0]],
         ["CHECKBOX", ["Select closest building only", "Disregards all buildings in the search except the nearest one."], false],
         ["EDIT", ["Explosives", "An array that contains all allowed explosives."], GETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']"), true],
+        ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [8, 60, 20, 0]],
         ["CHECKBOX", ["Reset to default explosives list", "Resets the explosives list above to the default, which contains only the vanilla demolition block."], false, true]
     ],
     {
         params ["_results", "_pos"];
-        _results params ["_mode", "_radius", "_closestOnly", "_explosives", "_reset"];
+        _results params ["_mode", "_radius", "_closestOnly", "_explosives", "_timer", "_reset"];
 
         if (_reset) exitWith {
             SETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']");
@@ -47,6 +48,9 @@
             ["No buildings found!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
+
+        _timer = round _timer;
+        private _timerString = (format ["Breach door (%1s Timer)", _timer]);
 
         // Used for Zeus interface updating of editable objects
         private _helperObjectListTotal = [];
@@ -99,10 +103,10 @@
                     _helperObjectList pushBack _helperObject;
 
                     [_helperObject, [
-                        "Breach door (30s Timer)",
+                        _timerString,
                         {
                             params ["_target", "_caller", "_actionId", "_arguments"];
-                            _arguments params ["_doorID", "_explosives"];
+                            _arguments params ["_doorID", "_explosives", "_timer"];
 
                             private _foundExplosive = false;
 
@@ -127,7 +131,8 @@
                             _caller setVariable ["ace_explosives_PlantingExplosive", true];
                             [{_this setVariable ["ace_explosives_PlantingExplosive", false]}, _caller, 1.5] call CBA_fnc_waitAndExecute;
 
-                            ["Breaching in 30s!", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _caller];
+                            //private _string = format ["Breaching in %1s!", _timer];
+                            [(format ["Breaching in %1s!", _timer]), false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _caller];
 
                             [{
                                 params ["_caller", "_target"];
@@ -137,22 +142,22 @@
                                 _explosion remoteExecCall ["hideObject", 0];
                                 _explosion setShotParents [_caller, _caller];
                                 _explosion setDamage 1;
-                            }, [_caller, _target], 27.5] call CBA_fnc_waitAndExecute;
+                            }, [_caller, _target], _timer - 2.5] call CBA_fnc_waitAndExecute;
 
-                            [{["Breaching in 5...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, 25] call CBA_fnc_waitAndExecute;
-                            [{["Breaching in 4...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, 26] call CBA_fnc_waitAndExecute;
-                            [{["Breaching in 3...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, 27] call CBA_fnc_waitAndExecute;
-                            [{["Breaching in 2...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, 28] call CBA_fnc_waitAndExecute;
-                            [{["Breaching in 1...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, 29] call CBA_fnc_waitAndExecute;
+                            [{["Breaching in 5...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, _timer - 5] call CBA_fnc_waitAndExecute;
+                            [{["Breaching in 4...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, _timer - 4] call CBA_fnc_waitAndExecute;
+                            [{["Breaching in 3...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, _timer - 3] call CBA_fnc_waitAndExecute;
+                            [{["Breaching in 2...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, _timer - 2] call CBA_fnc_waitAndExecute;
+                            [{["Breaching in 1...", false, 1, 2] remoteExecCall ["ace_common_fnc_displayText", _this];}, _caller, _timer - 1] call CBA_fnc_waitAndExecute;
 
                             [{
                                 params ["_target", "_building", "_doorID"];
 
                                 deleteVehicle _target;
                                 [_building, _doorID, 2] call zen_doors_fnc_setState;
-                            }, [_target, _building, _doorID], 30] call CBA_fnc_waitAndExecute;
+                            }, [_target, _building, _doorID], _timer] call CBA_fnc_waitAndExecute;
                         },
-                        [(_forEachIndex + 1), _explosives],
+                        [(_forEachIndex + 1), _explosives, _timer],
                         1.5,
                         true,
                         true,
