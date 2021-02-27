@@ -11,7 +11,7 @@
  * Role number <NUMBER>
  *
  * Example:
- * call zeus_additions_main_fnc_getRole;
+ * [player] call zeus_additions_main_fnc_getRole;
  *
  * Public: No
  */

@@ -134,7 +134,7 @@
         _numHand = parseNumber _numHand;
         _numSec = parseNumber _numSec;
 
-        if (_numPrim == 0 && {_numHand == 0} && {_numSec == 0}) exitWith {
+        if (_numPrim isEqualTo 0 && {_numHand isEqualTo 0} && {_numSec isEqualTo 0}) exitWith {
             ["Empty ammo crate created"] call zen_common_fnc_showMessage;
         };
 
@@ -158,6 +158,7 @@
 
         if (_numSec > 0 && {!isNil {secondaryWeapon _unit}}) then {
             private _magsSec = [secondaryWeapon _unit] call CBA_fnc_compatibleMagazines;
+            _magsSec = _magsSec - _blackList;
             {
                 _object addItemCargoGlobal [_x, _numSec];
             } forEach _magsSec;

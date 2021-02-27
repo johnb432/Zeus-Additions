@@ -27,7 +27,8 @@
         ["EDIT", ["Engineer", "Engineers, Demo. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearEngineer),"[]"), true],
         ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearSingle),"[]"), true],
         ["CHECKBOX", ["Reset saved loadouts", "Resets saved loadouts (clears window on next open)."], false, true]
-    ], {
+    ],
+    {
         params ["_results"];
 
         if (_results select (count _results - 1)) exitWith {

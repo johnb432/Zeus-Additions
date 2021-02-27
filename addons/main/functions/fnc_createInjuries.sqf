@@ -56,7 +56,7 @@
 
          // iterate over results and copy all values except last one, so (count - 1) - 1 + 2 = count
          for "_i" from 0 to (count _results) step 1 do {
-             if (_i == 2 || {_i == 4}) then {
+             if (_i isEqualTo 2 || {_i isEqualTo 4}) then {
                  _formattedResults pushBack false;
              };
 

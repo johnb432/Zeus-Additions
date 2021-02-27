@@ -47,5 +47,7 @@ call FUNC(dogAttack);
 call FUNC(forceWakeUp);
 call FUNC(gearScriptModules);
 call FUNC(grassRender);
+call FUNC(lockDoors);
+call FUNC(makeInvincible);
 call FUNC(medicalResupply);
 call FUNC(radioDistance);

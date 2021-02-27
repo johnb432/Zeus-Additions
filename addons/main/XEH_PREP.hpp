@@ -5,6 +5,7 @@ PREPFNC(forceWakeUp);
 PREPFNC(gearScriptModules);
 PREPFNC(getRole);
 PREPFNC(grassRender);
+PREPFNC(lockDoors);
 PREPFNC(makeInvincible);
 PREPFNC(medicalResupply);
 PREPFNC(radioDistance);

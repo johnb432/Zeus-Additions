@@ -76,7 +76,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         // Create a new injury. Format [0:classComplex, 1:bodypart, 2:amountOf, 3:bleedingRate, 4:woundDamage]
         private _injury = [_classComplex, _bodyPartNToAdd, _woundNumber, _bleeding, _woundDamage];
 
-        if (_bodyPartNToAdd == 0 || {_bodyPartNToAdd == 1 && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
+        if (_bodyPartNToAdd isEqualTo 0 || {_bodyPartNToAdd isEqualTo 1 && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
             _critialDamage = true;
         };
 
@@ -85,10 +85,10 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         {
             _x params ["_classID", "_bodyPartN", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
             if (
-                    (_classComplex == _classID) &&
-                    {_bodyPartNToAdd == _bodyPartN} &&
+                    (_classComplex isEqualTo _classID) &&
+                    {_bodyPartNToAdd isEqualTo _bodyPartN} &&
                     {(_bodyPartNToAdd != 1) || {(_woundDamage < ace_medical_const_penetrationThreshold) isEqualTo (_oldDamage < ace_medical_const_penetrationThreshold)}} // penetrating body damage is handled differently
-                    ) exitWith { // don't want limping
+                    ) exitWith { // don't want/care limping
                 private _newAmountOf = _oldAmountOf + _woundNumber;
                 _x set [2, _newAmountOf];
                 _x set [3, ((_oldAmountOf * _oldBleeding + _bleeding) / _newAmountOf)]; // new bleeding

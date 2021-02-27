@@ -1,3 +1,7 @@
+# Changelog for Zeus Additions 27.2.2021
+- Actually added the invincibility modules (never called the function to make the modeules...)
+- Added "Lock doors" module (see HOW TO below)
+
 # Changelog for Zeus Additions 23.2.2021
 
 - Added "TFAR Range multiplier" module (see HOW TO below)
@@ -37,6 +41,7 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
 * **Loadout: Apply to group:** Applies a predetermined loadout to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role it isn't very precise).
 * **Loadout: Apply to single unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
 * **Loadout: Set:** Allows you to set loadouts for the "Loadout: Apply to group" and "Loadout: Apply to single unit" modules. These are saved on a profile basis, which means they stick around, allowing you to use them on various servers.
+* **Lock building doors:** Allows the Zeus to set doors on a building to be locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
 * **Make people invincible at mission end:** ***PLACE THIS MODULE ONLY NEAR MISSION END.*** It checks every 1/10 s if the end screen has popped up, which can be performance consuming.
 * **Spawn Ammo Resupply Crate:** Spawns a magazine resupply crate using lists predefined in the CBA settings.
 * **Spawn Ammo Resupply for unit:** Spawns a magazine resupply crate using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. It can use a blacklist which can be defined in the CBA settings. Future support for direct access to the FK blacklist is being waited on, as the FK framework has to update.

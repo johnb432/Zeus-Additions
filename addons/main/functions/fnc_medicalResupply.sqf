@@ -42,7 +42,8 @@
         ["EDIT", "Surgical Kit", GETPRVAR(QGVAR(surgical),0), true],
         ["EDIT", "Personal Aid Kit", GETPRVAR(QGVAR(PAK),0), true],
         ["CHECKBOX", ["Reset to default"], false, true]
-    ], {
+    ],
+    {
         params ["_results", "_pos"];
 
         if (_results select (count _results - 1)) exitWith {
@@ -105,7 +106,7 @@
 
         {
             _object addItemCargoGlobal [_items select _forEachIndex, parseNumber (_results select _forEachIndex)];
-            SETPRVAR(_x, _results select _forEachIndex);
+            SETPRVAR(_x,_results select _forEachIndex);
         } forEach [
             QGVAR(elastic), QGVAR(packing), QGVAR(quickclot), QGVAR(basic),
             QGVAR(blood1000), QGVAR(blood500), QGVAR(blood250),
