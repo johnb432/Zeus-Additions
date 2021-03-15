@@ -2,7 +2,7 @@
 
 /*
  * Author: Fred, with modifications made by johnb43
- * Creates a modules that spawns a dog.
+ * Creates a module that spawns a dog.
  *
  * Arguments:
  * None
@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions", "[WIP] Spawn Attack Dog", {
+["Zeus Additions - AI", "[WIP] Spawn Attack Dog", {
     params ["_pos"];
 
     ["Side Selector", [
@@ -42,15 +42,24 @@
 
 
         if (_spawnLightning) then {
-            private _lightning = createVehicle ["Lightning1_F", [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
-            //[_dog, ["dog_spawn_in", 50]] remoteExec ["say3D", -2, true]; //Find Zeus lightning bolt sounds
-            [{deleteVehicle _this}, _lightning, 1] call CBA_fnc_waitAndExecute;
+            _dog allowDamage false;
+            private _lightning = createVehicle [selectRandom ["Lightning1_F" ,"Lightning2_F"], [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
+
+            private _bolt = createvehicle ["LightningBolt", [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
+            _bolt setdamage 1;
+
+            [{
+                params ["_lightning", "_dog"];
+
+                deleteVehicle _lightning;
+                _dog allowDamage true;
+            }, [_lightning, _dog], 1] call CBA_fnc_waitAndExecute;
         };
 
         _dog setVariable ["BIS_fnc_animalBehaviour_disable", false];
 
         {
-            [_x, [[_dog], true]] remoteExec ["addCuratorEditableObjects", _x, true];
+            [_x, [[_dog], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
         } forEach allCurators;
 
         _dog playMoveNow "Dog_Run";
@@ -103,7 +112,7 @@
 
                     playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 15, 0.5, 100];
 
-                    [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"] remoteExec ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy, true];
+                    [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy, true];
                 };
 
                 /*

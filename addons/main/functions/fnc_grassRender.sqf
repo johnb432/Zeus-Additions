@@ -16,13 +16,13 @@
  * Public: No
  */
 
-["Zeus Additions", "[WIP] Change grass rendering", {
+["Zeus Additions - Utility", "Change grass rendering", {
     params ["", "_unit"];
 
     ["Grass rendering settings", [
         ["OWNERS", ["Players selected", "Changes selected players/groups/sides grass rendering."], [[], [], [], 0], true],
         ["CHECKBOX", ["Change yourself", "You can use this whilst as a curator to change your grass rendering."], false, true],
-        ["LIST", ["Setting", "Choose Low to turn off grass rendering. Choose Standard if you want to render it again."], [[50, 25, 12.5, 6.25, 3.125], ["Low (Off)", "Standard", "High", "Very High", "Ultra"], 0, 5]]
+        ["LIST", ["Setting", "Choose Low to turn off grass rendering. Choose Standard if you want to render it again."], [[50, 25, 12.5, 6.25, 3.125], ["Low (Off)", "Standard (Normal)", "High", "Very High", "Ultra"], 0, 5]]
     ],
     {
         params ["_results", "_unit"];
@@ -37,7 +37,7 @@
 
         if  (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             if (!isNull _unit && {isPlayer _unit}) then {
-                _setting remoteExec ["setTerrainGrid", _unit];
+                _setting remoteExecCall ["setTerrainGrid", _unit];
                 _string = "Grass rendering changed on player";
             } else {
                 if (_self) then {
@@ -54,7 +54,7 @@
         _players append _sides;
 
         {
-            _setting remoteExec ["setTerrainGrid", _x];
+            _setting remoteExecCall ["setTerrainGrid", _x];
         } forEach _players;
 
         [_string] call zen_common_fnc_showMessage;

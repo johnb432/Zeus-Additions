@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions", "[WIP] Make people invincible at mission end", {
+["Zeus Additions - Utility", "Make people invincible at mission end", {
     ["Make Invincible at mission end (use only very close to mission end, as this is performance consuming)", [
         ["CHECKBOX", ["Make Invincible", "Makes players invincible at mission end to prevent friendly firing."], true]
     ],
@@ -29,14 +29,14 @@
         if (_invincible) then {
             if (isNil QGVAR(missionEndID)) then {
                 GVAR(missionEndID) = [{
-                    if (!isNull (uiNamespace getVariable ["RscDisplayDebriefing",displayNull])) exitWith {
+                    if (!isNull (uiNamespace getVariable ["RscDisplayDebriefing", displayNull])) exitWith {
                         [GVAR(missionEndID)] call CBA_fnc_removePerFrameHandler;
 
                         {
                             ["zen_common_allowDamage", [_x, false], _x] call CBA_fnc_targetEvent;
 
                             // If player is in a vehicle, make that invincible too
-                            if !(vehicle _x isEqualTo _x) then {
+                            if (vehicle _x isNotEqualTo _x) then {
                                 ["zen_common_allowDamage", [vehicle _x, false], vehicle _x] call CBA_fnc_targetEvent;
                             };
                         } forEach allPlayers;
@@ -62,7 +62,7 @@
     }, _unit] call zen_dialog_fnc_create;
 }] call zen_custom_modules_fnc_register;
 
-["Zeus Additions", "[WIP] End mission with player invincibility", {
+["Zeus Additions - Utility", "End mission with player invincibility", {
     ["End mission with player invincibility", [
         ["LIST", ["Mission ending", "You can't set a debrief text!"], [[true, false], ["Mission completed", "Mission failed"], 0, 1]],
         ["CHECKBOX", ["Make Invincible", "Makes players invincible at mission end to prevent friendly firing."], true]
@@ -77,7 +77,7 @@
             ["zen_common_allowDamage", [_x, _allowDamage], _x] call CBA_fnc_targetEvent;
 
             // If player is in a vehicle, make that invincible too
-            if !(vehicle _x isEqualTo _x) then {
+            if (vehicle _x isNotEqualTo _x) then {
                 ["zen_common_allowDamage", [vehicle _x, _allowDamage], vehicle _x] call CBA_fnc_targetEvent;
             };
         } forEach allPlayers;

@@ -1,6 +1,9 @@
 PREPFNC(ammoResupply);
+PREPFNC(behaviourAIModules);
 PREPFNC(createInjuries);
+PREPFNC(disableChannels);
 PREPFNC(dogAttack);
+PREPFNC(exitUnconsciousUnit);
 PREPFNC(forceWakeUp);
 PREPFNC(gearScriptModules);
 PREPFNC(getRole);
@@ -8,5 +11,6 @@ PREPFNC(grassRender);
 PREPFNC(lockDoors);
 PREPFNC(makeInvincible);
 PREPFNC(medicalResupply);
+PREPFNC(preventBlowUpVehicle);
 PREPFNC(radioDistance);
 PREPFNC(woundsHandler);

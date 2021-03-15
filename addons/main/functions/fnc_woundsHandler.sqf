@@ -121,7 +121,7 @@ if (_updateDamageEffects) then {
     if (_local) then {
         [_unit] call ace_medical_engine_fnc_updateDamageEffects;
     } else {
-        [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit];
+        [_unit] remoteExecCall ["ace_medical_engine_fnc_updateDamageEffects", _unit];
     };
 };
 
@@ -133,8 +133,8 @@ if (_local) then {
     _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
     ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
 } else {
-    [_unit] remoteExec ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
-    _bodyPartVisParams remoteExec ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
+    [_unit] remoteExecCall ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
+    _bodyPartVisParams remoteExecCall ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
     ["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
 };
 
@@ -142,6 +142,6 @@ if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
     if (_local) then {
         [_unit] call ace_medical_damage_fnc_handleIncapacitation;
     } else {
-        [_unit] remoteExec ["ace_medical_damage_fnc_handleIncapacitation", _unit];
+        [_unit] remoteExecCall ["ace_medical_damage_fnc_handleIncapacitation", _unit];
     };
 };

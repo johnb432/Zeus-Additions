@@ -1,4 +1,16 @@
 [
+    QGVAR(enableExitUnconsciousUnit),
+    "CHECKBOX",
+    ["Enable leave unconscious unit", "Allows people to leave an unconscious remote controlled unit by pressing the ESCAPE key."],
+    [COMPONENT_NAME, "Units"],
+    true,
+    false,
+    {
+        call FUNC(exitUnconsciousUnit);
+    }
+] call CBA_fnc_addSetting;
+
+[
     QGVAR(blacklistSettings),
     "EDITBOX",
     ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only works for the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],

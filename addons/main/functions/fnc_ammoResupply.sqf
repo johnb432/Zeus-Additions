@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions", "Spawn Ammo Resupply Crate", {
+["Zeus Additions - Resupply", "Spawn Ammo Resupply Crate", {
     params ["_pos"];
 
     ["Spawn Ammo Resupply Crate", [
@@ -52,7 +52,7 @@
 
         private _object = "Box_NATO_Equip_F" createVehicle _pos;
         {
-            [_x, [[_object], true]] remoteExec ["addCuratorEditableObjects", _x, true];
+            [_x, [[_object], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
         } forEach allCurators;
         clearItemCargoGlobal _object;
 
@@ -81,8 +81,8 @@
             };
         } forEach _numAT;
 
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setDraggable", 0, true];
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setCarryable", 0, true];
+        [_object, true, [0, 1.25, 0], 0, true] remoteExecCall ["ace_dragging_fnc_setDraggable", 0, true];
+        [_object, true, [0, 1.25, 0.5], 90, true] remoteExecCall ["ace_dragging_fnc_setCarryable", 0, true];
 
         ["Ammo crate created"] call zen_common_fnc_showMessage;
     }, {
@@ -93,7 +93,7 @@
 
 
 
-["Zeus Additions", "Spawn Ammo Resupply for unit", {
+["Zeus Additions - Resupply", "Spawn Ammo Resupply for unit", {
     params ["_pos", "_unit"];
 
     ["Spawn Ammo Resupply Crate", [
@@ -126,13 +126,16 @@
 
         private _object = "Box_NATO_Equip_F" createVehicle _pos;
         {
-            [_x, [[_object], true]] remoteExec ["addCuratorEditableObjects", _x, true];
+            [_x, [[_object], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
         } forEach allCurators;
         clearItemCargoGlobal _object;
 
         _numPrim = parseNumber _numPrim;
         _numHand = parseNumber _numHand;
         _numSec = parseNumber _numSec;
+
+        [_object, true, [0, 1.25, 0], 0, true] remoteExecCall ["ace_dragging_fnc_setDraggable", 0, true];
+        [_object, true, [0, 1.25, 0.5], 90, true] remoteExecCall ["ace_dragging_fnc_setCarryable", 0, true];
 
         if (_numPrim isEqualTo 0 && {_numHand isEqualTo 0} && {_numSec isEqualTo 0}) exitWith {
             ["Empty ammo crate created"] call zen_common_fnc_showMessage;
@@ -163,9 +166,6 @@
                 _object addItemCargoGlobal [_x, _numSec];
             } forEach _magsSec;
         };
-
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setDraggable", 0, true];
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setCarryable", 0, true];
 
         ["Ammo crate created"] call zen_common_fnc_showMessage;
     }, {

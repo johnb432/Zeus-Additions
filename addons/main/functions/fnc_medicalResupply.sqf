@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions", "Spawn Medical Resupply Crate", {
+["Zeus Additions - Resupply", "Spawn Medical Resupply Crate", {
     params ["_pos"];
 
     ["Spawn Medical Resupply Crate", [
@@ -35,7 +35,7 @@
         ["EDIT", "250ml Saline", GETPRVAR(QGVAR(saline250),0), true],
         ["EDIT", "Epinephrine autoinjector", GETPRVAR(QGVAR(epinephrine),30), true],
         ["EDIT", "Morphine autoinjector", GETPRVAR(QGVAR(morphine),30), true],
-        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),10), true],
+        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),0), true],
         ["EDIT", "Splint", GETPRVAR(QGVAR(splint),50), true],
         ["EDIT", "Tourniquet (CAT)", GETPRVAR(QGVAR(tourniquet),40), true],
         ["EDIT", "Bodybag", GETPRVAR(QGVAR(bodybag),20), true],
@@ -62,7 +62,7 @@
             SETPRVAR(QGVAR(saline250),0);
             SETPRVAR(QGVAR(epinephrine),30);
             SETPRVAR(QGVAR(morphine),30);
-            SETPRVAR(QGVAR(adenosine),10);
+            SETPRVAR(QGVAR(adenosine),0);
             SETPRVAR(QGVAR(splint),50);
             SETPRVAR(QGVAR(tourniquet),40);
             SETPRVAR(QGVAR(bodybag),20);
@@ -76,7 +76,7 @@
 
         private _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
         {
-            [_x, [[_object], true]] remoteExec ["addCuratorEditableObjects", _x, true];
+            [_x, [[_object], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
         } forEach allCurators;
         clearItemCargoGlobal _object;
 
@@ -117,8 +117,8 @@
             QGVAR(bodybag), QGVAR(surgical), QGVAR(PAK)
         ];
 
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setDraggable", 0, true];
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setCarryable", 0, true];
+        [_object, true, [0, 1.25, 0], 90, true] remoteExecCall ["ace_dragging_fnc_setDraggable", 0, true];
+        [_object, true, [0, 0.8, 0.8], 0, true] remoteExecCall ["ace_dragging_fnc_setCarryable", 0, true];
 
         ["Medical crate created"] call zen_common_fnc_showMessage;
     }, {

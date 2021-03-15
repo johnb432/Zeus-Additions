@@ -16,7 +16,7 @@
  * Public: No
  */
 
- ["Zeus Additions", "Create injuries", {
+ ["Zeus Additions - Medical", "Create injuries", {
      params ["", "_unit"];
 
      if (isNull _unit) exitWith {
@@ -70,7 +70,7 @@
          [_unit, _formattedResults, (_results select (count _results - 1))] call FUNC(woundsHandler);
 
          if (isPlayer _unit) then {
-             ["Zeus has injured you using a module.", false, 10, 3] remoteExec ["ace_common_fnc_displayText", _unit];
+             ["Zeus has injured you using a module.", false, 10, 3] remoteExecCall ["ace_common_fnc_displayText", _unit];
          };
 
          ["Injuries created"] call zen_common_fnc_showMessage;
@@ -80,7 +80,7 @@
      }, _unit] call zen_dialog_fnc_create;
  }] call zen_custom_modules_fnc_register;
 
-["Zeus Additions", "[WIP] Create random injuries", {
+["Zeus Additions - Medical", "Create random injuries", {
     params ["", "_unit"];
 
     if (isNull _unit) exitWith {
@@ -115,7 +115,7 @@
             if (_local) then {
                 [_unit, _damage, _bodyPart, _damageType] call ace_medical_fnc_addDamageToUnit;
             } else {
-                [_unit, _damage, _bodyPart, _damageType] remoteExec ["ace_medical_fnc_addDamageToUnit", _unit];
+                [_unit, _damage, _bodyPart, _damageType] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _unit];
             };
         };
 
@@ -127,7 +127,7 @@
         } forEach [_setFractureLeftArm, _setFractureRightArm, _setFractureLeftLeg, _setFractureRightLeg];
 
         if (isPlayer _unit) then {
-            ["Zeus has injured you using a module.", false, 10, 3] remoteExec ["ace_common_fnc_displayText", _unit];
+            ["Zeus has injured you using a module.", false, 10, 3] remoteExecCall ["ace_common_fnc_displayText", _unit];
         };
 
         if (_runUpdateEffects) then {
@@ -136,7 +136,7 @@
             if (_local) then {
                 [_unit] call ace_medical_engine_fnc_updateDamageEffects;
             } else {
-                [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit];
+                [_unit] remoteExecCall ["ace_medical_engine_fnc_updateDamageEffects", _unit];
             };
         };
 

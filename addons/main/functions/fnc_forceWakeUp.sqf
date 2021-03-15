@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions", "Force consciousness change", {
+["Zeus Additions - Medical", "Force consciousness change", {
     params ["", "_unit"];
 
     if (isNull _unit) exitWith {
@@ -30,10 +30,10 @@
     if (local _unit) then {
         [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] call ace_medical_status_fnc_setUnconsciousState;
     } else {
-        [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] remoteExec ["ace_medical_status_fnc_setUnconsciousState", _unit];
+        [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] remoteExecCall ["ace_medical_status_fnc_setUnconsciousState", _unit];
     };
 
     if (isPlayer _unit) then {
-        ["Zeus has toggled your consciousness using a module.", false, 10, 2] remoteExec ["ace_common_fnc_displayText", _unit];
+        ["Zeus has toggled your consciousness using a module.", false, 10, 2] remoteExecCall ["ace_common_fnc_displayText", _unit];
     };
 }] call zen_custom_modules_fnc_register;
