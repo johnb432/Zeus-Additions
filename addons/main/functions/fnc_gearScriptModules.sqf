@@ -26,6 +26,8 @@ SETPRVAR(QGVAR(gearMedic),nil);
 SETPRVAR(QGVAR(gearEngineer),nil);
 SETPRVAR(QGVAR(gearSingle),nil);
 
+if (!hasInterface) exitWith {};
+
 GVAR(gearPreset) = "default";
 
 ["Zeus Additions - Loadout", "Loadout: Presets", {

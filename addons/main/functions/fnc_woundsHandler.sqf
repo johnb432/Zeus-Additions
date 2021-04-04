@@ -24,8 +24,6 @@
 
 params ["_unit", "_args", "_woundClassIDToAdd"];
 
-private _local = local _unit;
-
 // Administration for open wounds and ids
 private _openWounds = _unit getVariable ["ace_medical_openWounds", []];
 
@@ -105,12 +103,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
     if (_doFracture) then {
         _fractures set [_bodyPartNToAdd, 1];
 
-        if (_local) then {
-            ["ace_medical_fracture", [_unit, _bodyPartNToAdd]] call CBA_fnc_localEvent;
-        } else {
-            ["ace_medical_fracture", [_unit, _bodyPartNToAdd], _unit] call CBA_fnc_targetEvent;
-        };
-
+        ["ace_medical_fracture", [_unit, _bodyPartNToAdd], _unit] call CBA_fnc_targetEvent;
         _updateDamageEffects = true;
     };
 };
@@ -118,30 +111,16 @@ for "_i" from 0 to (count _args - 3) step 3 do {
 if (_updateDamageEffects) then {
     _unit setVariable ["ace_medical_fractures", _fractures, true];
 
-    if (_local) then {
-        [_unit] call ace_medical_engine_fnc_updateDamageEffects;
-    } else {
-        [_unit] remoteExecCall ["ace_medical_engine_fnc_updateDamageEffects", _unit];
-    };
+    ["zen_common_execute", [ace_medical_engine_fnc_updateDamageEffects, [_unit]], _unit] call CBA_fnc_targetEvent;
 };
 
 _unit setVariable ["ace_medical_openWounds", _openWounds, true];
 _unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
 
-if (_local) then {
-    [_unit] call ace_medical_status_fnc_updateWoundBloodLoss;
-    _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
-    ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
-} else {
-    [_unit] remoteExecCall ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
-    _bodyPartVisParams remoteExecCall ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
-    ["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
-};
+["zen_common_execute", [ace_medical_status_fnc_updateWoundBloodLoss, [_unit]], _unit] call CBA_fnc_targetEvent;
+["zen_common_execute", [ace_medical_engine_fnc_updateBodyPartVisuals, _bodyPartVisParams], _unit] call CBA_fnc_targetEvent;
+["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
 
 if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
-    if (_local) then {
-        [_unit] call ace_medical_damage_fnc_handleIncapacitation;
-    } else {
-        [_unit] remoteExecCall ["ace_medical_damage_fnc_handleIncapacitation", _unit];
-    };
+    ["zen_common_execute", [ace_medical_damage_fnc_handleIncapacitation, [_unit]], _unit] call CBA_fnc_targetEvent;
 };

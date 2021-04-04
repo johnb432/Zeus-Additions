@@ -16,125 +16,96 @@
  * Public: No
  */
 
-["Zeus Additions - AI", "[WIP] Spawn Attack Dog", {
+if (!hasInterface) exitWith {};
+
+["Zeus Additions - AI", "Spawn Attack Dog", {
     params ["_pos"];
 
     ["Side Selector", [
         ["SIDES", ["Spawn as", "Only the first selected side will be taken into account."], [east]],
         ["SIDES", ["Attack", "Allows the dog to attack the given sides."], [west]],
         ["SLIDER", ["Search Radius", "The dogs will search within given radius for targets."], [0, 1000, 100, 0]],
-        ["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 5, 1, 2]],
-        ["SLIDER", ["Update Interval", "Determines how quickly the script runs."], [0.1, 10, 3, 1]],
-        ["CHECKBOX", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], true]
+        ["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 20, 3, 2]],
+        ["CHECKBOX", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
+        ["CHECKBOX", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false]
     ],
     {
         params ["_results", "_pos"];
-        _results params ["_sides", "_attackSides", "_radius", "_damage", "_interval", "_spawnLightning"];
+        _results params ["_sides", "_attackSides", "_radius", "_damage", "_spawnLightning", "_spawnBolt"];
+        _pos params ["_posX", "_posY"];
 
         if (_sides isEqualTo []) exitWith {
             ["You must select a side!"] call zen_common_fnc_showMessage;
         };
 
-        private _grp = createGroup (_sides select 0);
-        private _dog = _grp createUnit ["Fin_random_F", [_pos select 0, _pos select 1, 0.3], [], 0, "CAN_COLLIDE"];
-
-        [_grp] joinSilent _dog;
-
+        private _lightning = objNull;
 
         if (_spawnLightning) then {
-            _dog allowDamage false;
-            private _lightning = createVehicle [selectRandom ["Lightning1_F" ,"Lightning2_F"], [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
-
-            private _bolt = createvehicle ["LightningBolt", [_pos select 0, _pos select 1, 0], [], 0, "CAN_COLLIDE"];
-            _bolt setdamage 1;
+            _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], [_posX, _posY, 0], [], 0, "CAN_COLLIDE"];
 
             [{
-                params ["_lightning", "_dog"];
-
-                deleteVehicle _lightning;
-                _dog allowDamage true;
-            }, [_lightning, _dog], 1] call CBA_fnc_waitAndExecute;
+                deleteVehicle _this;
+            }, _lightning, 1] call CBA_fnc_waitAndExecute;
         };
 
-        _dog setVariable ["BIS_fnc_animalBehaviour_disable", false];
-
-        {
-            [_x, [[_dog], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
-        } forEach allCurators;
-
-        _dog playMoveNow "Dog_Run";
-        _dog setName selectRandom ["Fluffy","Susian","Cuddles","Santa's Little Helper","Biter","Foxer","Boxy","Death","TopKek","Rabit","Cuddles","SirKillsALot","Dogga","Digga"];
-
-        GVAR(animFinished) = true;
-
-        private _EHid = _dog addEventHandler ["AnimDone", {
-        	   params ["_unit", "_anim"];
-
-            if (GVAR(distanceEnemy) > 10) then {
-                _unit playMoveNow "Dog_Sprint";
-            };
-
-            if (GVAR(distanceEnemy) > 6 && {GVAR(distanceEnemy) < 10}) then {
-                _unit playMoveNow "Dog_Run";
-            };
-
-            if (GVAR(distanceEnemy) > 3 && {GVAR(distanceEnemy) < 6}) then {
-                _unit playMoveNow "Dog_Walk";
-            };
-
-            _unit setDir (_unit getDir GVAR(dogNearestEnemy));
-            _unit move (getPos GVAR(dogNearestEnemy));
-
-            GVAR(animFinished) = true;
-        }];
+        if (_spawnBolt) then {
+            (createvehicle ["LightningBolt", [_posX, _posY, 0], [], 0, "CAN_COLLIDE"]) setDamage 1;
+        };
 
         [{
-            params ["_args", "_handleID"];
-            _args params ["_dog", "_attackSides", "_radius", "_damage", "_EHid"];
+            isNull (_this select 0)
+         }, {
+            params ["_lightning", "_side", "_attackSides", "_radius", "_damage", "_posX", "_posY"];
 
-            if (!alive _dog) exitWith {
-                _dog removeEventHandler ["AnimDone", _EHid];
-                [_handleID] call CBA_fnc_removePerFrameHandler;
-            };
+            private _grp = createGroup _side;
+            private _dog = _grp createUnit ["Fin_random_F", [_posX, _posY, 0.3], [], 0, "CAN_COLLIDE"];
+            [_grp] joinSilent _dog;
+            _dog setVariable ["BIS_fnc_animalBehaviour_disable", false];
 
-            // Look for the closest enemy: Exclude invalid classes
-            private _dogNearestEnemy = (((getPos _dog) nearEntities ["Man", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
-            GVAR(dogNearestEnemy) = _dogNearestEnemy;
+            ["zen_common_addObjects", [[_dog]]] call CBA_fnc_serverEvent;
 
-            if (!isNull _dogNearestEnemy) then {
-                //_dog setDir (_dog getDir _dogNearestEnemy);
+            _dog playMoveNow "Dog_Run";
+            _dog setName selectRandom ["Fluffy","Susian","Cuddles","Santa's Little Helper","Biter","Foxer","Boxy","Death","TopKek","Rabit","SirKillsALot","Dogga"];
 
-                GVAR(distanceEnemy) = _dog distance _dogNearestEnemy;
+            private _EHid = _dog addEventHandler ["AnimDone", {
+            	   params ["_unit", "_anim"];
 
-                if (GVAR(distanceEnemy) < 3) then {
-                    _dog setPos ((getPos _dogNearestEnemy) set [1, ((_enemyPos select 1) + 1)]);
-                    _dog playMove "Dog_Sit";
+                private _nearestEnemy = _unit getVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
 
-                    playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 15, 0.5, 100];
+                if (isNil "_nearestEnemy") exitWith {};
 
-                    [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy, true];
+                // This allows a smooth moving towards the target
+                _unit setVectorDir ((getPos _nearestEnemy) vectorDiff (getPos _unit));
+
+                private _distance = _unit distance _nearestEnemy;
+
+                if (_distance > 10) exitWith {
+                    _unit playMoveNow "Dog_Sprint";
                 };
 
-                /*
-                if (_distance > 20) then {
-                    _dog playMove "Dog_Sprint";
+                _unit playMoveNow (["Dog_Walk", "Dog_Run"] select (_distance > 5));
+            }];
+
+            [{
+                params ["_args", "_handleID"];
+                _args params ["_dog", "_attackSides", "_radius", "_damage", "_EHid"];
+
+                if (!alive _dog) exitWith {
+                    _dog removeEventHandler ["AnimDone", _EHid];
+                    [_handleID] call CBA_fnc_removePerFrameHandler;
                 };
 
-                if (_distance > 10 && {_distance < 20}) then {
-                    _dog playMove "Dog_Run";
-                };
+                // Look for the closest enemy: Exclude invalid classes
+                private _dogNearestEnemy = (((getPos _dog) nearEntities ["Man", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
+                _dog setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
 
-                if (_distance > 3 && {_distance < 10}) then {
-                    _dog playMove "Dog_Walk";
+                if (!isNull _dogNearestEnemy && {(_dog distance _dogNearestEnemy) < 5}) then {
+                    playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+
+                    ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"]], _dogNearestEnemy] call CBA_fnc_targetEvent;
                 };
-                */
-                /*
-                if (GVAR(animFinished)) then {
-                    _dog move (getPos _dogNearestEnemy);
-                    GVAR(animFinished) = false;
-                };*/
-            };
-        }, _interval, [_dog, _attackSides, _radius, _damage, _EHid]] call CBA_fnc_addPerFrameHandler;
+            }, 2.5, [_dog, _attackSides, _radius, _damage, _EHid]] call CBA_fnc_addPerFrameHandler;
+        }, [_lightning, (_sides select 0), _attackSides, _radius, _damage, _posX, _posY]] call CBA_fnc_waitUntilAndExecute;
     },
     {
         ["Aborted"] call zen_common_fnc_showMessage;

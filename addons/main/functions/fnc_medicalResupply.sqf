@@ -16,6 +16,8 @@
  * Public: No
  */
 
+if (!hasInterface) exitWith {};
+
 ["Zeus Additions - Resupply", "Spawn Medical Resupply Crate", {
     params ["_pos"];
 
@@ -75,9 +77,7 @@
         _results deleteAt (count _results - 1);
 
         private _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
-        {
-            [_x, [[_object], true]] remoteExecCall ["addCuratorEditableObjects", _x, true];
-        } forEach allCurators;
+        ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
         clearItemCargoGlobal _object;
 
         private _items = [
@@ -117,8 +117,8 @@
             QGVAR(bodybag), QGVAR(surgical), QGVAR(PAK)
         ];
 
-        [_object, true, [0, 1.25, 0], 90, true] remoteExecCall ["ace_dragging_fnc_setDraggable", 0, true];
-        [_object, true, [0, 0.8, 0.8], 0, true] remoteExecCall ["ace_dragging_fnc_setCarryable", 0, true];
+        ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [0, 1.25, 0], 90, true]]] call CBA_fnc_globalEventJIP;
+        ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [0, 0.8, 0.8], 0, true]]] call CBA_fnc_globalEventJIP;
 
         ["Medical crate created"] call zen_common_fnc_showMessage;
     }, {

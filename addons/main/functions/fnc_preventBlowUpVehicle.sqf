@@ -16,6 +16,8 @@
  * Public: No
  */
 
+if (!hasInterface) exitWith {};
+
 ["Zeus Additions - Utility", "[WIP] Prevent vehicle from blowing up", {
     params ["", "_object"];
 
@@ -54,7 +56,9 @@
             };
 								} else {
 												_EHIndex = _object getVariable [QGVAR(blowUpID), nil];
-												if (isNil "_EHIndex") exitWith {};
+												if (isNil "_EHIndex") exitWith {
+                _string = "Vehicle already has this feature disabled!";
+            };
 												_object removeEventHandler ["HandleDamage", _EHIndex];
 												_object setVariable [QGVAR(blowUpID), nil, true];
 								};

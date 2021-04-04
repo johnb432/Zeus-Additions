@@ -16,6 +16,8 @@
  * Public: No
  */
 
+if (!hasInterface) exitWith {};
+
 if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWith {
     GVAR(exitUnconsciousID) = [missionNamespace, "OnGameInterrupt", {
         if (!isNil {bis_fnc_moduleRemoteControl_unit} && {bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false]}) then {
@@ -26,7 +28,7 @@ if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWi
                 (findDisplay 49) closeDisplay 0;
 
                 // Stop remote controlling unit
-                objnull remoteControl bis_fnc_moduleRemoteControl_unit;
+                objNull remoteControl bis_fnc_moduleRemoteControl_unit;
                 bis_fnc_moduleRemoteControl_unit = nil;
                 openCuratorInterface;
             }] call CBA_fnc_waitUntilAndExecute;

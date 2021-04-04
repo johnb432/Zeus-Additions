@@ -16,11 +16,13 @@
  * Public: No
  */
 
+if (!hasInterface) exitWith {};
+
 ["Zeus Additions - AI", "[WIP] Change AI dismounting behaviour", {
     params ["", "_unit"];
 
     if (isNull _unit) exitWith {
-        ["Select a unit!"] call zen_common_fnc_showMessage;
+        ["Select a vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
@@ -44,7 +46,7 @@
             _x enableAIFeature ["FSM", !_forceStayCrew];
         } forEach (crew _vehicle);
         */
-        ["Changed dismount behaviour"] call zen_common_fnc_showMessage;
+        ["Changed dismount behaviour on vehicle"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
@@ -68,27 +70,29 @@
             playSound "FD_Start_F";
         };
 
+        private _function = ["zen_common_disableAI", "zen_common_enableAI"] select _allowMinedetection;
+
         if (isNull _unit) then {
             {
                 if (!isPlayer _x) then {
-                    [_x, ["MINEDETECTION", _allowMinedetection]] remoteExecCall ["enableAIFeature", _x];
+                    [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
                 };
             } forEach (units _side);
+
+            ["Changed mine detecting behaviour"] call zen_common_fnc_showMessage;
         } else {
             if (_doGroup) exitWith {
                 {
                     if (!isPlayer _x) then {
-                        [_x, ["MINEDETECTION", _allowMinedetection]] remoteExecCall ["enableAIFeature", _x];
+                        [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
                     };
                 } forEach (units (group _unit));
                 ["Changed mine detecting behaviour on group"] call zen_common_fnc_showMessage;
             };
 
-            [_unit, ["MINEDETECTION", _allowMinedetection]] remoteExecCall ["enableAIFeature", _unit];
+            [_function, [_unit, "MINEDETECTION"], _unit] call CBA_fnc_targetEvent;
             ["Changed mine detecting behaviour on unit"] call zen_common_fnc_showMessage;
         };
-
-        ["Changed mine detecting behaviour"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
