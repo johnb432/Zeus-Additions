@@ -24,8 +24,6 @@
 
 params ["_unit", "_args", "_woundClassIDToAdd"];
 
-private _local = local _unit;
-
 // Administration for open wounds and ids
 private _openWounds = _unit getVariable ["ace_medical_openWounds", []];
 
@@ -76,7 +74,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         // Create a new injury. Format [0:classComplex, 1:bodypart, 2:amountOf, 3:bleedingRate, 4:woundDamage]
         private _injury = [_classComplex, _bodyPartNToAdd, _woundNumber, _bleeding, _woundDamage];
 
-        if (_bodyPartNToAdd == 0 || {_bodyPartNToAdd == 1 && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
+        if (_bodyPartNToAdd isEqualTo 0 || {_bodyPartNToAdd isEqualTo 1 && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
             _critialDamage = true;
         };
 
@@ -85,10 +83,10 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         {
             _x params ["_classID", "_bodyPartN", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
             if (
-                    (_classComplex == _classID) &&
-                    {_bodyPartNToAdd == _bodyPartN} &&
+                    (_classComplex isEqualTo _classID) &&
+                    {_bodyPartNToAdd isEqualTo _bodyPartN} &&
                     {(_bodyPartNToAdd != 1) || {(_woundDamage < ace_medical_const_penetrationThreshold) isEqualTo (_oldDamage < ace_medical_const_penetrationThreshold)}} // penetrating body damage is handled differently
-                    ) exitWith { // don't want limping
+                    ) exitWith { // don't want/care limping
                 private _newAmountOf = _oldAmountOf + _woundNumber;
                 _x set [2, _newAmountOf];
                 _x set [3, ((_oldAmountOf * _oldBleeding + _bleeding) / _newAmountOf)]; // new bleeding
@@ -105,12 +103,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
     if (_doFracture) then {
         _fractures set [_bodyPartNToAdd, 1];
 
-        if (_local) then {
-            ["ace_medical_fracture", [_unit, _bodyPartNToAdd]] call CBA_fnc_localEvent;
-        } else {
-            ["ace_medical_fracture", [_unit, _bodyPartNToAdd], _unit] call CBA_fnc_targetEvent;
-        };
-
+        ["ace_medical_fracture", [_unit, _bodyPartNToAdd], _unit] call CBA_fnc_targetEvent;
         _updateDamageEffects = true;
     };
 };
@@ -118,30 +111,16 @@ for "_i" from 0 to (count _args - 3) step 3 do {
 if (_updateDamageEffects) then {
     _unit setVariable ["ace_medical_fractures", _fractures, true];
 
-    if (_local) then {
-        [_unit] call ace_medical_engine_fnc_updateDamageEffects;
-    } else {
-        [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit];
-    };
+    ["zen_common_execute", [ace_medical_engine_fnc_updateDamageEffects, [_unit]], _unit] call CBA_fnc_targetEvent;
 };
 
 _unit setVariable ["ace_medical_openWounds", _openWounds, true];
 _unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
 
-if (_local) then {
-    [_unit] call ace_medical_status_fnc_updateWoundBloodLoss;
-    _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
-    ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
-} else {
-    [_unit] remoteExec ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
-    _bodyPartVisParams remoteExec ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
-    ["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
-};
+["zen_common_execute", [ace_medical_status_fnc_updateWoundBloodLoss, [_unit]], _unit] call CBA_fnc_targetEvent;
+["zen_common_execute", [ace_medical_engine_fnc_updateBodyPartVisuals, _bodyPartVisParams], _unit] call CBA_fnc_targetEvent;
+["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
 
 if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
-    if (_local) then {
-        [_unit] call ace_medical_damage_fnc_handleIncapacitation;
-    } else {
-        [_unit] remoteExec ["ace_medical_damage_fnc_handleIncapacitation", _unit];
-    };
+    ["zen_common_execute", [ace_medical_damage_fnc_handleIncapacitation, [_unit]], _unit] call CBA_fnc_targetEvent;
 };

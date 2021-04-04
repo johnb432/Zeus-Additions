@@ -16,7 +16,9 @@
  * Public: No
  */
 
-["Zeus Additions", "Spawn Medical Resupply Crate", {
+if (!hasInterface) exitWith {};
+
+["Zeus Additions - Resupply", "Spawn Medical Resupply Crate", {
     params ["_pos"];
 
     ["Spawn Medical Resupply Crate", [
@@ -35,14 +37,15 @@
         ["EDIT", "250ml Saline", GETPRVAR(QGVAR(saline250),0), true],
         ["EDIT", "Epinephrine autoinjector", GETPRVAR(QGVAR(epinephrine),30), true],
         ["EDIT", "Morphine autoinjector", GETPRVAR(QGVAR(morphine),30), true],
-        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),10), true],
+        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),0), true],
         ["EDIT", "Splint", GETPRVAR(QGVAR(splint),50), true],
         ["EDIT", "Tourniquet (CAT)", GETPRVAR(QGVAR(tourniquet),40), true],
         ["EDIT", "Bodybag", GETPRVAR(QGVAR(bodybag),20), true],
         ["EDIT", "Surgical Kit", GETPRVAR(QGVAR(surgical),0), true],
         ["EDIT", "Personal Aid Kit", GETPRVAR(QGVAR(PAK),0), true],
         ["CHECKBOX", ["Reset to default"], false, true]
-    ], {
+    ],
+    {
         params ["_results", "_pos"];
 
         if (_results select (count _results - 1)) exitWith {
@@ -61,7 +64,7 @@
             SETPRVAR(QGVAR(saline250),0);
             SETPRVAR(QGVAR(epinephrine),30);
             SETPRVAR(QGVAR(morphine),30);
-            SETPRVAR(QGVAR(adenosine),10);
+            SETPRVAR(QGVAR(adenosine),0);
             SETPRVAR(QGVAR(splint),50);
             SETPRVAR(QGVAR(tourniquet),40);
             SETPRVAR(QGVAR(bodybag),20);
@@ -74,9 +77,7 @@
         _results deleteAt (count _results - 1);
 
         private _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
-        {
-            [_x, [[_object], true]] remoteExec ["addCuratorEditableObjects", _x, true];
-        } forEach allCurators;
+        ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
         clearItemCargoGlobal _object;
 
         private _items = [
@@ -105,7 +106,7 @@
 
         {
             _object addItemCargoGlobal [_items select _forEachIndex, parseNumber (_results select _forEachIndex)];
-            SETPRVAR(_x, _results select _forEachIndex);
+            SETPRVAR(_x,_results select _forEachIndex);
         } forEach [
             QGVAR(elastic), QGVAR(packing), QGVAR(quickclot), QGVAR(basic),
             QGVAR(blood1000), QGVAR(blood500), QGVAR(blood250),
@@ -116,8 +117,8 @@
             QGVAR(bodybag), QGVAR(surgical), QGVAR(PAK)
         ];
 
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setDraggable", 0, true];
-        [_object, true, [0,0,0], 0, true] remoteExec ["ace_dragging_fnc_setCarryable", 0, true];
+        ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [0, 1.25, 0], 90, true]]] call CBA_fnc_globalEventJIP;
+        ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [0, 0.8, 0.8], 0, true]]] call CBA_fnc_globalEventJIP;
 
         ["Medical crate created"] call zen_common_fnc_showMessage;
     }, {

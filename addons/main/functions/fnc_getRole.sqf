@@ -11,7 +11,7 @@
  * Role number <NUMBER>
  *
  * Example:
- * call zeus_additions_main_fnc_getRole;
+ * [player] call zeus_additions_main_fnc_getRole;
  *
  * Public: No
  */
@@ -25,8 +25,8 @@ if (isText(configFile >> "CfgVehicles" >> typeOf _unit >> "icon")) then {
 
     switch (_icon) do {
         case "iconManEngineer": {_type = 6};
-        case "iconManMG": {_type = 4};
         case "iconManMedic": {_type = 5};
+        case "iconManMG": {_type = 4};
         case "iconManLeader": {_type = 1};
         default {};
     };

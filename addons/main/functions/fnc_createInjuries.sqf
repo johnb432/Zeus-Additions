@@ -16,71 +16,76 @@
  * Public: No
  */
 
- ["Zeus Additions", "Create injuries", {
-     params ["", "_unit"];
+if (!hasInterface) exitWith {};
 
-     if (isNull _unit) exitWith {
-         ["You must select a unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
-     };
+["Zeus Additions - Medical", "Create injuries", {
+    params ["", "_unit"];
 
-     ["Create injuries", [
-         ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", ["Number of Wounds Head", ""], [0, 20, 0, 0]],
+    if (isNull _unit) exitWith {
+        ["You must select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    };
 
-         ["TOOLBOX", "Damage Torso", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", ["Number of Wounds Torso", ""], [0, 20, 0, 0]],
+    ["Create injuries", [
+        ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Head", [0, 20, 0, 0]],
 
-         ["TOOLBOX", "Damage Left Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", ["Number of Wounds Left Arm", ""], [0, 20, 0, 0]],
-         ["CHECKBOX", ["Set Fracture to Left Arm", "Forces a fracture to occur."], false],
+        ["TOOLBOX", "Damage Torso", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Torso", [0, 20, 0, 0]],
 
-         ["TOOLBOX", "Damage Right Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", "Number of Wounds Right Arm", [0, 20, 0, 0]],
-         ["CHECKBOX", ["Set Fracture to Right Arm", "Forces a fracture to occur."], false],
+        ["TOOLBOX", "Damage Left Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Left Arm", [0, 20, 0, 0]],
+        ["CHECKBOX", ["Set Fracture to Left Arm", "Forces a fracture to occur."], false],
 
-         ["TOOLBOX", "Damage Left Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", ["Number of Wounds Left Leg", ""], [0, 20, 0, 0]],
-         ["CHECKBOX", ["Set Fracture to Left Leg", "Forces a fracture to occur."], false],
+        ["TOOLBOX", "Damage Right Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Right Arm", [0, 20, 0, 0]],
+        ["CHECKBOX", ["Set Fracture to Right Arm", "Forces a fracture to occur."], false],
 
-         ["TOOLBOX", "Damage Right Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
-         ["SLIDER", ["Number of Wounds Right Leg", ""], [0, 20, 0, 0]],
-         ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur."], false],
+        ["TOOLBOX", "Damage Left Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Left Leg", [0, 20, 0, 0]],
+        ["CHECKBOX", ["Set Fracture to Left Leg", "Forces a fracture to occur."], false],
 
-         ["TOOLBOX:WIDE", ["Wound Type", ""], [0, 1, 8, ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","Velocity W.","Puncture W."]], false]
-     ],
-     {
-         params ["_results", "_unit"];
+        ["TOOLBOX", "Damage Right Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["SLIDER", "Number of Wounds Right Leg", [0, 20, 0, 0]],
+        ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur."], false],
 
-         private _formattedResults = [];
+        ["TOOLBOX:WIDE", ["Wound Type", ""], [0, 1, 8, ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","Velocity W.","Puncture W."]], false]
+    ],
+    {
+        params ["_results", "_unit"];
 
-         // iterate over results and copy all values except last one, so (count - 1) - 1 + 2 = count
-         for "_i" from 0 to (count _results) step 1 do {
-             if (_i == 2 || {_i == 4}) then {
-                 _formattedResults pushBack false;
-             };
+        private _formattedResults = [];
+        private _temp;
 
-             if ((_results select _i) isEqualType 0) then {
-                 _formattedResults pushBack (round (_results select _i));
-             } else {
-                 _formattedResults pushBack (_results select _i);
-             };
-         };
+        // Iterate over results and copy all values except last one, so (count - 1) - 1 + 2 = count
+        for "_i" from 0 to (count _results) step 1 do {
+            if (_i isEqualTo 2 || {_i isEqualTo 4}) then {
+                _formattedResults pushBack false;
+            };
 
-         [_unit, _formattedResults, (_results select (count _results - 1))] call FUNC(woundsHandler);
+            _temp = _results select _i;
 
-         if (isPlayer _unit) then {
-             ["Zeus has injured you using a module.", false, 10, 3] remoteExec ["ace_common_fnc_displayText", _unit];
-         };
+            if (_temp isEqualType 0) then {
+                _temp = round _temp;
+            };
 
-         ["Injuries created"] call zen_common_fnc_showMessage;
-     }, {
-         ["Aborted"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
-     }, _unit] call zen_dialog_fnc_create;
- }] call zen_custom_modules_fnc_register;
+            _formattedResults pushBack _temp;
+        };
 
-["Zeus Additions", "[WIP] Create random injuries", {
+        [_unit, _formattedResults, (_results select (count _results - 1))] call FUNC(woundsHandler);
+
+        if (isPlayer _unit) then {
+            ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
+        };
+
+        ["Injuries created"] call zen_common_fnc_showMessage;
+    }, {
+        ["Aborted"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    }, _unit] call zen_dialog_fnc_create;
+}] call zen_custom_modules_fnc_register;
+
+["Zeus Additions - Medical", "Create random injuries", {
     params ["", "_unit"];
 
     if (isNull _unit) exitWith {
@@ -110,13 +115,7 @@
         private _local = local _unit;
 
         if (_damage > 0) then {
-            private _bodyPart = selectRandom _allBodyParts;
-
-            if (_local) then {
-                [_unit, _damage, _bodyPart, _damageType] call ace_medical_fnc_addDamageToUnit;
-            } else {
-                [_unit, _damage, _bodyPart, _damageType] remoteExec ["ace_medical_fnc_addDamageToUnit", _unit];
-            };
+            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_unit, _damage, selectRandom _allBodyParts, _damageType]], _unit] call CBA_fnc_targetEvent;
         };
 
         {
@@ -127,17 +126,12 @@
         } forEach [_setFractureLeftArm, _setFractureRightArm, _setFractureLeftLeg, _setFractureRightLeg];
 
         if (isPlayer _unit) then {
-            ["Zeus has injured you using a module.", false, 10, 3] remoteExec ["ace_common_fnc_displayText", _unit];
+            ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
         };
 
         if (_runUpdateEffects) then {
             _unit setVariable ["ace_medical_fractures", _fractures, true];
-
-            if (_local) then {
-                [_unit] call ace_medical_engine_fnc_updateDamageEffects;
-            } else {
-                [_unit] remoteExec ["ace_medical_engine_fnc_updateDamageEffects", _unit];
-            };
+            ["zen_common_execute", [ace_medical_engine_fnc_updateDamageEffects, [_unit]], _unit] call CBA_fnc_targetEvent;
         };
 
         ["Injuries created"] call zen_common_fnc_showMessage;
