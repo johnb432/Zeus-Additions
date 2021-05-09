@@ -29,6 +29,15 @@
 ] call CBA_fnc_addSetting;
 
 [
+    QGVAR(enableTFARHint),
+    "CHECKBOX",
+    ["Enable TFAR missing addon hint", "Allows people to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true,
+    false
+] call CBA_fnc_addSetting;
+
+[
     QGVAR(blacklistFKEnable),
     "CHECKBOX",
     ["Enable automatic blacklist detection for FK servers", "Allows the automatic adoption of the premade blacklist on FK servers. FK is a EU based unit."],
@@ -36,7 +45,7 @@
     false,
     false,
     {
-        if (GVAR(blacklistFKEnable) && {isClass (configFile >> "CfgPatches" >> "CLib")} && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+        if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
             {
                 GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
             } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);
@@ -54,9 +63,9 @@
     "[]",
     false,
     {
-        if !(GVAR(blacklistFKEnable) && {isClass (configFile >> "CfgPatches" >> "CLib")} && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
-            GVAR(blacklist) = parseSimpleArray GVAR(blacklistSettings);
-        };
+        if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
+
+        GVAR(blacklist) = parseSimpleArray GVAR(blacklistSettings);
     }
 ] call CBA_fnc_addSetting;
 

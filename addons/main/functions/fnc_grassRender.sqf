@@ -24,9 +24,9 @@ if (hasInterface) then {
 
         ["Grass rendering settings", [
             ["OWNERS", ["Players selected", "Changes selected players/groups/sides grass rendering."], [[], [], [], 0], true],
-            ["CHECKBOX", ["Change yourself", "You can use this whilst as a curator to change your grass rendering."], false, true],
+            ["TOOLBOX:YESNO", ["Change yourself", "You can use this whilst as a curator to change your grass rendering."], false, true],
             ["LIST", ["Setting", "Choose Low to turn off grass rendering. Choose Standard if you want to render it again."], [[50, 25, 12.5, 6.25, 3.125], ["Low (Off)", "Standard (Normal)", "High", "Very High", "Ultra"], 0, 5]],
-            ["CHECKBOX", ["Account for JIP players", "Only works if the mod is on the server aswell."], false, false]
+            ["TOOLBOX:YESNO", ["Account for JIP players", "Only works if the mod is on the server aswell."], false, false]
         ],
         {
             params ["_results", "_unit"];

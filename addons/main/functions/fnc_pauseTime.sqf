@@ -20,7 +20,7 @@ if (!hasInterface) exitWith {};
 
 ["Zeus Additions - Utility", "[WIP] Pause time", {
     ["[WIP] Pause time", [
-        ["CHECKBOX", ["Pause time", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], true]
+        ["TOOLBOX:ENABLED", ["Pause time", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], false]
     ],
     {
         params ["_results"];
@@ -56,7 +56,7 @@ if (!hasInterface) exitWith {};
                             _deltaSec = _deltaSec + 60;
                         };
 
-                        (-_deltaSec/3600) remoteExecCall ["skipTime", 0];
+                        (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
                     }, 100, ([daytime] call BIS_fnc_timeToString) splitString ":"] call CBA_fnc_addPerFrameHandler;
                 }, _timeMult, 10, {}] call CBA_fnc_waitUntilAndExecute;
             } else {

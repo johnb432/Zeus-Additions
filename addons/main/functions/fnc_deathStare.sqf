@@ -21,8 +21,13 @@ if (!hasInterface) exitWith {};
 ["Zeus Additions - Utility", "[WIP] Give death stare ability", {
     params ["", "_unit"];
 
+    if (isNull _unit) exitWith {
+        ["You must select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    };
+
     ["[WIP] Death stare", [
-        ["CHECKBOX", ["Give death stare ability", "Adds a ACE self-interaction. To use the ability, look at target and use interaction."], false],
+        ["TOOLBOX", ["Give death stare ability", "Adds a ACE self-interaction. To use the ability, look at target and use interaction."], [0, 1, 2, ["Add", "Remove"]]],
         ["TOOLBOX", ["Incapacitation type", "Type of 'punishment' the target unit will endure if it gets death stared. For no damage, select 'Just Damage' and set damage to 0."], [0, 1, 2, [/*"Cardiac Arrest", */"Unconscious", "Just Damage"]], false],
         ["SLIDER", ["Death timer", "Causes either unconsciousness and/or damage after this amount of time."], [10, 120, 30, 0]],
         ["SLIDER", ["Damage done to target", "Adds vanilla damage to the target in percent. 100% is lethal."], [0, 1, 0.5, 2, true]]
@@ -36,7 +41,7 @@ if (!hasInterface) exitWith {};
              [_unit, 1, ["ACE_SelfActions", QGVAR(deathstare)]] call ace_interact_menu_fnc_removeActionFromObject;
         };
 
-        if (!_giveAbility) exitWith {
+        if (_giveAbility isEqualTo 1) exitWith {
             _unit setVariable [QGVAR(hasDeathStare), nil, true];
             ["Removed death stare ability from unit"] call zen_common_fnc_showMessage;
         };
@@ -45,7 +50,7 @@ if (!hasInterface) exitWith {};
             [
                 QGVAR(deathstare),
                 "Death Stare",
-                "",
+                ICON_DEATH_STARE,
                 {
                     params ["_target", "_player", "_args"];
                     _args params ["_incapType", "_timer", "_damage"];

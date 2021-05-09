@@ -16,6 +16,12 @@
  * Public: No
  */
 
+if (!isClass (configFile >> "CfgPatches" >> "tfar_core")) exitWith {
+    if (hasInterface && {GVAR(enableTFARHint)}) then {
+        hint "The radio range script isn't available because TFAR isn't loaded."
+    };
+};
+
 if (hasInterface) then {
     GVAR(radioMultiplicatorJIP) = 1;
 
@@ -25,7 +31,7 @@ if (hasInterface) then {
         ["Radio range", [
             ["OWNERS", ["Units selected", "Select a side/group/player."], [[], [], [], 2], true],
             ["SLIDER", ["Range Multiplier", "Determines how far a radio can transmit. Default is 1.0."], [0, 10, 1, 2]],
-            ["CHECKBOX", ["Account for JIP players", "This option only works if the mod is on the server aswell."], false, false]
+            ["TOOLBOX:YESNO", ["Account for JIP players", "This option only works if the mod is on the server aswell."], false, false]
         ],
         {
             params ["_results", "_unit"];
@@ -42,29 +48,11 @@ if (hasInterface) then {
                 };
             };
 
-            private _side;
             {
-                _side = _x;
-                {
-                    if (side _x isEqualTo _side) then {
-                        _x setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
-                    };
-                } forEach allPlayers;
-            } forEach _sides;
-
-            private _group;
-            {
-                _group = _x;
-                {
-                    if (group _x isEqualTo _group) then {
-                        _x setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
-                    };
-                } forEach allPlayers;
-            } forEach _groups;
-
-            {
-                _x setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
-            } forEach _players;
+                if (side _x in _sides || {group _x in _groups} || {_x in _players}) then {
+                    _x setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
+                };
+            } forEach allPlayers;
 
             if (_doJIP) then {
                 GVAR(radioMultiplicatorJIP) = _multiplier;

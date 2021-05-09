@@ -7,6 +7,14 @@
 
 #define FUNC_PATHTO_SYS(var1,var2,var3) \MAINPREFIX\var1\SUBPREFIX\var2\functions\var3.sqf
 
+#undef PATHTO_FNC
+#define PATHTO_FNC(func) \
+class func {\
+    file = QUOTE(FUNC_PATHTO_SYS(PREFIX,COMPONENT,DOUBLES(fnc,func)));\
+    CFGFUNCTION_HEADER;\
+    RECOMPILE;\
+}
+
 #ifdef DISABLE_COMPILE_CACHE
     #define PREPFNC(var1) TRIPLES(ADDON,fnc,var1) = compile preProcessFileLineNumbers 'FUNC_PATHTO_SYS(PREFIX,COMPONENT,DOUBLES(fnc,var1))'
 #else
@@ -17,3 +25,11 @@
 #define RESUPPLY_DESC "Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings."
 
 #define MAGAZINES_DESC "Magazines"
+
+#define PARADROP_UNITS 0
+#define PARADROP_VEHICLES 1
+#define PARADROP_ALL 2
+
+#define ICON_PARADROP "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
+#define ICON_MEDICAL "x\zen\addons\context_actions\ui\medical_cross_ca.paa"
+#define ICON_DEATH_STARE "x\zen\addons\modules\ui\target_ca.paa"

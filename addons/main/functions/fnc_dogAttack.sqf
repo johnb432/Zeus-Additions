@@ -26,8 +26,8 @@ if (!hasInterface) exitWith {};
         ["SIDES", ["Attack", "Allows the dog to attack the given sides."], [west]],
         ["SLIDER", ["Search Radius", "The dogs will search within given radius for targets."], [0, 1000, 100, 0]],
         ["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 20, 3, 2]],
-        ["CHECKBOX", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
-        ["CHECKBOX", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false]
+        ["TOOLBOX:YESNO", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
+        ["TOOLBOX:YESNO", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false]
     ],
     {
         params ["_results", "_pos"];
@@ -36,6 +36,7 @@ if (!hasInterface) exitWith {};
 
         if (_sides isEqualTo []) exitWith {
             ["You must select a side!"] call zen_common_fnc_showMessage;
+            playSound "FD_Start_F";
         };
 
         private _lightning = objNull;
@@ -70,9 +71,9 @@ if (!hasInterface) exitWith {};
             private _EHid = _dog addEventHandler ["AnimDone", {
             	   params ["_unit", "_anim"];
 
-                private _nearestEnemy = _unit getVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
+                private _nearestEnemy = _unit getVariable [QGVAR(dogNearestEnemy), objNull];
 
-                if (isNil "_nearestEnemy") exitWith {};
+                if (isNull _nearestEnemy) exitWith {};
 
                 // This allows a smooth moving towards the target
                 _unit setVectorDir ((getPos _nearestEnemy) vectorDiff (getPos _unit));
@@ -96,11 +97,13 @@ if (!hasInterface) exitWith {};
                 };
 
                 // Look for the closest enemy: Exclude invalid classes
-                private _dogNearestEnemy = (((getPos _dog) nearEntities ["Man", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
+                private _dogNearestEnemy = (((getPos _dog) nearEntities ["CAManBase", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
                 _dog setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
 
                 if (!isNull _dogNearestEnemy && {(_dog distance _dogNearestEnemy) < 5}) then {
-                    playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+                    if (random 1 < 0.4) then {
+                        playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+                    };
 
                     ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"]], _dogNearestEnemy] call CBA_fnc_targetEvent;
                 };

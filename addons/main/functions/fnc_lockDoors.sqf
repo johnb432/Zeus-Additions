@@ -24,8 +24,8 @@ if (!hasInterface) exitWith {};
     ["Change building lock", [
         ["TOOLBOX", "Lock state", [0, 1, 4, ["Unbreachable", "Breachable", "Closed", "Open"]], false],
         ["EDIT", ["Explosives", "An array that contains all allowed explosives used for breaching."], GETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']"), true],
-        ["CHECKBOX", ["Disable explosion", "Disables the explosion. Still requires a breaching charge."], false],
-        ["CHECKBOX", ["Use stun grenade", "Spawns a stun grenade when opening the door. Requires a stun grenade from the list below."], false],
+        ["TOOLBOX:YESNO", ["Disable explosion", "Disables the explosion. Still requires a breaching charge."], false],
+        ["TOOLBOX:YESNO", ["Use stun grenade", "Spawns a stun grenade when opening the door. Requires a stun grenade from the list below."], false],
         ["EDIT", ["Stun grenades", "An array that contains all allowed explosives."], GETPRVAR(QGVAR(stunsBreach),"['ACE_M84']"), true],
         ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [8, 60, 20, 0]],
         ["CHECKBOX", ["Reset to default lists", "Resets the explosives & stuns lists above to the default."], false, true]
@@ -51,10 +51,10 @@ if (!hasInterface) exitWith {};
         };
 
         _timer = round _timer;
-        private _timerString = (format ["Breach door using explosives (%1s Timer)", _timer]);
-        private _sortedKeysSelectionNames = _building call FUNC(findDoors);
+        private _timerString = (format ["<t color='#FF0000'>Breach door using explosives</t> (%1s Timer)", _timer]);
+        private _sortedSelectionNames = _building call FUNC(findDoors);
 
-        if (isNil "_sortedKeysSelectionNames") exitWith {};
+        if (isNil "_sortedSelectionNames") exitWith {};
 
         private _lock = 1;
 
@@ -66,7 +66,7 @@ if (!hasInterface) exitWith {};
 
         {
             [_building, _forEachIndex + 1, _lock] call zen_doors_fnc_setState;
-        } forEach _sortedKeysSelectionNames;
+        } forEach _sortedSelectionNames;
 
         // Remove all previous breaching actions from building
         {
@@ -87,6 +87,7 @@ if (!hasInterface) exitWith {};
                     params ["_target", "_caller", "_actionId", "_args"];
                     _args params ["_door", "_doorID", "_explosives", "_disableExplosion", "_timer", "_useStun", "_stuns"];
 
+                    // In case door has been unlocked by other means
                     if (([_target, _doorID] call zen_doors_fnc_getState) isNotEqualTo 1) exitWith {
                         hint "You find the door to be unlocked.";
                         _target removeAction _actionId;
@@ -130,7 +131,8 @@ if (!hasInterface) exitWith {};
 
                     // Get door surface to place explosive on
                     private _unitPos = eyePos _caller;
-                    private _intersection = (lineIntersectsSurfaces [_unitPos, _unitPos vectorAdd ((vectorDir _caller) vectorMultiply 2.5), _caller]) select 0;
+                    private _endPos = AGLtoASL screenToWorld getMousePosition;
+                    private _intersection = (lineIntersectsSurfaces [_unitPos, _unitPos vectorAdd ((vectorDir _caller) vectorMultiply 2.5), _caller, objNull, true, 1, "GEOM"]) select 0;
 
                     // If door is out of glass for example, it will not return anything.
                     if (isNil "_intersection") exitWith {
@@ -140,7 +142,7 @@ if (!hasInterface) exitWith {};
                     _intersection params ["_intersectPosASL", "_surfaceNormal", "_intersectObject", "_parentObject"];
 
                     // Spawn explosive
-                    private _helperObject = "DemoCharge_F" createVehicle _intersectPosASL;
+                    private _helperObject = "DemoCharge_F" createVehicle [0, 0, 0];
                     _helperObject setPosASL _intersectPosASL;
 
                     // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly.
@@ -154,9 +156,9 @@ if (!hasInterface) exitWith {};
                     ["zen_common_addObjects", [[_helperObject]]] call CBA_fnc_serverEvent;
 
                     // Remove explosives once everything is sure to go through, so player doesn't lose any.
-                    _caller removeMagazine _foundExplosive;
+                    _caller removeItem _foundExplosive;
                     if (_useStun) then {
-                        _caller removeMagazine _foundStun;
+                        _caller removeItem _foundStun;
                     };
 
                     sleep 1.5;
@@ -186,7 +188,7 @@ if (!hasInterface) exitWith {};
                     sleep 1;
 
                     if (_useStun) then {
-                        ["ACE_G_M84" createVehicle (getPosATL _helperObject)] call ace_grenades_fnc_flashbangThrownFuze;
+                        ["ACE_G_M84" createVehicle ((getPosATL _helperObject) vectorAdd (_surfaceNormal vectorMultiply -0.3))] call ace_grenades_fnc_flashbangThrownFuze;
                     };
 
                     deleteVehicle _helperObject;
@@ -202,7 +204,7 @@ if (!hasInterface) exitWith {};
                 false,
                 _x
              ]] remoteExecCall ["addAction", 0, true];
-        } forEach _sortedKeysSelectionNames;
+        } forEach _sortedSelectionNames;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

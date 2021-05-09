@@ -23,15 +23,16 @@ if (!hasInterface) exitWith {};
 
     if (isPlayer _object) exitWith {
         ["You can't delete players!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     if (!isNil {crew _object}) then {
         {
-            deleteVehicle _x;
+            _object deleteVehicleCrew _x;
         } forEach (crew _object);
     };
 
     deleteVehicle (_object);
 
-    ["Deleted %1", name _object] call zen_common_fnc_showMessage;
+    ["Deleted %1", getText (configOf _object >> "displayName")] call zen_common_fnc_showMessage;
 }] call zen_custom_modules_fnc_register;

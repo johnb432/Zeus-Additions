@@ -29,4 +29,6 @@ class CfgMods {
     };
 };
 
+#include "CfgContext.hpp"
 #include "CfgEventHandlers.hpp"
+#include "CfgFunctions.hpp"
