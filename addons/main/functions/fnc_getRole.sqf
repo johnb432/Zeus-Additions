@@ -20,16 +20,12 @@ params ["_unit"];
 
 private _type = 0;
 
-if (isText(configFile >> "CfgVehicles" >> typeOf _unit >> "icon")) then {
-    private _icon = getText(configFile >> "CfgVehicles" >> typeOf _unit >> "icon");
-
-    switch (_icon) do {
-        case "iconManEngineer": {_type = 6};
-        case "iconManMedic": {_type = 5};
-        case "iconManMG": {_type = 4};
-        case "iconManLeader": {_type = 1};
-        default {};
-    };
+switch (toLower getText (configOf _unit >> "icon")) do {
+    case "iconmanengineer": {_type = 6};
+    case "iconmanmedic": {_type = 5};
+    case "iconmanmg": {_type = 4};
+    case "iconmanleader": {_type = 1};
+    default {};
 };
 
 if (_type isEqualTo 0) then {
@@ -43,13 +39,11 @@ if (_type isEqualTo 0) then {
         _weapon = secondaryWeapon _unit
     };
 
-    if (isText(configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) then {
-        switch (getText(configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {
-            case "\A3\weapons_f\data\UI\icon_mg_CA.paa": {_type = 4};
-            case "\A3\Weapons_F\Data\UI\icon_aa_CA.paa": {_type = 3};
-            case "\A3\Weapons_F\Data\UI\icon_at_CA.paa": {_type = 2};
-            default {};
-        };
+    switch (toLower getText (configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {
+        case "\a3\weapons_f\data\ui\icon_mg_ca.paa": {_type = 4};
+        case "\a3\weapons_f\data\ui\icon_aa_ca.paa": {_type = 3};
+        case "\a3\weapons_f\data\ui\icon_at_ca.paa": {_type = 2};
+        default {};
     };
 };
 

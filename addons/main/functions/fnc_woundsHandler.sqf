@@ -82,11 +82,9 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         private _createNewWound = true;
         {
             _x params ["_classID", "_bodyPartN", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
-            if (
-                    (_classComplex isEqualTo _classID) &&
-                    {_bodyPartNToAdd isEqualTo _bodyPartN} &&
-                    {(_bodyPartNToAdd != 1) || {(_woundDamage < ace_medical_const_penetrationThreshold) isEqualTo (_oldDamage < ace_medical_const_penetrationThreshold)}} // penetrating body damage is handled differently
-                    ) exitWith { // don't want/care limping
+            
+            // penetrating body damage is handled differently
+            if ((_classComplex isEqualTo _classID) && {_bodyPartNToAdd isEqualTo _bodyPartN} && {(_bodyPartNToAdd isNotEqualTo 1) || {(_woundDamage < ace_medical_const_penetrationThreshold) isEqualTo (_oldDamage < ace_medical_const_penetrationThreshold)}}) exitWith { // don't want/care limping
                 private _newAmountOf = _oldAmountOf + _woundNumber;
                 _x set [2, _newAmountOf];
                 _x set [3, ((_oldAmountOf * _oldBleeding + _bleeding) / _newAmountOf)]; // new bleeding

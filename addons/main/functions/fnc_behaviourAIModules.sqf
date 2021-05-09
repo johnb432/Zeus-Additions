@@ -27,10 +27,10 @@ if (!hasInterface) exitWith {};
     };
 
     ["Change AI dismounting behaviour", [
-        ["CHECKBOX", ["Allow passengers to dismount in combat", "Allow passengers to dismount while in combat."], false],
-        ["CHECKBOX", ["Allow crew to dismount in combat", "Allow crews to dismount while in combat."], false],
-        ["CHECKBOX", ["Allow crew to stay in immobile vehicles", "Allow crews to stay in immobile vehicles."], false]//,
-        //["CHECKBOX", ["Force crew to stay in immobile vehicles", "Setting above must be turned on aswell to use this."], false]
+        ["TOOLBOX:ENABLED", ["Passenger dismounting in combat", "Allow passengers to dismount while in combat."], false],
+        ["TOOLBOX:ENABLED", ["Crew dismounting in combat", "Allow crews to dismount while in combat."], false],
+        ["TOOLBOX:ENABLED", ["Crew staying in immobile vehicles", "Allow crews to stay in immobile vehicles."], false]//,
+        //["TOOLBOX:ENABLED", ["Force crew to stay in immobile vehicles", "Setting above must be turned on aswell to use this."], false]
     ],
     {
         params ["_results", "_unit"];
@@ -58,8 +58,8 @@ if (!hasInterface) exitWith {};
 
     ["AI minedetecting capabilities (command doesn't seem to work though)", [
         ["SIDES", ["AI selected", "Select AI from the list to change mine detection capabilities."], east],
-        ["CHECKBOX", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false],
-        ["CHECKBOX", ["Allow AI to detect mines", "You can either disable or reenable mine detection."], false]
+        ["TOOLBOX:YESNO", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false],
+        ["TOOLBOX:ENABLED", ["Allow AI to detect mines", "You can either disable or reenable mine detection."], false]
     ],
     {
         params ["_results", "_unit"];
@@ -87,6 +87,7 @@ if (!hasInterface) exitWith {};
                         [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
                     };
                 } forEach (units (group _unit));
+
                 ["Changed mine detecting behaviour on group"] call zen_common_fnc_showMessage;
             };
 

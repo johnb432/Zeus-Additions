@@ -27,7 +27,7 @@ if (!hasInterface) exitWith {};
     };
 
     ["Prevent vehicles from blowing up", [
-        ["CHECKBOX", ["Prevent vehicle from blowing up", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false, true]
+        ["TOOLBOX:ENABLED", ["Prevent vehicle from blowing up", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false, true]
     ],
     {
         params ["_results", "_object"];
@@ -41,14 +41,20 @@ if (!hasInterface) exitWith {};
                 _EHIndex = _object addEventHandler ["HandleDamage", {
                     params ["_object", "_selection", "_damage", "_source", "_projectile", "_hitIndex", "_instigator", "_hitPoint"];
 
+                    // Convert to lower case string for string comparison
+                    _hitPoint = toLower _hitPoint;
+
                     if !("wheel" in _hitPoint || "track" in _hitPoint) then {
                         _damage = 0.95 min _damage;
-                        if (_hitPoint == "hitHull") then {
+
+                        if (_hitPoint isEqualTo "hithull") then {
                             _damage = 0.75;
                         };
                     };
+                    
                     _damage;
                 }];
+
                 _object setVariable [QGVAR(blowUpID), _EHIndex, true];
             } else {
                 _string = "Vehicle already has this feature enabled!";
@@ -56,9 +62,11 @@ if (!hasInterface) exitWith {};
             };
 								} else {
 												_EHIndex = _object getVariable [QGVAR(blowUpID), nil];
+
 												if (isNil "_EHIndex") exitWith {
                 _string = "Vehicle already has this feature disabled!";
             };
+
 												_object removeEventHandler ["HandleDamage", _EHIndex];
 												_object setVariable [QGVAR(blowUpID), nil, true];
 								};

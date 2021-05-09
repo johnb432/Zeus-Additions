@@ -94,28 +94,24 @@ if (!hasInterface) exitWith {};
     };
 
     ["Create random injuries", [
-        ["SLIDER", ["Damage amount (Minor [0.25-0.5], Medium [0.5-0.75], Large [0.75+])", "More damage will usually make more wounds. It can be lethal!"], [0, 20, 0, 2]],
-        ["CHECKBOX", ["Set Fracture to Left Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
-        ["CHECKBOX", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
-        ["CHECKBOX", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
-        ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
-        ["LIST", ["Damage Type", "Various types of damages produce different results."], [
-            ["grenade","explosive","shell","vehiclecrash","collision","backblast"],
-            ["Grenade","Explosive","Shell","Vehicle Crash","Collision","Backblast"], 0]
-        ]
+        ["SLIDER", ["Damage amount", "More damage will usually make more wounds. It can be lethal! Minor [0.25-0.5], Medium [0.5-0.75], Large [0.75+]"], [0, 20, 0, 2]],
+        ["TOOLBOX:YESNO", ["Set Fracture to Left Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
+        ["TOOLBOX:YESNO", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
+        ["TOOLBOX:YESNO", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
+        ["TOOLBOX:YESNO", ["Set Fracture to Right Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
+        ["TOOLBOX:WIDE", ["Damage Type", "Various types of damages produce different results."], [0, 1, 6, ["Grenade","Explosive","Shell","Vehicle Crash","Collision","Backblast"]], false]
     ],
     {
         params ["_results", "_unit"];
         _results params ["_damage", "_setFractureLeftArm", "_setFractureRightArm", "_setFractureLeftLeg", "_setFractureRightLeg", "_damageType"];
 
-        private _allBodyParts = ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"];
-        private _fractureLimbs = [false, false, _setFractureLeftArm, _setFractureRightArm, _setFractureLeftLeg, _setFractureRightLeg];
+        _damageType = ["grenade","explosive","shell","vehiclecrash","collision","backblast"] select _damageType;
+
         private _runUpdateEffects = false;
         private _fractures = _unit getVariable ["ace_medical_fractures", [0,0,0,0,0,0]];
-        private _local = local _unit;
 
         if (_damage > 0) then {
-            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_unit, _damage, selectRandom _allBodyParts, _damageType]], _unit] call CBA_fnc_targetEvent;
+            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_unit, _damage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], _damageType]], _unit] call CBA_fnc_targetEvent;
         };
 
         {
@@ -127,7 +123,7 @@ if (!hasInterface) exitWith {};
 
         if (isPlayer _unit) then {
             ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
-        };
+        } ;
 
         if (_runUpdateEffects) then {
             _unit setVariable ["ace_medical_fractures", _fractures, true];

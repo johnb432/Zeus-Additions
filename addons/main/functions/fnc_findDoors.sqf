@@ -17,31 +17,21 @@
  */
 
 params ["_building"];
-private _hashMapSelectionNames = createHashMap;
 
-/* Alternative find doors
-{
-    if ("opendoor" in toLower configName _x) then {
-        _door = _building selectionPosition (getText (_x >> "position"));
-        _doorPositionsUserActions pushBack _door;
-        _doorPositionsUserActionsNames pushBack (toLower (configName _x));
-    };
-} forEach configProperties [configOf _building >> "UserActions", "isClass _x"];
-*/
+private _hashMapSelectionNames = [];
 
 // Find doors
 {
     if (_x find "door" isNotEqualTo -1 && {_x find "handle" isEqualTo -1} && {_x find "doorlocks" isEqualTo -1}) then {
-        _hashMapSelectionNames set [toLower _x, (_building modelToWorld (_building selectionPosition _x)) select 2];
+        _hashMapSelectionNames pushBack (toLower _x);
     };
 } forEach (selectionNames _building);
 
 // If no doors found, exit
-if (count _hashMapSelectionNames isEqualTo 0) exitWith {
-    ["No doors were found for %1!", getText (configFile >> "CfgVehicles" >> typeOf _building >> "displayName")] call zen_common_fnc_showMessage;
+if (_hashMapSelectionNames isEqualTo []) exitWith {
+    ["No doors were found for %1!", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
     nil;
 };
 
-private _sortedKeysSelectionNames = keys _hashMapSelectionNames;
-_sortedKeysSelectionNames sort true;
-_sortedKeysSelectionNames;
+_hashMapSelectionNames sort true;
+_hashMapSelectionNames;

@@ -30,7 +30,7 @@ if (hasInterface) then {
             ["TOOLBOX:WIDE", ["Group channel", "Allows to change the group chat & VON."], [1, 1, 4, ["Disabled","Chat only","VON only","Enabled"]], false],
             ["TOOLBOX:WIDE", ["Vehicle channel", "Allows to change the vehicle chat & VON."], [1, 1, 4, ["Disabled","Chat only","VON only","Enabled"]], false],
             ["TOOLBOX:WIDE", ["Direct channel", "Allows to change the direct chat & VON."], [1, 1, 4, ["Disabled","Chat only","VON only","Enabled"]], false],
-            ["CHECKBOX", ["Account for JIP players", "This option only works if the mod is on the server aswell."], false, false]
+            ["TOOLBOX:YESNO", ["Account for JIP players", "This option only works if the mod is on the server aswell."], false, false]
         ],
         {
             params ["_results", "_unit"];
@@ -80,13 +80,12 @@ if (hasInterface) then {
             _players append _groups;
 
             // remoteExecCall can do units, groups and sides, whereas targetEvents can only do units and groups
-            private _playersAndSides = _players + _sides;
-            {
-                _x remoteExecCall ["enableChannel", _playersAndSides];
-            } forEach _enableArray;
-
             // Add all players from a selected side
             _players append (allPlayers select {side _x in _sides});
+
+            {
+                _x remoteExecCall ["enableChannel", _players];
+            } forEach _enableArray;
 
             ["zen_common_hint", ["Zeus has changed channel visibility."], _players] call CBA_fnc_targetEvent;
 
@@ -100,7 +99,7 @@ if (hasInterface) then {
 
 if (isServer) then {
     addMissionEventHandler ["PlayerConnected", {
-    	   params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
+        params ["_id", "_uid", "_name", "_jip", "_owner", "_idstr"];
 
         if (!_jip || isNil QGVAR(disableChannelsJIP)) exitWith {};
 

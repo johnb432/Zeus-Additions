@@ -22,27 +22,27 @@ if (!hasInterface) exitWith {};
     params ["_pos"];
 
     ["Spawn Medical Resupply Crate", [
-        ["EDIT", "Bandages (Elastic)", GETPRVAR(QGVAR(elastic),200), true],
-        ["EDIT", "Bandages (Packing)", GETPRVAR(QGVAR(packing),200), true],
-        ["EDIT", "Bandages (Quickclot)", GETPRVAR(QGVAR(quickclot),50), true],
-        ["EDIT", "Bandages (Basic)", GETPRVAR(QGVAR(basic),0), true],
-        ["EDIT", "1000ml Blood", GETPRVAR(QGVAR(blood1000),25), true],
-        ["EDIT", "500ml Blood", GETPRVAR(QGVAR(blood500),50), true],
-        ["EDIT", "250ml Blood", GETPRVAR(QGVAR(blood250),0), true],
-        ["EDIT", "1000ml Plasma", GETPRVAR(QGVAR(plasma1000),0), true],
-        ["EDIT", "500ml Plasma", GETPRVAR(QGVAR(plasma500),30), true],
-        ["EDIT", "250ml Plasma", GETPRVAR(QGVAR(plasma250),0), true],
-        ["EDIT", "1000ml Saline", GETPRVAR(QGVAR(saline1000),0), true],
-        ["EDIT", "500ml Saline", GETPRVAR(QGVAR(saline500),30), true],
-        ["EDIT", "250ml Saline", GETPRVAR(QGVAR(saline250),0), true],
-        ["EDIT", "Epinephrine autoinjector", GETPRVAR(QGVAR(epinephrine),30), true],
-        ["EDIT", "Morphine autoinjector", GETPRVAR(QGVAR(morphine),30), true],
-        ["EDIT", "Adenosine autoinjector", GETPRVAR(QGVAR(adenosine),0), true],
-        ["EDIT", "Splint", GETPRVAR(QGVAR(splint),50), true],
-        ["EDIT", "Tourniquet (CAT)", GETPRVAR(QGVAR(tourniquet),40), true],
-        ["EDIT", "Bodybag", GETPRVAR(QGVAR(bodybag),20), true],
-        ["EDIT", "Surgical Kit", GETPRVAR(QGVAR(surgical),0), true],
-        ["EDIT", "Personal Aid Kit", GETPRVAR(QGVAR(PAK),0), true],
+        ["SLIDER", "Bandages (Elastic)", [0, 300, GETPRVAR(QGVAR(elastic),200), 0], true],
+        ["SLIDER", "Bandages (Packing)", [0, 300, GETPRVAR(QGVAR(packing),200), 0], true],
+        ["SLIDER", "Bandages (Quickclot)", [0, 300, GETPRVAR(QGVAR(quickclot),50), 0], true],
+        ["SLIDER", "Bandages (Basic)", [0, 300, GETPRVAR(QGVAR(elastic),0), 0], true],
+        ["SLIDER", "1000ml Blood", [0, 50, GETPRVAR(QGVAR(blood1000),25), 0], true],
+        ["SLIDER", "500ml Blood", [0, 100, GETPRVAR(QGVAR(blood500),50), 0], true],
+        ["SLIDER", "250ml Blood", [0, 100, GETPRVAR(QGVAR(blood250),0), 0], true],
+        ["SLIDER", "1000ml Plasma", [0, 50, GETPRVAR(QGVAR(plasma1000),0), 0], true],
+        ["SLIDER", "500ml Plasma", [0, 100, GETPRVAR(QGVAR(plasma500),30), 0], true],
+        ["SLIDER", "250ml Plasma", [0, 100, GETPRVAR(QGVAR(plasma250),0), 0], true],
+        ["SLIDER", "1000ml Saline", [0, 50, GETPRVAR(QGVAR(saline1000),0), 0], true],
+        ["SLIDER", "500ml Saline", [0, 100, GETPRVAR(QGVAR(saline500),30), 0], true],
+        ["SLIDER", "250ml Saline", [0, 100, GETPRVAR(QGVAR(saline250),0), 0], true],
+        ["SLIDER", "Epinephrine autoinjector", [0, 50, GETPRVAR(QGVAR(epinephrine),30), 0], true],
+        ["SLIDER", "Morphine autoinjector", [0, 50, GETPRVAR(QGVAR(morphine),30), 0], true],
+        ["SLIDER", "Adenosine autoinjector", [0, 50, GETPRVAR(QGVAR(adenosine),0), 0], true],
+        ["SLIDER", "Splint", [0, 100, GETPRVAR(QGVAR(splint),50), 0], true],
+        ["SLIDER", "Tourniquet (CAT)", [0, 100, GETPRVAR(QGVAR(tourniquet),40), 0], true],
+        ["SLIDER", "Bodybag", [0, 50, GETPRVAR(QGVAR(bodybag),20), 0], true],
+        ["SLIDER", "Surgical Kit", [0, 100, GETPRVAR(QGVAR(surgical),0), 0], true],
+        ["SLIDER", "Personal Aid Kit", [0, 100, GETPRVAR(QGVAR(PAK),0), 0], true],
         ["CHECKBOX", ["Reset to default"], false, true]
     ],
     {
@@ -105,7 +105,7 @@ if (!hasInterface) exitWith {};
         ];
 
         {
-            _object addItemCargoGlobal [_items select _forEachIndex, parseNumber (_results select _forEachIndex)];
+            _object addItemCargoGlobal [_items select _forEachIndex, _results select _forEachIndex];
             SETPRVAR(_x,_results select _forEachIndex);
         } forEach [
             QGVAR(elastic), QGVAR(packing), QGVAR(quickclot), QGVAR(basic),

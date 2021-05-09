@@ -1,61 +1,3 @@
-# Changelog for Zeus Additions 4.4.2021
-
-- Improved "Lock building doors" module.
-- Improved "Paradrop units" module selection.
-- General improvements.
-
-# Changelog for Zeus Additions 28.3.2021
-
-- Added "Force delete object" module that *should* be able to force delete objects.
-- Added "Pause time" module that allows for a "pausing" of time. It sets time acceleration to 0.1 and revert time every 100s by 10s, making the time effective stand still.
-- Added "Toggle Snow Script" module that makes snow fall.
-- Improved Dog attack module.
-- General improvements.
-
-# Changelog for Zeus Additions 15.3.2021
-
-- Added "Disable channels" module that can disable various map marking and VON channels
-- Added a functionality that allows you to exit unconscious remote controlled units when in Zeus. This fixes the issue where you can't get out of unconscious units when your Zeus key bound to a double tap. Can be enabled in CBA settings, default is off.
-
-# Changelog for Zeus Additions 13.3.2021
-
-- Changed loadout system to have a preset system.
-- Changed lock building module (should work better).
-- Added 2x AI behaviour changing modules (vehicle dismounting and mine detecting)
-- Added "Prevent vehicle from blowing up" module that prevents vehicles from blowing up. Tested with ground assets at this time.
-
-# Changelog for Zeus Additions 7.3.2021
-
-- Minor code improvements.
-
-# Changelog for Zeus Additions 27.2.2021
-
-- Actually added the invincibility modules (never called the function to make the modules...).
-- Added "Lock doors" module (see HOW TO below).
-
-# Changelog for Zeus Additions 23.2.2021
-
-- Added "TFAR Range multiplier" module (see HOW TO below).
-- Added "Invincibility at end of mission" modules (see HOW TO below).
-- General simplifications and improvements.
-
-# Changelog for Zeus Additions 14.2.2021
-
-- Added "Force consciousness change" module: Forces a unit to go unconscious or to wake up, depending on their previous state. This does not take stable vitals into account. (see HOW TO below)
-- Added "Change grass rendering" module: It allows you to change grass rendering on selected sides/groups/players. (see HOW TO below)
-
-# Changelog for Zeus Additions 11.2.2021
-
-- Fixed and updated gear script modules to work better.
-
-# Changelog for Zeus Additions 7.2.2021
-
-- Initial release.
-
-
----
-
-
 Zeus Additions
 <h3>README</h3>
 
@@ -70,7 +12,7 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
 * **Create injuries:** Allows the Zeus to create injuries on any types of unit, be it AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Create random injuries:** Creates random wounds, taking a damage value and type you are able to set.
 * **Disable Channels:** Allows the Zeus to disable specific channels, both writing and VON.
-* **End mission with player invincibility:** Ends the mission with all player becoming invulnerable. You can choose if it's a mission fail or success and whether they are invulnerable, but nothing else.
+* **End mission with player modifier:** Ends the mission with all player having the chosen modifier applied to them. You can choose if it's a mission fail or success and the modifier, but nothing else.
 * **Force consciousness change:** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals.
 * **Force delete object:** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 * **Give death stare ability:** If used this module grants the chosen unit to have a "death stare". The unit uses an ACE self-interaction whilst looking at the desired target. The result of the action will the inducing pain the target and doing some sort of harm, depending on the settings.
@@ -78,10 +20,11 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
 * **Loadout: Apply to single unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
 * **Loadout: Set:** Allows you to set loadouts for the "Loadout: Apply to group" and "Loadout: Apply to single unit" modules. These are saved on a profile basis, which means they stick around, allowing you to use them on various servers.
 * **Lock building doors:** Allows the Zeus to set doors on a building to be locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
+* **Open ACE Medical Menu:** Allows the Zeus to open a unit's medical menu more easily.
 * **Pause time:** Allows the Zeus to nearly stop time. It sets time acceleration to a minimum and reverts time every 100 seconds.
 * **Paradrop units:** Allows the Zeus to have units and vehicles be paradropped.
 * **Prevent vehicle from blowing up:** This module makes vehicles not able to blow up, but still allows them to take damage.
-* **Set player invincibility at mission end:** ***RECOMMEND PLACING THIS MODULE ONLY NEAR MISSION END.*** It checks every frame if the end screen has popped up, which can be performance consuming.
+* **Set player modifier at mission end:** ***RECOMMEND PLACING THIS MODULE ONLY NEAR MISSION END.*** It checks every frame if the end screen has popped up, which can be performance consuming.
 * **Spawn Ammo Resupply Crate:** Spawns a magazine resupply crate using lists predefined in the CBA settings.
 * **Spawn Ammo Resupply for unit:** Spawns a magazine resupply crate using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. It can use a blacklist which can be defined in the CBA settings. Future support for direct access to the FK blacklist is being waited on, as the FK framework has to update.
 * **Spawn Medical Resupply Crate:** Spawns a medical resupply crate
@@ -93,9 +36,10 @@ Adds a handful of modules to the Zeus interface. Requires ZEN.
   Inputs are arrays of strings.
   * **Blacklist:** Allows the user to set up a list of ammo that won't be put in the resupply using the "Spawn Ammo Resupply for unit" module.
   * **X Magazines:** Allows the user to set up custom arrays of ammunition to give to users using the "Spawn Ammo Resupply Crate" module.
-  * **Enable automatic blacklist detection for FK servers:** ***DOES NOT WORK CURRENTLY***, as it needs an update in the FK Framework. FK is a gaming community.
+  * **Enable automatic blacklist detection for FK servers:** FK is a gaming community.
   * **Enable leave unconscious unit:** Allows the user to leave an unconscious remote controlled unit when pressing the ESCAPE key. Handy for people who have their Zeus key bound to a double tap.
   * **Enable Snow Script missing addon hint:** If enabled, it will hint if CUP Core is missing.
+  * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
 
 <h3>CREDITS</h3>
 
@@ -114,4 +58,4 @@ This mod is a client side mod, although some features will unlock if it's on the
 
 <h3>Known issues</h3>
 
-* When tabbing out whilst having the snow scipt applied, it will lose the wind effect.
+* When tabbing out whilst having the snow script applied, it will lose the wind effect.

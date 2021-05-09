@@ -16,26 +16,18 @@
  * Public: No
  */
 
-// delete old loadouts, from before preset system
-SETPRVAR(QGVAR(gearDefault),nil);
-SETPRVAR(QGVAR(gearLeader),nil);
-SETPRVAR(QGVAR(gearAT),nil);
-SETPRVAR(QGVAR(gearAA),nil);
-SETPRVAR(QGVAR(gearAR),nil);
-SETPRVAR(QGVAR(gearMedic),nil);
-SETPRVAR(QGVAR(gearEngineer),nil);
-SETPRVAR(QGVAR(gearSingle),nil);
-
 if (!hasInterface) exitWith {};
 
 GVAR(gearPreset) = "default";
+GVAR(gearIndex) = 0;
+GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer", "Single")];
 
 ["Zeus Additions - Loadout", "Loadout: Presets", {
     ["Set Loadout (Uses ACE arsenal export format)", [
         ["EDIT", ["Create new loadout preset", "Allows you to store multiple presets of loadouts."], "", true],
-        ["COMBO", ["Select loadout preset", "Allows you to select a preset to edit and apply."], [GETPRVAR(QGVAR(gearPresetNames),["default"]), GETPRVAR(QGVAR(gearPresetNames),["default"]), 0], false],
-        ["CHECKBOX", ["Reset saved loadouts", "Resets saved loadouts in currently selected preset."], false, true],
-        ["CHECKBOX", ["Delete preset", "Deletes the currently selected preset. If you chose a preset in the current window, it will delete that one."], false, true]
+        ["COMBO", ["Select loadout preset", "Allows you to select a preset to edit and apply."], [GETPRVAR(QGVAR(gearPresetNames),["default"]), GETPRVAR(QGVAR(gearPresetNames),["default"]), GVAR(gearIndex)], false],
+        ["TOOLBOX:YESNO", ["Reset saved loadouts", "Resets saved loadouts in currently selected preset."], false, true],
+        ["TOOLBOX:YESNO", ["Delete preset", "Deletes the currently selected preset. If you chose a preset in the current window, it will delete that one."], false, true]
     ],
     {
         params ["_results"];
@@ -43,20 +35,21 @@ GVAR(gearPreset) = "default";
 
         private _presets = GETPRVAR(QGVAR(gearPresetNames),["default"]);
 
-        if (!(_newPreset in _presets) && {_newPreset isNotEqualTo ""}) exitWith {
+        if (_newPreset isNotEqualTo "" && {!(_newPreset in _presets)}) exitWith {
             _presets pushBack _newPreset;
             SETPRVAR(QGVAR(gearPresetNames),_presets);
             GVAR(gearPreset) = _newPreset;
+            GVAR(gearIndex) = _presets findIf {_x isEqualTo _newPreset};
 
-            ["New preset " + _newPreset + " created"] call zen_common_fnc_showMessage;
+            ["New preset %1 created and chosen", _newPreset] call zen_common_fnc_showMessage;
         };
 
         if (_resetPreset) exitWith {
             {
-                SETPRVAR("zeus_additions_main_" + _x + _selectedPreset,"[]");
-            } forEach ["gearDefault_", "gearLeader_", "gearAT_", "gearAA_", "gearAR_", "gearMedic_", "gearEngineer_", "gearSingle_"];
+                SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),"[]");
+            } forEach GVAR(loadoutTypes);
 
-            ["Loadouts in " + _selectedPreset + " preset reset"] call zen_common_fnc_showMessage;
+            ["Loadouts in %1 preset reset", _selectedPreset] call zen_common_fnc_showMessage;
         };
 
         if (_deletePreset) exitWith {
@@ -65,19 +58,21 @@ GVAR(gearPreset) = "default";
             };
 
             {
-                SETPRVAR("zeus_additions_main_" + _x + _selectedPreset,nil);
-            } forEach ["gearDefault_", "gearLeader_", "gearAT_", "gearAA_", "gearAR_", "gearMedic_", "gearEngineer_", "gearSingle_"];
+                SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),nil);
+            } forEach GVAR(loadoutTypes);
 
             private _index = _presets findIf {_x isEqualTo _selectedPreset};
-            if (_index isNotEqualTo -1) then {
-               _presets deleteAt _index;
-               SETPRVAR(QGVAR(gearPresetNames),_presets);
-               ["Loadout preset " + _selectedPreset + " deleted"] call zen_common_fnc_showMessage;
-            };
+            if (_index isEqualTo -1) exitWith {};
+
+            _presets deleteAt _index;
+            SETPRVAR(QGVAR(gearPresetNames),_presets);
+            GVAR(gearIndex) = 0;
+            
+            ["Loadout preset %1 deleted", _selectedPreset] call zen_common_fnc_showMessage;
         };
 
         GVAR(gearPreset) = _selectedPreset;
-        ["Chosen preset: " + _selectedPreset] call zen_common_fnc_showMessage;
+        ["Chosen preset: %1", _selectedPreset] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
@@ -102,13 +97,8 @@ GVAR(gearPreset) = "default";
 
         {
             _result = _results select _forEachIndex;
-
-            if (_result == "") then {
-                SETPRVAR("zeus_additions_main_" + _x + GVAR(gearPreset),"[]");
-            } else {
-                SETPRVAR("zeus_additions_main_" + _x + GVAR(gearPreset),_result);
-            };
-        } forEach ["gearDefault_", "gearLeader_", "gearAT_", "gearAA_", "gearAR_", "gearMedic_", "gearEngineer_", "gearSingle_"];
+            SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),[ARR_2("[]",_result)] select (_result isNotEqualTo ""));
+        } forEach GVAR(loadoutTypes);
 
         ["Loadouts saved"] call zen_common_fnc_showMessage;
     }, {
@@ -128,16 +118,7 @@ GVAR(gearPreset) = "default";
     private _loadoutString = GETPRVAR("zeus_additions_main_gearSingle_" + GVAR(gearPreset),"[]");
 
     if (_loadoutString isEqualTo "[]") then {
-        _loadoutString =
-        [
-            GETPRVAR("zeus_additions_main_gearDefault_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearLeader_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearAT_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearAA_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearAR_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearMedic_" + GVAR(gearPreset),"[]"),
-            GETPRVAR("zeus_additions_main_gearEngineer_" + GVAR(gearPreset),"[]")
-        ] select (_unit call FUNC(getRole));
+        _loadoutString = GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),GVAR(loadoutTypes) select (_unit call FUNC(getRole)),GVAR(gearPreset)),"[]");
      };
 
     _unit setUnitLoadout (parseSimpleArray (_loadoutString splitString " " joinString ""));
@@ -153,15 +134,12 @@ GVAR(gearPreset) = "default";
         playSound "FD_Start_F";
     };
 
-    private _loadouts = [
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearDefault_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearLeader_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearAT_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearAA_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearAR_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearMedic_" + GVAR(gearPreset),"[]") splitString " " joinString ""),
-        parseSimpleArray (GETPRVAR("zeus_additions_main_gearEngineer_" + GVAR(gearPreset),"[]") splitString " " joinString "")
-    ];
+    private _loadouts = [];
+
+    {
+        _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]") splitString " " joinString ""),
+    } forEach GVAR(loadoutTypes);
+
 
     private _loadout;
     // If loadout is not defined, use default loadout instead

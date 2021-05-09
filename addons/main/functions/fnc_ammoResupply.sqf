@@ -19,7 +19,7 @@
 if (!hasInterface) exitWith {};
 
 ["Zeus Additions - Resupply", "Spawn Ammo Resupply Crate", {
-    params ["_pos"];
+    params ["_pos", "_object"];
 
     ["Spawn Ammo Resupply Crate", [
         ["SLIDER", ["AK/RPK 5.45x39mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
@@ -47,14 +47,44 @@ if (!hasInterface) exitWith {};
         ["SLIDER", ["CLU for BAF Javelin", "Spawns x amount of BAF CLUs."], [0, 200, 0, 0]],
         ["SLIDER", ["HAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["AA BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]], // 25
-        ["SLIDER", ["AA REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]]
+        ["SLIDER", ["AA REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
+        ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places stuff in its inventory."], [0, 1, 3, ["Spawn Ammo Box","Put in inventory","Clear inventory and insert"]], false]
     ],
     {
-        params ["_results", "_pos"];
+        params ["_results", "_args"];
+        _args params ["_pos", "_object"];
 
-        private _object = "Box_NATO_Equip_F" createVehicle _pos;
-        ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
-        clearItemCargoGlobal _object;
+        private _exit = false;
+
+        private _emptyInventory = _results select (count _results - 1);
+
+        // If make a new object
+        if (_emptyInventory isEqualTo 0) then {
+            _object = "Box_NATO_Equip_F" createVehicle _pos;
+            ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
+            clearItemCargoGlobal _object;
+
+            ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [0, 1.25, 0], 0, true]]] call CBA_fnc_globalEventJIP;
+            ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [0, 1.25, 0.5], 90, true]]] call CBA_fnc_globalEventJIP;
+        };
+
+        private _config = configOf _object;
+
+        // If insert into inventory, but no inventory found or enabled
+        if (_emptyInventory > 0 && {isNull _object || {getNumber (_config >> "maximumLoad") isEqualTo 0} || {getNumber (_config >> "disableInventory") isEqualTo 1}}) exitWith {
+            ["Object has no inventory!"] call zen_common_fnc_showMessage;
+            playSound "FD_Start_F";
+        };
+
+        // Clear all content of other types of inventories
+        if (_emptyInventory isEqualTo 2) then {
+            clearItemCargoGlobal _object;
+            clearMagazineCargoGlobal _object;
+            clearWeaponCargoGlobal _object;
+            clearBackpackCargoGlobal _object;
+        };
+
+        _results deleteAt (count _results - 1);
 
         private _numAT = [_results select 16, _results select 17, _results select 21, _results select 22];
 
@@ -81,14 +111,11 @@ if (!hasInterface) exitWith {};
             };
         } forEach _numAT;
 
-        ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [0, 1.25, 0], 0, true]]] call CBA_fnc_globalEventJIP;
-        ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [0, 1.25, 0.5], 90, true]]] call CBA_fnc_globalEventJIP;
-
         ["Ammo crate created"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
-    }, _pos] call zen_dialog_fnc_create;
+    }, [_pos, _object]] call zen_dialog_fnc_create;
 }] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Resupply", "Spawn Ammo Resupply for unit", {
@@ -96,11 +123,11 @@ if (!hasInterface) exitWith {};
 
     ["Spawn Ammo Resupply Crate", [
         ["OWNERS", ["Player selected", "Select a player from the list to determine which ammunition to spawn. If multiple are chosen only the first one selected will be looked at."], [[], [], [], 2], true],
-        ["SLIDER", ["Primary Magazines", "Spawns in x amount of each primary weapon compatible magazines (not x total!)."], [0, 100, 20, 0]],
-        ["SLIDER", ["Sidearm Magazines", "Spawns in x amount of each sidearm compatible magazines (not x total!)."], [0, 100, 10, 0]],
-        ["SLIDER", ["Tertiary Magazine", "Spawns in x amount of each launcher compatible magazines (not x total!)."], [0, 100, 5, 0]],
-        ["CHECKBOX", ["Include UGL ammo", "Also checks for UGLs and spawns ammo for UGLs if enabled."], false, true],
-        ["CHECKBOX", ["Allow blacklisted ammo", "Allows ammo that is normally blacklisted to be spawned in."], false, true]
+        ["SLIDER", ["Primary Magazines", "Spawns in x amount of each primary weapon compatible magazines (not x total!)."], [0, 200, 20, 0]],
+        ["SLIDER", ["Sidearm Magazines", "Spawns in x amount of each sidearm compatible magazines (not x total!)."], [0, 200, 10, 0]],
+        ["SLIDER", ["Tertiary Magazine", "Spawns in x amount of each launcher compatible magazines (not x total!)."], [0, 200, 5, 0]],
+        ["TOOLBOX:YESNO", ["Include UGL ammo", "Also checks for UGLs and spawns ammo for UGLs if enabled."], false, true],
+        ["TOOLBOX:YESNO", ["Allow blacklisted ammo", "Allows ammo that is normally blacklisted to be spawned in."], false, true]
     ],
     {
         params ["_results", "_info"];
@@ -108,8 +135,9 @@ if (!hasInterface) exitWith {};
         _results params ["_players", "_numPrim", "_numHand", "_numSec", "_allowUGL", "_allowBlackList"];
         _info params ["_pos", "_unit"];
 
-        if  (_players select 2 isEqualTo [] && {isNull _unit}) exitWith {
+        if (_players select 2 isEqualTo [] && {isNull _unit}) exitWith {
             ["Place module on a player or select a player from the list!"] call zen_common_fnc_showMessage;
+            playSound "FD_Start_F";
         };
 
         private _player = _players select 2 select 0;

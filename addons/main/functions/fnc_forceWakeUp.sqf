@@ -23,10 +23,12 @@ if (!hasInterface) exitWith {};
 
     if (isNull _unit) exitWith {
         ["Select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     if (!alive _unit) exitWith {
         ["Unit is dead!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     ["zen_common_execute", [ace_medical_status_fnc_setUnconsciousState, [_unit, !(_unit getVariable ["ACE_isUnconscious", false])]], _unit] call CBA_fnc_targetEvent;

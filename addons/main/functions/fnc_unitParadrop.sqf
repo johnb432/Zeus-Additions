@@ -27,12 +27,12 @@ GVAR(selectedParadropVehicles) = nil;
 
     ["[WIP] Paradrop players (Read tooltips! Use this in map screen to get best results)", [
         ["OWNERS", ["Players selected", "Select sides, groups, players."], [[], [], [], 0], true],
-        ["CHECKBOX", ["Include context menu selection", "Paradrops units (AI or players) selected by the Zeus using the ZEN context menu."], false, true],
-        ["CHECKBOX", ["Include vehicles", "Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only."], false],
-        ["CHECKBOX", ["Include players in vehicles", "Takes players only out of their vehicles and paradrops the players only."], false],
+        ["TOOLBOX:YESNO", ["Include context menu selection", "Paradrops units (AI or players) selected by the Zeus using the ZEN context menu."], false, true],
+        ["TOOLBOX:YESNO", ["Include vehicles", "Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only."], false],
+        ["TOOLBOX:YESNO", ["Include players in vehicles", "Takes players only out of their vehicles and paradrops the players only."], false],
         ["SLIDER", ["Paradrop altitude", "Determines how far up units spawn over terrain level."], [200, 3000, 1000, 0]],
         ["SLIDER", ["Player density", "Determines how far apart units are paradropped from each other."], [10, 100, 40, 0]],
-        ["CHECKBOX", ["Give units parachutes automatically", "Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back."], true]
+        ["TOOLBOX:YESNO", ["Give units parachutes", "Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back."], true]
     ],
     {
         params ["_results", "_pos"];
@@ -47,45 +47,21 @@ GVAR(selectedParadropVehicles) = nil;
 
         private _unitList = [];
         private _vehicleList = [];
-        private _side;
-        {
-            _side = _x;
-            {
-                if (side _x isEqualTo _side) then {
-                    if (_includePlayersInVehicles || {isNull objectParent _x}) then {
-                        _unitList pushBack _x;
-                    };
+        private _vehicle;
 
-                    if (_includeVehicles && {objectParent _x isKindOf "LandVehicle"}) then {
-                        _vehicleList pushBackUnique (objectParent _x);
-                    };
+        {
+            if (side _x in _sides || {group _x in _groups} || {_x in _players}) then {
+                if (_includePlayersInVehicles || {isNull objectParent _x}) then {
+                    _unitList pushBack _x;
                 };
-            } forEach allPlayers;
-        } forEach _sides;
 
-        private _group;
-        {
-            _group = _x;
-            {
-                if (group _x isEqualTo _group) then {
-                    if (_includePlayersInVehicles || {isNull objectParent _x}) then {
-                        _unitList pushBackUnique _x;
-                    };
+                _vehicle = objectParent _x;
 
-                    if (_includeVehicles && {objectParent _x isKindOf "LandVehicle"}) then {
-                        _vehicleList pushBackUnique (objectParent _x);
-                    };
+                if (_includeVehicles && {_vehicle isKindOf "LandVehicle" || {_vehicle isKindOf "Ship"}}) then {
+                    _vehicleList pushBackUnique _vehicle;
                 };
-            } forEach allPlayers;
-        } forEach _groups;
-
-        {
-            _unitList pushBackUnique _x;
-
-            if (_includeVehicles && {objectParent _x isKindOf "LandVehicle"}) then {
-                _vehicleList pushBackUnique (objectParent _x);
             };
-        } forEach _players;
+        } forEach allPlayers;
 
         if (_includeContextMenu) then {
             if (!isNil QGVAR(selectedParadropUnits)) then {
@@ -126,7 +102,9 @@ GVAR(selectedParadropVehicles) = nil;
                    _unit = _unitList select _indexUnits;
 
                    // If unit is already paradropping, don't TP
-                   if (_unit getVariable [QGVAR(isParadropping), false]) exitWith {};
+                   if (_unit getVariable [QGVAR(isParadropping), false]) then {
+                       continue;
+                   };
 
                    _unit setVariable [QGVAR(isParadropping), true, true];
 
@@ -188,9 +166,11 @@ GVAR(selectedParadropVehicles) = nil;
                                    // Return old content
                                    private _contents = _this getVariable [QGVAR(backpackContents), []];
                                    if (_contents isEqualTo []) exitWith {};
+
                                    {
                                        _this addItemToBackpack _x;
                                    } forEach _contents;
+                                   
                                    _this setVariable [QGVAR(backpackContents), nil, true];
                                }, _this
                            ]
@@ -216,7 +196,7 @@ GVAR(selectedParadropVehicles) = nil;
                     if (_indexVics isNotEqualTo _vicCount) then {
                         _vehicle = _vehicleList select _indexVics;
                         _vehicle setPosATL (_topLeft vectorAdd [_i, _j, 0]);
-                        _vehicle attachTo [createvehicle ["i_parachute_02_f", getPos _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, 2]];
+                        _vehicle attachTo [createVehicle ["i_parachute_02_f", getPos _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, 2]];
 
                         _indexVics = _indexVics + 1;
                     };
