@@ -20,11 +20,11 @@ if (!hasInterface) exitWith {};
 
 GVAR(gearPreset) = "default";
 GVAR(gearIndex) = 0;
-GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer", "Single")];
+GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer","Single")];
 
 ["Zeus Additions - Loadout", "Loadout: Presets", {
     ["Set Loadout (Uses ACE arsenal export format)", [
-        ["EDIT", ["Create new loadout preset", "Allows you to store multiple presets of loadouts."], "", true],
+        ["EDIT", ["Create new loadout preset", "Allows you to store multiple presets of loadouts. DO NOT USE PUNCUATION MARKS."], "", true],
         ["COMBO", ["Select loadout preset", "Allows you to select a preset to edit and apply."], [GETPRVAR(QGVAR(gearPresetNames),["default"]), GETPRVAR(QGVAR(gearPresetNames),["default"]), GVAR(gearIndex)], false],
         ["TOOLBOX:YESNO", ["Reset saved loadouts", "Resets saved loadouts in currently selected preset."], false, true],
         ["TOOLBOX:YESNO", ["Delete preset", "Deletes the currently selected preset. If you chose a preset in the current window, it will delete that one."], false, true]
@@ -32,6 +32,8 @@ GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Eng
     {
         params ["_results"];
         _results params ["_newPreset", "_selectedPreset", "_resetPreset", "_deletePreset"];
+
+        _newPreset = _newPreset splitString " " joinString "";
 
         private _presets = GETPRVAR(QGVAR(gearPresetNames),["default"]);
 
@@ -67,7 +69,7 @@ GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Eng
             _presets deleteAt _index;
             SETPRVAR(QGVAR(gearPresetNames),_presets);
             GVAR(gearIndex) = 0;
-            
+
             ["Loadout preset %1 deleted", _selectedPreset] call zen_common_fnc_showMessage;
         };
 
@@ -121,7 +123,7 @@ GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Eng
         _loadoutString = GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),GVAR(loadoutTypes) select (_unit call FUNC(getRole)),GVAR(gearPreset)),"[]");
      };
 
-    _unit setUnitLoadout (parseSimpleArray (_loadoutString splitString " " joinString ""));
+    _unit setUnitLoadout (parseSimpleArray _loadoutString);
 
     ["Loadout applied"] call zen_common_fnc_showMessage;
 }] call zen_custom_modules_fnc_register;
@@ -137,9 +139,8 @@ GVAR(loadoutTypes) = [ARR_8("Default", "Leader", "AT", "AA", "AR", "Medic", "Eng
     private _loadouts = [];
 
     {
-        _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]") splitString " " joinString ""),
+        _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]"));
     } forEach GVAR(loadoutTypes);
-
 
     private _loadout;
     // If loadout is not defined, use default loadout instead

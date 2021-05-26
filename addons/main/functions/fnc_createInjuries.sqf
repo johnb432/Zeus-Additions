@@ -123,7 +123,7 @@ if (!hasInterface) exitWith {};
 
         if (isPlayer _unit) then {
             ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
-        } ;
+        };
 
         if (_runUpdateEffects) then {
             _unit setVariable ["ace_medical_fractures", _fractures, true];

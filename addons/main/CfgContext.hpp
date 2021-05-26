@@ -1,10 +1,26 @@
 class zen_context_menu_actions {
+    class GVAR(disablePathing) {
+        condition = QUOTE(_objects findIf {!isPlayer _x && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}} isNotEqualTo -1);
+        displayName = "Disable AI Pathing";
+        icon = "";
+        priority = 50;
+        statement = QUOTE({[ARR_3('zen_common_disableAI',[ARR_2(_x,'PATH')],_x)] call CBA_fnc_targetEvent} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}}));
+    };
+
+    class GVAR(enablePathing) {
+        condition = QUOTE(_objects findIf {!isPlayer _x && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}} isNotEqualTo -1);
+        displayName = "Enable AI Pathing";
+        icon = "";
+        priority = 50;
+        statement = QUOTE({[ARR_3('zen_common_enableAI',[ARR_2(_x,'PATH')],_x)] call CBA_fnc_targetEvent} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}}));
+    };
+
     class GVAR(openMedicalMenu) {
-        condition = QUOTE(_hoveredEntity isKindOf 'CAManBase');
+        condition = QUOTE(_hoveredEntity isEqualType objNull && {_hoveredEntity isKindOf 'CAManBase'});
         displayName = "Open ACE Medical Menu";
         icon = ICON_MEDICAL;
         priority = 50;
-        statement = QUOTE(_hoveredEntity call FUNC(openMedicalMenu););
+        statement = QUOTE(_hoveredEntity call FUNC(openMedicalMenu));
     };
 
     class GVAR(selectParadropMenu) {

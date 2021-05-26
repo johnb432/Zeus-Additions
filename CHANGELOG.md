@@ -1,3 +1,7 @@
+# Changelog for Zeus Additions 26.5.2021
+- Added AI pathing enabling & disabling in context menu
+- Fixed bug with context menu related to open medical menu
+
 # Changelog for Zeus Additions 9.5.2021
 - Added "Open Medical Menu" module + context menu action.
 - Added option to put magazine resupply directly in an inventory.
