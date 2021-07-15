@@ -16,68 +16,87 @@
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
-
-["Zeus Additions - Utility", "[WIP] Give death stare ability", {
+["Zeus Additions - Utility", "Give Death Stare Ability", {
     params ["", "_unit"];
 
-    if (isNull _unit) exitWith {
-        ["You must select a unit!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+    if !(_unit isKindOf "CAManBase") exitWith {
+         ["Select a unit!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
     };
 
-    ["[WIP] Death stare", [
-        ["TOOLBOX", ["Give death stare ability", "Adds a ACE self-interaction. To use the ability, look at target and use interaction."], [0, 1, 2, ["Add", "Remove"]]],
-        ["TOOLBOX", ["Incapacitation type", "Type of 'punishment' the target unit will endure if it gets death stared. For no damage, select 'Just Damage' and set damage to 0."], [0, 1, 2, [/*"Cardiac Arrest", */"Unconscious", "Just Damage"]], false],
+    ["Death Stare Ability", [
+        ["TOOLBOX", ["Give death stare ability", "Adds a ACE self-interaction. To use the ability, look at target (must be a living unit) and use interaction."], [0, 1, 2, ["Add", "Remove"]]],
+        ["TOOLBOX", ["Incapacitation type", "Type of 'punishment' the target unit will endure if it gets death stared. For no damage, select 'Just Damage' and set damage to 0."], [0, 1, 3, ["Lightning Bolt", "Unconscious", "Just Damage"]], false],
         ["SLIDER", ["Death timer", "Causes either unconsciousness and/or damage after this amount of time."], [10, 120, 30, 0]],
-        ["SLIDER", ["Damage done to target", "Adds vanilla damage to the target in percent. 100% is lethal."], [0, 1, 0.5, 2, true]]
+        ["SLIDER:PERCENT", ["Damage done to target", "Adds vanilla damage to the target in percent. 100% is lethal."], [0, 1, 0.5]]
     ],
     {
         params ["_results", "_unit"];
         _results params ["_giveAbility", "_incapType", "_timer", "_damage"];
 
         // Remove action regardless if new one is added or old one removed only
-        if (!isNil {_unit getVariable [QGVAR(hasDeathStare), nil]}) then {
+        if (!isNil {_unit getVariable QGVAR(hasDeathStare)}) then {
              [_unit, 1, ["ACE_SelfActions", QGVAR(deathstare)]] call ace_interact_menu_fnc_removeActionFromObject;
         };
 
+        // If remove
         if (_giveAbility isEqualTo 1) exitWith {
             _unit setVariable [QGVAR(hasDeathStare), nil, true];
             ["Removed death stare ability from unit"] call zen_common_fnc_showMessage;
         };
 
-        [_unit, 1, ["ACE_SelfActions"],
-            [
-                QGVAR(deathstare),
-                "Death Stare",
-                ICON_DEATH_STARE,
-                {
-                    params ["_target", "_player", "_args"];
-                    _args params ["_incapType", "_timer", "_damage"];
+        // Add action
+        ["zen_common_execute", [
+            ace_interact_menu_fnc_addActionToObject, [
+                _unit,
+                1,
+                ["ACE_SelfActions"],
+                [
+                    QGVAR(deathstare),
+                    "Death Stare",
+                    ICON_DEATH_STARE,
+                    {
+                        params ["_target", "_player", "_args"];
+                        _args params ["_incapType", "_timer", "_damage"];
 
-                    private _cursorTarget = cursorTarget;
+                        private _cursorTarget = cursorTarget;
 
-                    if !(alive _cursorTarget && {_cursorTarget isKindOf "CAManBase"}) exitWith {};
+                        // Target must be alive and a man
+                        if !(alive _cursorTarget && {_cursorTarget isKindOf "CAManBase"}) exitWith {};
 
-                    [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.2]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.3 *  _timer) - 3] call CBA_fnc_waitAndExecute;
-                    // Pain increased to 0.5
-                    [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.3]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.5 *  _timer) - 3] call CBA_fnc_waitAndExecute;
-                    // Pain increased to 1
-                    [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.5]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.8 *  _timer) - 3] call CBA_fnc_waitAndExecute;
+                        // If "lightning" type
+                        if (_incapType isEqualTo 0) exitWith {
+                            (getPos _cursorTarget) params ["_posX", "_posY"];
+                            private _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], [_posX, _posY, 0], [], 0, "CAN_COLLIDE"];
 
-                    [{(_this select 0) setDamage ((damage (_this select 0)) + (_this select 1))}, [_cursorTarget, _damage], (0.9 * _timer) - 3] call CBA_fnc_waitAndExecute;
+                            // Make the bolt go off and add damage to unit
+                            [{
+                                deleteVehicle (_this select 0);
+                                (_this select 1) setDamage ((damage (_this select 1)) + (_this select 2));
+                            }, [_lightning, _cursorTarget, _damage], 1] call CBA_fnc_waitAndExecute;
 
-                    switch (_incapType) do {
-                        //case 0: {[{["zen_common_execute", [ace_medical_status_fnc_setCardiacArrestState, [_this, true]], _this] call CBA_fnc_targetEvent}, _cursorTarget, _timer] call CBA_fnc_waitAndExecute};
-                        case 0: {[{["zen_common_execute", [ace_medical_status_fnc_setUnconsciousState, [_this, true]], _this] call CBA_fnc_targetEvent}, _cursorTarget, _timer] call CBA_fnc_waitAndExecute};
-                        default {};
-                    };
-                },
-                {true},
-                {},
-                [_incapType, _timer, _damage]
-            ] call ace_interact_menu_fnc_createAction
-        ] call ace_interact_menu_fnc_addActionToObject;
+                            (createvehicle ["LightningBolt", [_posX, _posY, 0], [], 0, "CAN_COLLIDE"]) setDamage 1;
+                        };
+
+                        [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.2]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.3 *  _timer) - 3] call CBA_fnc_waitAndExecute;
+                        // Pain increase to 0.5
+                        [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.3]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.5 *  _timer) - 3] call CBA_fnc_waitAndExecute;
+                        // Pain increase to 1
+                        [{["zen_common_execute", [ace_medical_fnc_adjustPainLevel, [_this, 0.5]], _this] call CBA_fnc_targetEvent}, _cursorTarget, (0.8 *  _timer) - 3] call CBA_fnc_waitAndExecute;
+
+                        [{(_this select 0) setDamage ((damage (_this select 0)) + (_this select 1))}, [_cursorTarget, _damage], (0.9 * _timer) - 3] call CBA_fnc_waitAndExecute;
+
+                        switch (_incapType) do {
+                            case 1: {[{["zen_common_execute", [ace_medical_status_fnc_setUnconsciousState, [_this, true]], _this] call CBA_fnc_targetEvent}, _cursorTarget, _timer] call CBA_fnc_waitAndExecute};
+                            default {};
+                        };
+                    },
+                    {true},
+                    {},
+                    [_incapType, _timer, _damage]
+                ] call ace_interact_menu_fnc_createAction
+            ]
+        ], _unit] call CBA_fnc_targetEvent;
 
         _unit setVariable [QGVAR(hasDeathStare), true, true];
 
@@ -86,4 +105,4 @@ if (!hasInterface) exitWith {};
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _unit] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+}, ICON_DEATH_STARE] call zen_custom_modules_fnc_register;

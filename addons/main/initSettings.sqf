@@ -20,9 +20,18 @@
 ] call CBA_fnc_addSetting;
 
 [
+    QGVAR(enableNoCuratorHint),
+    "CHECKBOX",
+    ["Enable no curator found hint", "Allows to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true,
+    false
+] call CBA_fnc_addSetting;
+
+[
     QGVAR(enableSnowScriptHint),
     "CHECKBOX",
-    ["Enable Snow Script missing addon hint", "Allows people to toggle the hint on or off."],
+    ["Enable Snow Script missing addon hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
     true,
     false
@@ -31,10 +40,52 @@
 [
     QGVAR(enableTFARHint),
     "CHECKBOX",
-    ["Enable TFAR missing addon hint", "Allows people to toggle the hint on or off."],
+    ["Enable TFAR addon missing hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
     true,
     false
+] call CBA_fnc_addSetting;
+
+[
+    QGVAR(enableJIP),
+    "CHECKBOX",
+    ["Enable JIP features", "Allows join-in-progress (JIP) functionality for some modules.\nIt requires a mission restart for it to be turned off."],
+    [COMPONENT_NAME, "Modules"],
+    false,
+    false,
+    {
+        // If setting is off, already added or no curator object, don't do anything
+        if (isNull (getAssignedCuratorLogic player)) exitWith {};
+
+        call FUNC(handleJIP);
+    }
+] call CBA_fnc_addSetting;
+
+[
+    QGVAR(enableMissionCounter),
+    "CHECKBOX",
+    ["Enable Mission Object Counter", "If enabled, all objects placed and deleted by the player's curator will be kept track of.\nIf turned off, it will remove everything related to the counter, but not resetting the counter in the process."],
+    [COMPONENT_NAME, "Modules"],
+    false,
+    false,
+    {
+        // If there is no curator object, don't do anything
+        if (isNull (getAssignedCuratorLogic player)) exitWith {};
+
+        // If setting is off and there is stuff still there, remove it
+        if (!GVAR(enableMissionCounter) && {!isNil QGVAR(curatorHandleIDs)}) exitWith {
+            GVAR(curatorHandleIDs) params ["_handleID1", "_handleID2", "_handleID3", "_handleID4"];
+
+            (getAssignedCuratorLogic player) removeEventHandler ["CuratorObjectDeleted", _handleID1];
+            (getAssignedCuratorLogic player) removeEventHandler ["CuratorObjectPlaced", _handleID2];
+            (getAssignedCuratorLogic player) removeEventHandler ["CuratorGroupPlaced", _handleID3];
+            (getAssignedCuratorLogic player) removeEventHandler ["CuratorPinged", _handleID4];
+
+            GVAR(curatorHandleIDs) = nil;
+        };
+
+        call FUNC(objectsCounterMissionEH);
+    }
 ] call CBA_fnc_addSetting;
 
 [
@@ -46,6 +97,8 @@
     false,
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+            GVAR(blacklist) = [];
+
             {
                 GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
             } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);

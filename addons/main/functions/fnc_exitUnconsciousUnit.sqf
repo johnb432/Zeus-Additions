@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * When pressing escape whilst remote controlling an unconscious unit, it will put you back into curator.
+ * When pressing ESCAPE whilst remote controlling an unconscious unit, it will put you back into curator.
  *
  * Arguments:
  * None
@@ -16,23 +16,27 @@
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
-
 if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWith {
+    // To exit the unit, the player must get to the pause menu
     GVAR(exitUnconsciousID) = [missionNamespace, "OnGameInterrupt", {
-        if (!isNil {bis_fnc_moduleRemoteControl_unit} && {bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false]}) then {
-            [{
-                !isNull (findDisplay 49)
-            }, {
-                // Close the pause menu
-                (findDisplay 49) closeDisplay 0;
+        if (isNil "bis_fnc_moduleRemoteControl_unit" || {!(bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false])}) exitWith {};
 
-                // Stop remote controlling unit
-                objNull remoteControl bis_fnc_moduleRemoteControl_unit;
-                bis_fnc_moduleRemoteControl_unit = nil;
+        [{
+            // Wait until the pause menus has been opened
+            !isNull (findDisplay IDD_INTERRUPT);
+        }, {
+            // Close the pause menu
+            (findDisplay IDD_INTERRUPT) closeDisplay IDC_CANCEL;
+
+            // Stop remote controlling unit
+            objNull remoteControl bis_fnc_moduleRemoteControl_unit;
+            bis_fnc_moduleRemoteControl_unit = nil;
+
+            // Open curator interface
+            {
                 openCuratorInterface;
-            }] call CBA_fnc_waitUntilAndExecute;
-        };
+            } call CBA_fnc_execNextFrame;
+        }] call CBA_fnc_waitUntilAndExecute;
     }] call BIS_fnc_addScriptedEventHandler;
 };
 

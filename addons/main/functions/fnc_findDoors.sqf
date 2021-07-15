@@ -18,20 +18,20 @@
 
 params ["_building"];
 
-private _hashMapSelectionNames = [];
+private _selectionNames = [];
 
 // Find doors
 {
-    if (_x find "door" isNotEqualTo -1 && {_x find "handle" isEqualTo -1} && {_x find "doorlocks" isEqualTo -1}) then {
-        _hashMapSelectionNames pushBack (toLower _x);
+    if (((_x find "door") isNotEqualTo -1) && {(_x find "handle") isEqualTo -1} && {(_x find "doorlocks") isEqualTo -1}) then {
+        _selectionNames pushBack (toLower _x);
     };
 } forEach (selectionNames _building);
 
 // If no doors found, exit
-if (_hashMapSelectionNames isEqualTo []) exitWith {
+if (_selectionNames isEqualTo []) exitWith {
     ["No doors were found for %1!", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
     nil;
 };
 
-_hashMapSelectionNames sort true;
-_hashMapSelectionNames;
+_selectionNames sort true;
+_selectionNames;

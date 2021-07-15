@@ -1,5 +1,4 @@
 #define COMPONENT main
-#define COMPONENT_BEAUTIFIED Main
 #include "\x\zeus_additions\addons\main\script_mod.hpp"
 
 // #define DEBUG_MODE_FULL

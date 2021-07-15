@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Adds a module that allows you to open the medical menu of a unit.
+ * Creates a module that allows the Zeus to switch places with the selected AI unit.
  *
  * Arguments:
  * None
@@ -11,12 +11,12 @@
  * None
  *
  * Example:
- * call zeus_additions_main_fnc_openMedicalMenu;
+ * call zeus_additions_main_fnc_remoteControl;
  *
  * Public: No
  */
 
-["Zeus Additions - Medical", "Open ACE Medical Menu", {
+["Zeus Additions - AI", "Remote Control (Switch Unit)", {
     params ["", "_unit"];
 
     // If opening on a vehicle
@@ -27,5 +27,5 @@
          playSound "FD_Start_F";
     };
 
-    _unit call FUNC(openMedicalMenuContextMenu);
-}, ICON_MEDICAL] call zen_custom_modules_fnc_register;
+    _unit call FUNC(remoteControlContextMenu);
+}, ICON_REMOTECONTROL] call zen_custom_modules_fnc_register;

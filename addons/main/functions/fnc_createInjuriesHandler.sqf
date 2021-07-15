@@ -16,7 +16,7 @@
  * Example:
  * [player,
  *    [0, 4, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false],
- * 1] call zeus_additions_main_fnc_woundsHandler
+ * 1] call zeus_additions_main_fnc_createInjuriesHandler
  * --> 4 Minor avulsions to the Head
  *
  * Public: No
@@ -36,9 +36,9 @@ private _injuryPain = getNumber(configFile >> "ACE_Medical_Injuries" >> "wounds"
 private _updateDamageEffects = false;
 private _painLevel = 0;
 private _critialDamage = false;
-private _bodyPartDamage = _unit getVariable ["ace_medical_bodyPartDamage", [0,0,0,0,0,0]];
+private _bodyPartDamage = _unit getVariable ["ace_medical_bodyPartDamage", [0, 0, 0, 0, 0, 0]];
 private _bodyPartVisParams = [_unit, false, false, false, false]; // params array for EFUNC(medical_engine,updateBodyPartVisuals);
-private _fractures = _unit getVariable ["ace_medical_fractures", [0,0,0,0,0,0]];
+private _fractures = _unit getVariable ["ace_medical_fractures", [0, 0, 0, 0, 0, 0]];
 
 // For every bunch of 3 arguments
 for "_i" from 0 to (count _args - 3) step 3 do {
@@ -52,7 +52,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         private _woundDamage = 0.25 + (_woundSize * 0.25); // wound category (minor [0.25-0.5], medium [0.5-0.75], large [0.75+])
 
         _bodyPartDamage set [_bodyPartNToAdd, (_bodyPartDamage select _bodyPartNToAdd) + _woundDamage];
-        _bodyPartVisParams set [[1,2,3,3,4,4] select _bodyPartNToAdd, true]; // Mark the body part index needs updating
+        _bodyPartVisParams set [[1, 2, 3, 3, 4, 4] select _bodyPartNToAdd, true]; // Mark the body part index needs updating
 
         // Damage to limbs/head is scaled higher than torso by engine
         // Anything above this value is guaranteed worst wound possible
@@ -82,7 +82,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         private _createNewWound = true;
         {
             _x params ["_classID", "_bodyPartN", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
-            
+
             // penetrating body damage is handled differently
             if ((_classComplex isEqualTo _classID) && {_bodyPartNToAdd isEqualTo _bodyPartN} && {(_bodyPartNToAdd isNotEqualTo 1) || {(_woundDamage < ace_medical_const_penetrationThreshold) isEqualTo (_oldDamage < ace_medical_const_penetrationThreshold)}}) exitWith { // don't want/care limping
                 private _newAmountOf = _oldAmountOf + _woundNumber;
@@ -106,12 +106,14 @@ for "_i" from 0 to (count _args - 3) step 3 do {
     };
 };
 
+// Add fractures to unit if necessary
 if (_updateDamageEffects) then {
     _unit setVariable ["ace_medical_fractures", _fractures, true];
 
     ["zen_common_execute", [ace_medical_engine_fnc_updateDamageEffects, [_unit]], _unit] call CBA_fnc_targetEvent;
 };
 
+// Update damage and wounds
 _unit setVariable ["ace_medical_openWounds", _openWounds, true];
 _unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
 
