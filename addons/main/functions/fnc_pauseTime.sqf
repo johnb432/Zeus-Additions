@@ -16,11 +16,9 @@
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
-
-["Zeus Additions - Utility", "[WIP] Pause time", {
-    ["[WIP] Pause time", [
-        ["TOOLBOX:ENABLED", ["Pause time", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], false]
+["Zeus Additions - Utility", "Pause Time", {
+    ["Pause time", [
+        ["TOOLBOX:ENABLED", ["Pause Time", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], false]
     ],
     {
         params ["_results"];
@@ -29,45 +27,56 @@ if (!hasInterface) exitWith {};
         private _string = "Time paused";
 
         if (_setPaused) then {
-            if (isNil QGVAR(setTimeAcc)) then {
+            if (isNil {missionNamespace getVariable QGVAR(setTimeAcc)}) then {
                 // Get old time multiplier
                 private _timeMult = timeMultiplier;
                 0.1 remoteExecCall ["setTimeMultiplier", 2];
 
-                [{
-                    // Wait for new time multiplier to be active
-                    timeMultiplier isNotEqualTo _this
-                }, {
-                    GVAR(setTimeAcc) = [{
-                        params ["_args", "_handleID"];
-                        _args params ["_startHours", "_startMinutes", "_startSeconds"];
+                // Do on server in case client disconnects
+                ["zen_common_execute", [
+                    CBA_fnc_waitUntilAndExecute, [
+                        {
+                            // Wait for new time multiplier to be active
+                            timeMultiplier isNotEqualTo _this;
+                        }, {
+                            missionNamespace setVariable [QGVAR(setTimeAcc),
+                                [{
+                                    params ["_startSeconds", "_handleID"];
 
-                        if (timeMultiplier > 0.11) exitWith {
-                            [_handleID] call CBA_fnc_removePerFrameHandler;
-                            ["Removed time pause because time acceleration has been changed."] call zen_common_fnc_showMessage;
-                            GVAR(setTimeAcc) = nil;
-                        };
+                                    // If time acceleration has been changed, stop
+                                    if (timeMultiplier > 0.11) exitWith {
+                                        _handleID call CBA_fnc_removePerFrameHandler;
 
-                        (([daytime] call BIS_fnc_timeToString) splitString ":") params ["_currentHours", "_currentMinutes", "_currentSeconds"];
+                                        missionNamespace setVariable [QGVAR(setTimeAcc), nil, true];
 
-                        private _deltaSec = (parseNumber _currentSeconds) - (parseNumber _startSeconds);
+                                        ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Unpaused time because time acceleration has been changed."]], allCurators] call CBA_fnc_targetEvent;
+                                    };
 
-                        if ((((parseNumber _currentHours) - (parseNumber _startHours)) > 0 || {((parseNumber _currentMinutes) - (parseNumber _startMinutes)) > 0}) && {_deltaSec < 0}) then {
-                            _deltaSec = _deltaSec + 60;
-                        };
+                                    // Looking just at the seconds is enough
+                                    private _deltaSec = (parseNumber ((([daytime] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
 
-                        (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
-                    }, 100, ([daytime] call BIS_fnc_timeToString) splitString ":"] call CBA_fnc_addPerFrameHandler;
-                }, _timeMult, 10, {}] call CBA_fnc_waitUntilAndExecute;
+                                    if (_deltaSec < 0) then {
+                                        _deltaSec = _deltaSec + 60;
+                                    };
+
+                                    (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
+                                }, 100, (([daytime] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler, true
+                            ];
+                        }, _timeMult, 10
+                    ]
+                ]] call CBA_fnc_serverEvent;
             } else {
                 _string = "Time already paused!";
                 playSound "FD_Start_F";
             };
         } else {
-            if (!isNil QGVAR(setTimeAcc)) then {
-                [GVAR(setTimeAcc)] call CBA_fnc_removePerFrameHandler;
+            if (!isNil {missionNamespace getVariable QGVAR(setTimeAcc)}) then {
+                (missionNamespace getVariable QGVAR(setTimeAcc)) call CBA_fnc_removePerFrameHandler;
+
                 1 remoteExecCall ["setTimeMultiplier", 2];
-                GVAR(setTimeAcc) = nil;
+
+                missionNamespace setVariable [QGVAR(setTimeAcc), nil, true];
+
                 _string = "Time resumed back to normal (1x)";
             } else {
                 _string = "Time already normal (1x)!";
@@ -79,5 +88,5 @@ if (!hasInterface) exitWith {};
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+    }] call zen_dialog_fnc_create;
+}, ICON_TIME] call zen_custom_modules_fnc_register;

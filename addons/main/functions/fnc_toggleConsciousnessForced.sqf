@@ -11,19 +11,20 @@
  * None
  *
  * Example:
- * call zeus_additions_main_fnc_forceWakeUp;
+ * call zeus_additions_main_fnc_toggleConsciousnessForced;
  *
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
-
-["Zeus Additions - Medical", "Force consciousness change", {
+["Zeus Additions - Medical", "Toggle Consciousness (forced)", {
     params ["", "_unit"];
 
-    if (isNull _unit) exitWith {
-        ["Select a unit!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+    // If opening on a vehicle
+    _unit = effectiveCommander _unit;
+
+    if !(_unit isKindOf "CAManBase") exitWith {
+         ["Select a unit!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
     };
 
     if (!alive _unit) exitWith {
@@ -31,9 +32,11 @@ if (!hasInterface) exitWith {};
         playSound "FD_Start_F";
     };
 
+    // Toggle consciousness
     ["zen_common_execute", [ace_medical_status_fnc_setUnconsciousState, [_unit, !(_unit getVariable ["ACE_isUnconscious", false])]], _unit] call CBA_fnc_targetEvent;
 
+    // Notify the player if affected unit is a player; for fairness reasons
     if (isPlayer _unit) then {
         ["zen_common_hint", ["Zeus has toggled your consciousness using a module."], _unit] call CBA_fnc_targetEvent;
     };
-}] call zen_custom_modules_fnc_register;
+}, ICON_UNCONSCIOUS] call zen_custom_modules_fnc_register;

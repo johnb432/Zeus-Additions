@@ -1,7 +1,11 @@
 #include "script_component.hpp"
 
-// Takes the FK blacklist if enabled and present
+if (!hasInterface) exitWith {};
+
+// Take the FK blacklist if enabled and present
 if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+    GVAR(blacklist) = [];
+
     {
         GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
     } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);
@@ -41,7 +45,7 @@ private _temp = [GVAR(545x39),GVAR(762x39),GVAR(762x54R),GVAR(oddBLU),GVAR(Stana
 
 GVAR(weaponsTotal) = [];
 
-private _temp2 = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
+_temp = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
 
 {
     GVAR(magsTotal) pushBack ([_temp select _forEachIndex, parseSimpleArray _x] select (isNil QUOTE(_x)));
@@ -49,23 +53,58 @@ private _temp2 = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
 
 GVAR(weaponsTotal) pushBack ["UK3CB_BAF_Javelin_CLU"];
 
-call FUNC(ammoResupply);
+call FUNC(addACEDragAndCarry);
 call FUNC(behaviourAIModules);
+call FUNC(changeChannelVisibility);
+call FUNC(changeGrassRender);
+call FUNC(changeRadioRange);
+call FUNC(configureDoors);
 call FUNC(createInjuries);
+call FUNC(createResupply);
 call FUNC(deathStare);
-call FUNC(disableChannels);
+call FUNC(deleteObjectForced);
 call FUNC(dogAttack);
 call FUNC(exitUnconsciousUnit);
-call FUNC(forceDelete);
-call FUNC(forceWakeUp);
-call FUNC(gearScriptModules);
-call FUNC(grassRender);
-call FUNC(lockDoors);
-call FUNC(makeInvincible);
-call FUNC(medicalResupply);
-call FUNC(moduleMedicalMenu);
+call FUNC(gearScript);
+call FUNC(missionEndModifier);
+call FUNC(objectsCounterMission);
+call FUNC(openMedicalMenu);
 call FUNC(pauseTime);
-call FUNC(preventBlowUpVehicle);
-call FUNC(radioDistance);
-//call FUNC(snowScript);
+call FUNC(placeMapMarker);
+call FUNC(preventExplodingVehicle);
+call FUNC(remoteControl);
+call FUNC(snowScript);
+call FUNC(toggleConsciousnessForced);
 call FUNC(unitParadrop);
+
+[{
+    // Wait for curator object
+    !isNull (getAssignedCuratorLogic player);
+}, {
+    // Add the JIP function
+    call FUNC(handleJIP);
+
+    // Add mission object counter
+    call FUNC(objectsCounterMissionEH);
+}, [], 30, {
+    // Hint only if setting is enabled
+    if (!GVAR(enableNoCuratorHint)) exitWith {};
+
+    ["[Zeus Additions]: No Curator Object was found.", false, 10, 1] call ace_common_fnc_displayText;
+}] call CBA_fnc_waitUntilAndExecute;
+
+// Hint what is missing
+private _coreCUPLHint = GVAR(enableSnowScriptHint) && {!isClass (configFile >> "CfgPatches" >> "CUP_Worlds")};
+private _TFARHint = GVAR(enableTFARHint) && {!isClass (configFile >> "CfgPatches" >> "tfar_core")};
+
+if (_coreCUPLHint || {_TFARHint}) then {
+    systemChat "[Zeus Additions]:";
+
+    if (_coreCUPLHint) then {
+        systemChat "The snow script isn't available because CUP Core isn't loaded.";
+    };
+
+    if (_TFARHint) then {
+        systemChat "The radio range script isn't available because TFAR isn't loaded.";
+    };
+};

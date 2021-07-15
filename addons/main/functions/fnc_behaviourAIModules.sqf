@@ -16,56 +16,46 @@
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
+["Zeus Additions - AI", "Change AI Dismount Behaviour", {
+    params ["", "_object"];
 
-["Zeus Additions - AI", "[WIP] Change AI dismounting behaviour", {
-    params ["", "_unit"];
-
-    if (isNull _unit) exitWith {
+    if (!(_object isKindOf "AllVehicles") || {isNull (driver _object)}) exitWith {
         ["Select a vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
     ["Change AI dismounting behaviour", [
-        ["TOOLBOX:ENABLED", ["Passenger dismounting in combat", "Allow passengers to dismount while in combat."], false],
-        ["TOOLBOX:ENABLED", ["Crew dismounting in combat", "Allow crews to dismount while in combat."], false],
-        ["TOOLBOX:ENABLED", ["Crew staying in immobile vehicles", "Allow crews to stay in immobile vehicles."], false]//,
-        //["TOOLBOX:ENABLED", ["Force crew to stay in immobile vehicles", "Setting above must be turned on aswell to use this."], false]
+        ["TOOLBOX:ENABLED", ["Passenger dismount in combat", "Allow passengers to dismount while in combat."], false],
+        ["TOOLBOX:ENABLED", ["Crew dismount in combat", "Allow crews to dismount while in combat."], false],
+        ["TOOLBOX:ENABLED", ["Crew stay in immobile vehicles", "Allow crews to stay in immobile vehicles."], false]
     ],
     {
-        params ["_results", "_unit"];
-        _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew"/*, "_forceStayCrew"*/];
-        private _vehicle = vehicle _unit;
+        params ["_results", "_object"];
+        _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew"];
 
-        _vehicle setUnloadInCombat [_dismountPassengers, _dismountCrew];
-        _vehicle allowCrewInImmobile _stayCrew;
+        _object setUnloadInCombat [_dismountPassengers, _dismountCrew];
+        _object allowCrewInImmobile _stayCrew;
 
-        // If they are forced to stay mounted, disable the "FSM" feature
-        /*
-        {
-            _x enableAIFeature ["FSM", !_forceStayCrew];
-        } forEach (crew _vehicle);
-        */
         ["Changed dismount behaviour on vehicle"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+    }, _object] call zen_dialog_fnc_create;
+}, ICON_TRUCK] call zen_custom_modules_fnc_register;
 
-["Zeus Additions - AI", "[WIP] Change AI mine detecting behaviour", {
+["Zeus Additions - AI", "[WIP] Change AI Mine Detecting Behaviour", {
     params ["", "_unit"];
 
-    ["AI minedetecting capabilities (command doesn't seem to work though)", [
-        ["SIDES", ["AI selected", "Select AI from the list to change mine detection capabilities."], east],
+    ["[WIP] Change AI Mine Detecting Behaviour (broken?)", [
+        ["SIDES", ["AI selected", "Select AI from the list to change mine detection capabilities."], []],
         ["TOOLBOX:YESNO", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false],
-        ["TOOLBOX:ENABLED", ["Allow AI to detect mines", "You can either disable or reenable mine detection."], false]
+        ["TOOLBOX:YESNO", ["Allow AI to detect mines", "You can either disable or reenable mine detection."], false]
     ],
     {
         params ["_results", "_unit"];
         _results params ["_side", "_doGroup", "_allowMinedetection"];
 
-        if (_side isEqualTo "") exitWith {
+        if (_side isEqualTo "" && {isNull _unit}) exitWith {
             ["Select a side!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
@@ -92,10 +82,11 @@ if (!hasInterface) exitWith {};
             };
 
             [_function, [_unit, "MINEDETECTION"], _unit] call CBA_fnc_targetEvent;
+
             ["Changed mine detecting behaviour on unit"] call zen_common_fnc_showMessage;
         };
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _unit] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+}, ICON_EXPLOSION] call zen_custom_modules_fnc_register;

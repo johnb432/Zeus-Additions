@@ -11,14 +11,12 @@
  * None
  *
  * Example:
- * call zeus_additions_main_fnc_forceDelete;
+ * call zeus_additions_main_fnc_deleteObjectForced;
  *
  * Public: No
  */
 
-if (!hasInterface) exitWith {};
-
-["Zeus Additions - Utility", "[WIP] Force delete object", {
+["Zeus Additions - Utility", "Delete Object (forced)", {
     params ["", "_object"];
 
     if (isPlayer _object) exitWith {
@@ -35,4 +33,4 @@ if (!hasInterface) exitWith {};
     deleteVehicle (_object);
 
     ["Deleted %1", getText (configOf _object >> "displayName")] call zen_common_fnc_showMessage;
-}] call zen_custom_modules_fnc_register;
+}, ICON_DELETE] call zen_custom_modules_fnc_register;

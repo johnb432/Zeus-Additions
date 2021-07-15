@@ -22,7 +22,6 @@ class CfgPatches {
 class CfgMods {
     class PREFIX {
         name = "Zeus Additions";
-        hideName = 1;
         actionName = "GitHub";
         action = "https://github.com/johnb432/Zeus-Additions";
         description = "Zeus Additions";

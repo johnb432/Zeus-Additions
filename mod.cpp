@@ -1,6 +1,9 @@
 name = "Zeus Additions";
-description = "A small mod that adds Zeus modules, made by johnb43";
-tooltip = "Zeus Additions";
-tooltipOwned = "Zeus Additions";
-overview = "";
 author = "johnb43";
+tooltipOwned = "Zeus Additions";
+hideName = 0;
+hidePicture = 0;
+actionName = "Github";
+action = "https://github.com/johnb432/Zeus-Additions";
+description = "A small mod that adds Zeus modules, made by johnb43.";
+overview = "A small mod that adds Zeus modules, made by johnb43.";

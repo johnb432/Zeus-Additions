@@ -1,23 +1,54 @@
+# Changelog for Zeus Additions 14.7.2021
+
+1.6.2.0
+- Added hemtt support.
+- Changed signature (due to thing above).
+- Updated to support ZEN 1.11.0.
+- Added "Add ACE Drag and Carry Options" module which allows any object apart units to be draggable and carriable.
+- Added "Place Map Marker" module which allows easier placements of player markers (and markers from Metis Markers, e.g.).
+- Added "Remote Control (Switch Unit)" module which switches the player with the selected AI unit (not the same as remote controlling!). Context menu option exists too (under ZEN's "Remote Control"). To return back to original unit, get to the pause menu by pressing ESCAPE.
+- Added "Show Mission Object Counter" which tracks what you as a curator have placed in a mission, if enabled. Results are put into the RPT log.
+- Added icons to modules.
+- Added custom channel support for the "Change Channel Visibility" module and self option.
+- Added self option to the module "Change TFAR Radio Range" module and upped limit to 50x (before 10x).
+- Added "Spawn Ammo Box" options to both "Spawn Ammo Resupply for Unit" and "Spawn ACE Medical Resupply" modules.
+- Added "Lightning" option to "Death stare" module.
+- Added "Turn on pathing", "Name" and peaceful options to "Dog attack" module. Do not select any to be attacked side to make dog peaceful.
+- Added "Import" and "Export" options to the "Loadout: Presets" module.
+- Added "Debrief text" option to the "End mission with player modifier" module.
+- Fixed "Prevent Vehicle from Exploding" module (it would didn't reset hull damage properly).
+- Fixed "When tabbing out whilst having the snow script applied, it will lose the wind effect." issue with snow script.
+- Reenabled and fixed snow script.
+- Removed "Set player modifier at scenario end" module.
+- JIP support for modules does not require for the mod to be on the server anymore. In fact, JIP modules are designed *not* to be on the server.
+- General improvements.
+
 # Changelog for Zeus Additions 26.5.2021
-- Added AI pathing enabling & disabling in context menu
-- Fixed bug with context menu related to open medical menu
+
+1.6.1.0
+- Added AI pathing enabling & disabling in context menu.
+- Fixed bug with context menu related to open medical menu.
 
 # Changelog for Zeus Additions 9.5.2021
+
+1.6.0.0
 - Added "Open Medical Menu" module + context menu action.
 - Added option to put magazine resupply directly in an inventory.
 - Added more options to mission end player modifier.
-- FK Blacklist detection works now.
+- FK blacklist detection works now.
 - Disabled snow script for now. It doesn't work anymore and I have to figure out why.
 - General improvements.
 
 # Changelog for Zeus Additions 4.4.2021
 
+1.5.0.0
 - Improved "Lock building doors" module.
 - Improved "Paradrop units" module selection.
 - General improvements.
 
 # Changelog for Zeus Additions 28.3.2021
 
+1.4.0.0
 - Added "Force delete object" module that *should* be able to force delete objects.
 - Added "Pause time" module that allows for a "pausing" of time. It sets time acceleration to 0.1 and revert time every 100s by 10s, making the time effective stand still.
 - Added "Toggle Snow Script" module that makes snow fall.
@@ -26,11 +57,13 @@
 
 # Changelog for Zeus Additions 15.3.2021
 
+1.3.0.0
 - Added "Disable channels" module that can disable various map marking and VON channels
 - Added a functionality that allows you to exit unconscious remote controlled units when in Zeus. This fixes the issue where you can't get out of unconscious units when your Zeus key bound to a double tap. Can be enabled in CBA settings, default is off.
 
 # Changelog for Zeus Additions 13.3.2021
 
+1.2.2.0
 - Changed loadout system to have a preset system.
 - Changed lock building module (should work better).
 - Added 2x AI behaviour changing modules (vehicle dismounting and mine detecting)
@@ -38,28 +71,34 @@
 
 # Changelog for Zeus Additions 7.3.2021
 
+1.2.1.0
 - Minor code improvements.
 
 # Changelog for Zeus Additions 27.2.2021
 
+1.2.0.0
 - Actually added the invincibility modules (never called the function to make the modules...).
-- Added "Lock doors" module (see HOW TO below).
+- Added "Lock doors" module.
 
 # Changelog for Zeus Additions 23.2.2021
 
-- Added "TFAR Range multiplier" module (see HOW TO below).
-- Added "Invincibility at end of mission" modules (see HOW TO below).
+1.1.0.0
+- Added "TFAR Range multiplier" module.
+- Added "Invincibility at end of mission" modules.
 - General simplifications and improvements.
 
 # Changelog for Zeus Additions 14.2.2021
 
-- Added "Force consciousness change" module: Forces a unit to go unconscious or to wake up, depending on their previous state. This does not take stable vitals into account. (see HOW TO below)
-- Added "Change grass rendering" module: It allows you to change grass rendering on selected sides/groups/players. (see HOW TO below)
+1.0.2.0
+- Added "Force consciousness change" module: Forces a unit to go unconscious or to wake up, depending on their previous state. This does not take stable vitals into account.
+- Added "Change grass rendering" module: It allows you to change grass rendering on selected sides/groups/players.
 
 # Changelog for Zeus Additions 11.2.2021
 
+1.0.1.0
 - Fixed and updated gear script modules to work better.
 
 # Changelog for Zeus Additions 7.2.2021
 
+1.0.0.0
 - Initial release.
