@@ -15,7 +15,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] [b]Configure Doors:[/b] Allows the Zeus to set doors on a building to be open, locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
 [*] [b]Create ACE Injuries:[/b] Allows the Zeus to create injuries on AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 [*] [b]Create Random ACE Injuries:[/b] Creates random wounds, taking a damage value and type you are able to set. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
-[*] [b]Delete Object (forced):[/b] Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object. This module will no longer be needed after the 2.06 update.
+[*] [b]Delete Object (forced):[/b] Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 [*] [b]End Mission with Player Modifier:[/b] Ends the mission with all players except Zeuses having the chosen modifier applied to them.
 [*] [b]Give Death Stare Ability:[/b] If used this module grants the chosen unit to have a "death stare". The unit uses an ACE self-interaction whilst looking at the desired target. The result of the action will the inducing pain the target and doing some sort of harm, depending on the settings.
 [*] [b]Loadout: Apply to group:[/b] Applies a predetermined loadout to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role as it isn't very precise).
@@ -34,6 +34,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] [b]Toggle Consciousness (forced):[/b] Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
 [*] [b]Toggle Snow Script:[/b] Allows the Zeus to apply a snow script to players.
 [/list]
+
 [b]Numerous CBA settings to customize modules:[/b] To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
 Inputs are arrays of strings.
@@ -48,10 +49,11 @@ Inputs are arrays of strings.
 [*] [b]Enable JIP features:[/b] If enabled, it will add JIP functionality to the server, if the player is a curator.
 [*] [b]Enable Mission Object Counter:[/b] This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.
 [/list]
+
 [h2]CREDITS[/h2]
 
-Mod by johnb43<br/>
-[GitHub](https://github.com/johnb432/Zeus-Additions)
+Mod by johnb43
+[url=https://github.com/johnb432/Zeus-Additions]GitHub[/url]
 
 Gearscript originally made by cineafx, revamped by johnb43.
 Snow script made by JW & AZCoder, reworked by johnb43.
@@ -64,7 +66,7 @@ See LICENSE
 
 [h2]How to create PBOs[/h2]
 [list]
-[*] Download hemtt from [here](https://brettmayson.github.io/HEMTT/#/)
+[*] Download hemtt from [url=https://brettmayson.github.io/HEMTT/#/]here[/url]
 [*] Place hemtt.exe inside the project folder (same level as addons)
 [*] Open command terminal, navigate to said folder (Windows: cd 'insert path')
 [*] Type "hemtt build --release"
