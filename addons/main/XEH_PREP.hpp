@@ -25,6 +25,7 @@ PREP(placeMapMarker);
 PREP(preventExplodingVehicle);
 PREP(remoteControl);
 PREP(remoteControlContextMenu);
+PREP(removeGrenades);
 PREP(snowScript);
 PREP(toggleConsciousnessForced);
 PREP(unitParadrop);

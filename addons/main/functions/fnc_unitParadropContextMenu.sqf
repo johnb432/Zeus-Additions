@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Adds context menu for paradrop selection
+ * Adds context menu for paradrop selection.
  *
  * Arguments:
  * 0: Objects <ARRAY>

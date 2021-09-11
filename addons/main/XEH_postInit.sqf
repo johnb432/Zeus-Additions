@@ -73,6 +73,7 @@ call FUNC(pauseTime);
 call FUNC(placeMapMarker);
 call FUNC(preventExplodingVehicle);
 call FUNC(remoteControl);
+call FUNC(removeGrenades);
 call FUNC(snowScript);
 call FUNC(toggleConsciousnessForced);
 call FUNC(unitParadrop);

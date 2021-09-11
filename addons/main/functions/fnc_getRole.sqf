@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Find a selected unit's role
+ * Find a selected unit's role.
  *
  * Arguments:
  * 0: Unit <OBJECT>

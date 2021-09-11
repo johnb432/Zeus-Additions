@@ -3,7 +3,7 @@
 /*
  * Author: Glowbal, commy2, johnb43
  * Handling of the open wounds & injuries upon the handleDamage eventhandler.
- * Based off of ACE3's ace_medical_damage_fnc_woundsHandlerSQF
+ * Based off of ACE3's ace_medical_damage_fnc_woundsHandlerSQF.
  *
  * Arguments:
  * 0: Unit <OBJECT>

@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43, cineafx
- * cineafx's gearscript updated and modified by johnb43
+ * cineafx's gearscript updated and modified by johnb43.
  *
  * Arguments:
  * None

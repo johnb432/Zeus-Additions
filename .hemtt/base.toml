@@ -9,5 +9,5 @@ files = [
     "LICENSE",
     "README.md"
 ]
-folder_optionals = true
+folder_optionals = false
 sig_version = 3

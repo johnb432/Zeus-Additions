@@ -27,6 +27,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] [b]Place Map Markers:[/b] Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
 [*] [b]Paradrop Units:[/b] Allows the Zeus to paradrop units and vehicles.
 [*] [b]Prevent Vehicle from Exploding:[/b] This module makes vehicles not able to blow up, but still allows them to take damage.
+[*] [b]Remove Grenades from AI:[/b] This module removes all types of grenade from the selected AI.
 [*] [b]Show Mission Object Counter:[/b] This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
 [*] [b]Spawn ACE Medical Resupply:[/b] Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 [*] [b]Spawn Ammo Resupply:[/b] Spawns a magazine resupply using lists predefined in the CBA settings. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
@@ -66,8 +67,7 @@ See LICENSE
 
 [h2]How to create PBOs[/h2]
 [list]
-[*] Download hemtt from [url=https://brettmayson.github.io/HEMTT/#/]here[/url]
-[*] Place hemtt.exe inside the project folder (same level as addons)
+[*] Download and install hemtt from [here](https://brettmayson.github.io/HEMTT/#/)
 [*] Open command terminal, navigate to said folder (Windows: cd 'insert path')
-[*] Type "hemtt build --release"
+[*] Type "hemtt build" for pbo, "hemtt build --release" for entire release
 [/list]

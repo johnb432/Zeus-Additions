@@ -53,9 +53,9 @@
     ],
     {
         params ["_results", "_unit"];
-        _results params ["_side", "_doGroup", "_allowMinedetection"];
+        _results params ["_sides", "_doGroup", "_allowMinedetection"];
 
-        if (_side isEqualTo "" && {isNull _unit}) exitWith {
+        if (_sides isEqualTo [] && {isNull _unit}) exitWith {
             ["Select a side!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
@@ -64,10 +64,12 @@
 
         if (isNull _unit) then {
             {
-                if (!isPlayer _x) then {
-                    [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
-                };
-            } forEach (units _side);
+                {
+                    if (!isPlayer _x) then {
+                        [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
+                    };
+                } forEach (units _x);
+            } forEach _sides;
 
             ["Changed mine detecting behaviour"] call zen_common_fnc_showMessage;
         } else {
@@ -81,9 +83,13 @@
                 ["Changed mine detecting behaviour on group"] call zen_common_fnc_showMessage;
             };
 
-            [_function, [_unit, "MINEDETECTION"], _unit] call CBA_fnc_targetEvent;
-
-            ["Changed mine detecting behaviour on unit"] call zen_common_fnc_showMessage;
+            if (!isPlayer _unit) then {
+                [_function, [_unit, "MINEDETECTION"], _unit] call CBA_fnc_targetEvent;
+                ["Changed mine detecting behaviour on unit"] call zen_common_fnc_showMessage;
+            } else {
+                ["Select an AI unit!"] call zen_common_fnc_showMessage;
+                playSound "FD_Start_F";
+            };
         };
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;

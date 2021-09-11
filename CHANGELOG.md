@@ -1,3 +1,10 @@
+# Changelog for Zeus Additions 11.9.2021
+
+1.6.2.1
+- Fixed and tweaked "Configure Doors" module.
+- Added "Remove Grenades from AI" module which removes all types of grenades from AI units.
+- Fixed a part of the "Change AI Mine Detecting Behaviour" module (but it still probably does nothing).
+
 # Changelog for Zeus Additions 14.7.2021
 
 1.6.2.0

@@ -19,6 +19,11 @@
 ["Zeus Additions - Utility", "Delete Object (forced)", {
     params ["", "_object"];
 
+    if (isNull _object) exitWith {
+         ["Select an object!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
+    };
+
     if (isPlayer _object) exitWith {
         ["You can't delete players!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

@@ -5,10 +5,10 @@
  * Finds doors of a building.
  *
  * Arguments:
- * None
+ * 0: Building <OBJECT>
  *
  * Return Value:
- * None
+ * Selection names of doors <ARRAY>
  *
  * Example:
  * call zeus_additions_main_fnc_findDoors;
