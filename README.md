@@ -15,7 +15,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Configure Doors:** Allows the Zeus to set doors on a building to be open, locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
 * **Create ACE Injuries:** Allows the Zeus to create injuries on AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Create Random ACE Injuries:** Creates random wounds, taking a damage value and type you are able to set. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
-* **Delete Object (forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object. This module will no longer be needed after the 2.06 update.
+* **Delete Object (forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 * **End Mission with Player Modifier:** Ends the mission with all players except Zeuses having the chosen modifier applied to them.
 * **Give Death Stare Ability:** If used this module grants the chosen unit to have a "death stare". The unit uses an ACE self-interaction whilst looking at the desired target. The result of the action will the inducing pain the target and doing some sort of harm, depending on the settings.
 * **Loadout: Apply to group:** Applies a predetermined loadout to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role as it isn't very precise).
@@ -25,7 +25,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Open ACE Medical Menu:** Allows the Zeus to open a unit's medical menu.
 * **Pause Time:** Allows the Zeus to nearly stop time. It sets time acceleration to a minimum and reverts time every 100 seconds.
 * **Place Map Markers:** Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
-* **Paradrop Units:** Allows the Zeus to paradrop units and vehicles.
+* **Paradrop Units:** Allows the Zeus to paradrop units, vehicles and boxes.
 * **Prevent Vehicle from Exploding:** This module makes vehicles not able to blow up, but still allows them to take damage.
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
 * **Show Mission Object Counter:** This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
@@ -53,8 +53,9 @@ Inputs are arrays of strings.
 Mod by johnb43<br/>
 [GitHub](https://github.com/johnb432/Zeus-Additions)
 
-Gearscript originally made by cineafx, revamped by johnb43.
+Gear script originally made by cineafx, revamped by johnb43.
 Snow script made by JW & AZCoder, reworked by johnb43.
+Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to sh4rdknight for enduring testing sessions.
 
@@ -64,6 +65,6 @@ See LICENSE
 
 <h2>How to create PBOs</h2>
 
-* Download and install hemtt from [here](https://brettmayson.github.io/HEMTT/#/)
+* Download and install hemtt from [here](https://github.com/BrettMayson/HEMTT)
 * Open command terminal, navigate to said folder (Windows: cd 'insert path')
 * Type "hemtt build" for pbo, "hemtt build --release" for entire release

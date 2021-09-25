@@ -66,7 +66,7 @@ if (!isClass (configFile >> "CfgPatches" >> "tfar_core")) exitWith {};
 
         // Handle JIP
         if (_doJIP) then {
-            if (missionNamespace getVariable [QGVAR(handleServerJIP), false]) then {
+            if (GETMVAR(QGVAR(handleServerJIP),false)) then {
                 GVAR(radioSettingsJIP) = [_multiplier, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(radioSettingsJIP);
             } else {

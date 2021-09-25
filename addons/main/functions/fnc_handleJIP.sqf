@@ -17,10 +17,10 @@
  */
 
 // If PFH is already added or setting is disabled, exit
-if (!GVAR(enableJIP) || {missionNamespace getVariable [QGVAR(handleServerJIP), false]}) exitWith {};
+if (!GVAR(enableJIP) || {GETMVAR(QGVAR(handleServerJIP),false)}) exitWith {};
 
 // Make sure only 1 EH is added to the server
-missionNamespace setVariable [QGVAR(handleServerJIP), true, true];
+SETMVAR(QGVAR(handleServerJIP),true,true);
 
 [
     [],
@@ -37,18 +37,16 @@ missionNamespace setVariable [QGVAR(handleServerJIP), true, true];
                 params ["_uid", "_name"];
 
                 // If player is Virtual Curator, UID will not work for some reason
-                private _player = if (isNull (_uid call BIS_fnc_getUnitByUID)) then {
+                private _player = _uid call BIS_fnc_getUnitByUID;
+
+                if (isNull _player) then {
                     // Find the player through his name
                     private _playerNames = allPlayers apply {name _x};
                     private _index = _playerNames find _name;
 
-                    if (_index isEqualTo -1) exitWith {
-                        objNull;
-                    };
+                    if (_index isEqualTo -1) exitWith {};
 
-                    _playerNames select _index;
-                } else {
-                    _uid call BIS_fnc_getUnitByUID;
+                    _player = _playerNames select _index;
                 };
 
                 // For chat channels

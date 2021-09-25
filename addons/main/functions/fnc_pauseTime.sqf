@@ -27,7 +27,7 @@
         private _string = "Time paused";
 
         if (_setPaused) then {
-            if (isNil {missionNamespace getVariable QGVAR(setTimeAcc)}) then {
+            if (isNil {GETMVAR(QGVAR(setTimeAcc),nil)}) then {
                 // Get old time multiplier
                 private _timeMult = timeMultiplier;
                 0.1 remoteExecCall ["setTimeMultiplier", 2];
@@ -47,7 +47,7 @@
                                     if (timeMultiplier > 0.11) exitWith {
                                         _handleID call CBA_fnc_removePerFrameHandler;
 
-                                        missionNamespace setVariable [QGVAR(setTimeAcc), nil, true];
+                                        SETMVAR(QGVAR(setTimeAcc),nil,true);
 
                                         ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Unpaused time because time acceleration has been changed."]], allCurators] call CBA_fnc_targetEvent;
                                     };
@@ -70,12 +70,14 @@
                 playSound "FD_Start_F";
             };
         } else {
-            if (!isNil {missionNamespace getVariable QGVAR(setTimeAcc)}) then {
-                (missionNamespace getVariable QGVAR(setTimeAcc)) call CBA_fnc_removePerFrameHandler;
+            private _handleID = GETMVAR(QGVAR(setTimeAcc),nil);
+
+            if (!isNil "_handleID") then {
+                _handleID call CBA_fnc_removePerFrameHandler;
 
                 1 remoteExecCall ["setTimeMultiplier", 2];
 
-                missionNamespace setVariable [QGVAR(setTimeAcc), nil, true];
+                SETMVAR(QGVAR(setTimeAcc),nil,true);
 
                 _string = "Time resumed back to normal (1x)";
             } else {

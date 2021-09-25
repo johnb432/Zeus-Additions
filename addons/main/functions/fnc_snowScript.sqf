@@ -26,7 +26,7 @@ if (isNil QFUNC(snowScriptPFH)) then {
         // Check if CUP is loaded on the client
         if (!isClass (configFile >> "CfgPatches" >> "CUP_Worlds")) exitWith {
             if (hasInterface) then {
-                hint "[Zeus Additions] The snow script wasn't applied because CUP Core isn't loaded.";
+                hint "[Zeus Additions]: The snow script wasn't applied because CUP Core isn't loaded.";
             };
         };
 
@@ -142,7 +142,7 @@ if (isNil QFUNC(snowScriptPFH)) then {
 
         // Handle JIP
         if (_doJIP) then {
-            if (missionNamespace getVariable [QGVAR(handleServerJIP), false]) then {
+            if (GETMVAR(QGVAR(handleServerJIP),false)) then {
                 GVAR(snowSettingsJIP) = [_intensitySnow, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(snowSettingsJIP);
             } else {

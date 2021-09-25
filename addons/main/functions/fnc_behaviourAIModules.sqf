@@ -68,7 +68,7 @@
                     if (!isPlayer _x) then {
                         [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
                     };
-                } forEach (units _x);
+                } forEach units _x;
             } forEach _sides;
 
             ["Changed mine detecting behaviour"] call zen_common_fnc_showMessage;
@@ -78,7 +78,7 @@
                     if (!isPlayer _x) then {
                         [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
                     };
-                } forEach (units (group _unit));
+                } forEach units group _unit;
 
                 ["Changed mine detecting behaviour on group"] call zen_common_fnc_showMessage;
             };

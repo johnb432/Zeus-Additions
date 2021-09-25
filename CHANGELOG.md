@@ -1,3 +1,11 @@
+# Changelog for Zeus Additions 21.9.2021
+
+1.6.2.2
+- Reworked the "Spawn Attack Dog" module: Major update by Fred, tweaks by johnb43.
+- Reworked the "Configure Doors" module: Now players choose if they want to use stun grenades and set the timer duration themselves.
+- Added the ability to paradrop boxes using the context menu selection.
+- Fixed ammo resupply module.
+
 # Changelog for Zeus Additions 11.9.2021
 
 1.6.2.1

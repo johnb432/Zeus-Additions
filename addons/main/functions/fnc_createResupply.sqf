@@ -93,6 +93,7 @@
         // Spawn magazines
         {
             _num = _x;
+
             if (_num > 0) then {
                 {
                     _object addItemCargoGlobal [_x, _num];
@@ -103,6 +104,7 @@
         // Spawn weapons
         {
             _num = _x;
+
             if (_num > 0) then {
                 {
                     _object addWeaponCargoGlobal [_x, _num];

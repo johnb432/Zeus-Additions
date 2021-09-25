@@ -21,15 +21,27 @@ params ["_objects", "_filterMode"];
 
 private _units = _objects select {_x isKindOf "CAManBase"};
 private _vehicles = _objects select {_x isKindOf "LandVehicle" || {_x isKindOf "Ship"}};
+private _misc = _objects select {_x isKindOf "Thing"};
 
 // If selection is either vehicles or all, include all vehicles
-if (_filterMode isNotEqualTo 0) then {
+if (_filterMode in [PARADROP_VEHICLES, PARADROP_ALL]) then {
     GVAR(selectedParadropVehicles) = _vehicles;
 };
 
-// If only vehicles, exit
-if (_filterMode isEqualTo 1) exitWith {
+if (_filterMode in [PARADROP_MISC, PARADROP_ALL]) then {
+    GVAR(selectedParadropMisc) = _misc;
+};
+
+// If vehicles only, exit
+if (_filterMode isEqualTo PARADROP_VEHICLES) exitWith {
     ["Selected %1 vehicles", count _vehicles] call zen_common_fnc_showMessage;
+};
+
+_misc = count _misc;
+
+// If misc only, exit
+if (_filterMode isEqualTo PARADROP_MISC) exitWith {
+    ["Selected %1 misc objects", _misc] call zen_common_fnc_showMessage;
 };
 
 ["Paradrop Context Menu Selection", [
@@ -39,7 +51,7 @@ if (_filterMode isEqualTo 1) exitWith {
 {
     params ["_results", "_args"];
     _results params ["_includeGroup", "_includeInside"];
-    _args params ["_units", "_vehicles"];
+    _args params ["_units", "_vehicles", "_misc"];
 
     if (_includeGroup) then {
         private _groups = [];
@@ -65,8 +77,9 @@ if (_filterMode isEqualTo 1) exitWith {
     _units = (_units arrayIntersect _units) select {_x isKindOf "CAManBase"};
 
     GVAR(selectedParadropUnits) = _units;
-    ["Selected %1 units & %2 vehicles", count _units, count _vehicles] call zen_common_fnc_showMessage;
+
+    ["Selected %1 units, %2 vehicles & %3 objects", count _units, count _vehicles, _misc] call zen_common_fnc_showMessage;
 }, {
     ["Aborted"] call zen_common_fnc_showMessage;
     playSound "FD_Start_F";
-}, [_units, _vehicles]] call zen_dialog_fnc_create;
+}, [_units, _vehicles, _misc]] call zen_dialog_fnc_create;

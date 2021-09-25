@@ -25,7 +25,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] [b]Open ACE Medical Menu:[/b] Allows the Zeus to open a unit's medical menu.
 [*] [b]Pause Time:[/b] Allows the Zeus to nearly stop time. It sets time acceleration to a minimum and reverts time every 100 seconds.
 [*] [b]Place Map Markers:[/b] Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
-[*] [b]Paradrop Units:[/b] Allows the Zeus to paradrop units and vehicles.
+[*] [b]Paradrop Units:[/b] Allows the Zeus to paradrop units, vehicles and boxes.
 [*] [b]Prevent Vehicle from Exploding:[/b] This module makes vehicles not able to blow up, but still allows them to take damage.
 [*] [b]Remove Grenades from AI:[/b] This module removes all types of grenade from the selected AI.
 [*] [b]Show Mission Object Counter:[/b] This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
@@ -56,8 +56,9 @@ Inputs are arrays of strings.
 Mod by johnb43
 [url=https://github.com/johnb432/Zeus-Additions]GitHub[/url]
 
-Gearscript originally made by cineafx, revamped by johnb43.
+Gear script originally made by cineafx, revamped by johnb43.
 Snow script made by JW & AZCoder, reworked by johnb43.
+Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to sh4rdknight for enduring testing sessions.
 
@@ -67,7 +68,7 @@ See LICENSE
 
 [h2]How to create PBOs[/h2]
 [list]
-[*] Download and install hemtt from [here](https://brettmayson.github.io/HEMTT/#/)
+[*] Download and install hemtt from [here](https://github.com/BrettMayson/HEMTT))
 [*] Open command terminal, navigate to said folder (Windows: cd 'insert path')
 [*] Type "hemtt build" for pbo, "hemtt build --release" for entire release
 [/list]

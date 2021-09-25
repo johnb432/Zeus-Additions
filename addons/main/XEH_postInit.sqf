@@ -48,7 +48,7 @@ GVAR(weaponsTotal) = [];
 _temp = [GVAR(LATBLU),GVAR(LATRED),GVAR(HATBLU)];
 
 {
-    GVAR(magsTotal) pushBack ([_temp select _forEachIndex, parseSimpleArray _x] select (isNil QUOTE(_x)));
+    GVAR(weaponsTotal) pushBack ([_temp select _forEachIndex, parseSimpleArray _x] select (isNil QUOTE(_x)));
 } forEach [GVAR(BLUFORLAT),GVAR(REDFORLAT),GVAR(BLUFORHAT)];
 
 GVAR(weaponsTotal) pushBack ["UK3CB_BAF_Javelin_CLU"];

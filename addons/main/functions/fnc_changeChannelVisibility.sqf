@@ -107,7 +107,7 @@
 
         // Handle JIP
         if (_doJIP) then {
-            if (missionNamespace getVariable [QGVAR(handleServerJIP), false]) then {
+            if (GETMVAR(QGVAR(handleServerJIP),false)) then {
                 GVAR(channelSettingsJIP) = [_enableArray, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(channelSettingsJIP);
             } else {
