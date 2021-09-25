@@ -32,6 +32,7 @@
 #define PARADROP_UNITS 0
 #define PARADROP_VEHICLES 1
 #define PARADROP_ALL 2
+#define PARADROP_MISC 3
 
 #define ICON_CHANNEL "x\zen\addons\modules\ui\chat_ca.paa"
 #define ICON_DEATH_STARE "x\zen\addons\modules\ui\target_ca.paa"
@@ -41,13 +42,16 @@
 #define ICON_DOOR "\a3\ui_f\data\igui\cfg\actions\open_door_ca.paa"
 #define ICON_END "\a3\Modules_F_Curator\Data\portraitEndMission_ca.paa"
 #define ICON_EXPLOSION "x\zen\addons\modules\ui\explosion_ca.paa"
+#define ICON_GRENADE "x\zen\addons\context_actions\ui\grenade_ca.paa"
 #define ICON_INVENTORY "\a3\Modules_F_Curator\Data\portraitRespawnInventory_ca.paa"
 #define ICON_MEDICAL "x\zen\addons\context_actions\ui\medical_cross_ca.paa"
+#define ICON_OBJECT "x\zen\addons\modules\ui\edit_obj_ca.paa"
 #define ICON_PARADROP "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
 #define ICON_PERSON "x\zen\addons\modules\ui\person_ca.paa"
 #define ICON_RADIO "\a3\Modules_F_Curator\Data\portraitRadio_ca.paa"
 #define ICON_REMOTECONTROL "\a3\modules_f_curator\data\portraitremotecontrol_ca.paa"
 #define ICON_TIME "\a3\Modules_F_Curator\Data\portraitTimeAcceleration_ca.paa"
 #define ICON_TRUCK "x\zen\addons\modules\ui\truck_ca.paa"
+#define ICON_TREE "\a3\modules_f\data\hideterrainobjects\icon32_ca.paa"
 #define ICON_UNCONSCIOUS "\z\ace\addons\zeus\ui\Icon_Module_Zeus_Unconscious_ca.paa"
 #define ICON_WEATHER "\a3\3DEN\Data\Displays\Display3DEN\ToolBar\intel_ca.paa"

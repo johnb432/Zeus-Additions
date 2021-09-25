@@ -24,8 +24,8 @@ class zen_context_menu_actions {
     };
 
     class GVAR(selectParadropContextMenu) {
-        condition = QUOTE(_objects findIf {_x isKindOf 'LandVehicle' || {_x isKindOf 'Ship'} || {_x isKindOf 'CAManBase'}} isNotEqualTo -1);
-        displayName = "Select units/vehicles for paradrop";
+        condition = QUOTE(private _object; _objects findIf {_object = _x; [ARR_4('LandVehicle','Ship','CAManBase','Thing')] findIf {_object isKindOf _x} isNotEqualTo -1} isNotEqualTo -1);
+        displayName = "Select objects for paradrop";
         icon = ICON_PARADROP;
         priority = 10;
 
@@ -37,10 +37,17 @@ class zen_context_menu_actions {
         };
 
         class GVAR(selectParadropVehiclesContextMenu) {
-            condition = QUOTE(_objects findIf {_x isKindOf 'LandVehicle' || {_x isKindOf 'Ship'}} isNotEqualTo -1);
+            condition = QUOTE(private _object; _objects findIf {_object = _x; [ARR_2('LandVehicle','Ship')] findIf {_object isKindOf _x} isNotEqualTo -1} isNotEqualTo -1);
             displayName = "Select vehicles only";
             icon = ICON_PARADROP;
             statement = QUOTE([ARR_2(_objects,PARADROP_VEHICLES)] call FUNC(unitParadropContextMenu));
+        };
+
+        class GVAR(selectParadropObjectsContextMenu) {
+            condition = QUOTE(_objects findIf {_x isKindOf 'Thing'} isNotEqualTo -1);
+            displayName = "Select misc objects only";
+            icon = ICON_PARADROP;
+            statement = QUOTE([ARR_2(_objects,PARADROP_MISC)] call FUNC(unitParadropContextMenu));
         };
 
         class GVAR(selectParadropAllContextMenu) {

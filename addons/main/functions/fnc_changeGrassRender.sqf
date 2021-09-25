@@ -59,7 +59,7 @@
 
         // Handle JIP
         if (_doJIP) then {
-            if (missionNamespace getVariable [QGVAR(handleServerJIP), false]) then {
+            if (GETMVAR(QGVAR(handleServerJIP),false)) then {
                 GVAR(grassSettingsJIP) = [_setting, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(grassSettingsJIP);
             } else {
@@ -78,4 +78,4 @@
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _unit] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+}, ICON_TREE] call zen_custom_modules_fnc_register;

@@ -211,7 +211,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
     {
         _loadout = _loadouts select (_x call FUNC(getRole));
         _x setUnitLoadout ([_loadouts select 0, _loadout] select (_loadout isNotEqualTo []));
-    } forEach (units group _unit);
+    } forEach units group _unit;
 
     ["Loadouts applied"] call zen_common_fnc_showMessage;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;

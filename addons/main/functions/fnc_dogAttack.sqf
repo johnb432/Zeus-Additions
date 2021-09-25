@@ -26,7 +26,7 @@
         ["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 50, 3, 2]],
         ["TOOLBOX:YESNO", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
         ["TOOLBOX:YESNO", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false],
-        ["TOOLBOX:YESNO", ["Turn on pathing", "Turns on animal AI behaviour and pathing. Only applies if dog is peaceful."], false],
+        ["TOOLBOX:YESNO", ["Turn off pathing", "Turns off animal AI behaviour and pathing. Only applies if dog is peaceful."], false],
         ["EDIT", ["Name", "Sets the dog's name. If left blank, a random name will be chosen."], ""]
     ],
     {
@@ -64,7 +64,6 @@
             // Create dog
             private _group = createGroup _side;
             private _dog = _group createUnit ["Fin_random_F", [_posX, _posY, 0.3], [], 0, "CAN_COLLIDE"];
-            [_group] joinSilent _dog;
 
             ["zen_common_addObjects", [[_dog]]] call CBA_fnc_serverEvent;
 
@@ -72,61 +71,134 @@
 
             // If no side to be attacked are provided, dog is peaceful
             if (_attackSides isEqualTo []) exitWith {
+                // Helper unit needs to be the leader, so do it here if no helper unit present
+                [_dog] joinSilent _group;
+
                 // If dog is peaceful, dog can be allowed to have own AI
                 if (!_animalBehaviour) then {
-                    _dog setVariable ["BIS_fnc_animalBehaviour_disable", false, true];
+                    _dog setVariable ["BIS_fnc_animalBehaviour_disable", true, true];
                 };
             };
 
+            // Create helper to which the dog is attached to; This way, orders can be given to the dog via Zeus
+            private _helperUnit = _group createUnit ["B_Soldier_F", [_posX, _posY, 0.3], [], 0, "CAN_COLLIDE"];
+
+            // Make helper leader, otherwise problems arise
+            [_helperUnit, _dog] joinSilent _group;
+
+            ["zen_common_addObjects", [[_helperUnit]]] call CBA_fnc_serverEvent;
+
+            // Make helper invisible and invincible
+            ["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
+            ["zen_common_allowDamage", [_helperUnit, false]] call CBA_fnc_localEvent;
+
+            _dog attachTo [_helperUnit];
+
+            // Remove all items of the helper unit
+            removeAllWeapons _helperUnit;
+            removeAllItems _helperUnit;
+            removeAllAssignedItems _helperUnit;
+            removeUniform _helperUnit;
+            removeVest _helperUnit;
+            removeBackpack _helperUnit;
+            removeHeadgear _helperUnit;
+            removeGoggles _helperUnit;
+
             // Turn off AI in dog
-            _dog setVariable ["BIS_fnc_animalBehaviour_disable", false, true];
+            _dog setVariable ["BIS_fnc_animalBehaviour_disable", true, true];
 
-            // Make the dog move to trigger the EH below
-            _dog playMoveNow "Dog_Run";
+            // Turn off AI in helper unit, but enable important AI parts
+            _helperUnit disableAI "ALL";
+            _helperUnit enableAI "ANIM";
+            _helperUnit enableAI "MOVE";
+            _helperUnit enableAI "PATH";
+            _helperUnit enableAI "TEAMSWITCH";
+            _helperUnit setBehaviour "CARELESS";
+            _helperUnit setUnitPos "UP";
 
-            private _EHid = _dog addEventHandler ["AnimDone", {
-                params ["_unit", "_anim"];
-
-                private _nearestEnemy = _unit getVariable [QGVAR(dogNearestEnemy), objNull];
-
-                if (isNull _nearestEnemy) exitWith {};
-
-                // This allows a smooth moving towards the target
-                _unit setVectorDir ((getPos _nearestEnemy) vectorDiff (getPos _unit));
-
-                private _distance = _unit distance _nearestEnemy;
-
-                if (_distance > 10) exitWith {
-                    _unit playMoveNow "Dog_Sprint";
-                };
-
-                _unit playMoveNow (["Dog_Walk", "Dog_Run"] select (_distance > 5));
-            }];
+            // Set up time trackers
+            _helperUnit setVariable [QGVAR(timeDog), time - 2.5];
+            _helperUnit setVariable [QGVAR(timeBark), time - 2.5];
+            _helperUnit setVariable [QGVAR(currentPosWP), [0, 0, 0]];
 
             [{
                 params ["_args", "_handleID"];
-                _args params ["_dog", "_attackSides", "_radius", "_damage", "_EHid"];
+                _args params ["_dog", "_helperUnit", "_attackSides", "_radius", "_damage"];
 
-                // If dog died, stop looking for targets
+                // If dog has died, stop looking for targets
                 if (!alive _dog) exitWith {
-                    _dog removeEventHandler ["AnimDone", _EHid];
+                    deleteVehicle _helperUnit;
+
                     _handleID call CBA_fnc_removePerFrameHandler;
                 };
 
-                // Look for the closest enemy: Exclude invalid classes
-                private _dogNearestEnemy = (((getPos _dog) nearEntities ["CAManBase", _radius]) select {!(side _x in [sideLogic, sideAmbientLife, sideEmpty]) && {side _x in _attackSides}}) select 0;
-                _dog setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
+                // Set various animations for various speeds
+                if (speed _helperUnit isEqualTo 0) then {
+                    _dog playMoveNow "Dog_Sit";
+                } else {
+                    if (speed _helperUnit > 14) exitWith {
+                        if (speed _helperUnit > 22) exitWith {
+                            _dog playMoveNow "Dog_Sprint";
+                        };
 
-                if (!isNull _dogNearestEnemy && {(_dog distance _dogNearestEnemy) < 5}) then {
-                    // Prevents the dog from barking too much
-                    if (random 1 < 0.4) then {
-                        playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+                        _dog playMoveNow "Dog_Run";
                     };
 
-                    ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"]], _dogNearestEnemy] call CBA_fnc_targetEvent;
+                    _dog playMoveNow "Dog_Walk";
                 };
-            }, 2.5, [_dog, _attackSides, _radius, _damage, _EHid]] call CBA_fnc_addPerFrameHandler;
-        }, [_lightning, (_sides select 0), _attackSides, _radius, _damage, _posX, _posY, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
+
+                private _dogNearestEnemy = _helperUnit getVariable QGVAR(dogNearestEnemy);
+                private _time = time;
+                private _group = group _helperUnit;
+                private _currentWaypoint = [_group, currentWaypoint _group];
+                private _posWaypoint = waypointPosition _currentWaypoint;
+
+                // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
+                if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
+                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                    _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
+                    _helperUnit setVariable [QGVAR(currentPosWP), _posWaypoint];
+                };
+
+                // Prevents unnecessary orders and commands
+                if (_time >= (_helperUnit getVariable [QGVAR(timeDog), -1]) + 2.5) then {
+                    _helperUnit setVariable [QGVAR(timeDog), _time];
+
+                    // If no valid target, find one
+                    if (isNil "_dogNearestEnemy" || {!alive _dogNearestEnemy} || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false]}) then {
+                        // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
+                        _dogNearestEnemy = (((getPos _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                        _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
+                    };
+
+                    if (!isNull _dogNearestEnemy) then {
+                        private _distance = _helperUnit distance _dogNearestEnemy;
+
+                        // Only if the AI hasn't been ordered to do something else, move to target
+                        if !(waypointType _currentWaypoint in ["MOVE", "SCRIPTED"]) then {
+                            private _pos = getPos _dogNearestEnemy;
+
+                            _helperUnit lookAt _pos;
+
+                            if (_distance > 3) then {
+                                _helperUnit move _pos;
+                            };
+                        };
+
+                        // Inflict damage if in range
+                        if (_distance <= 3) then {
+                            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"]], _dogNearestEnemy] call CBA_fnc_targetEvent;
+                        };
+
+                        // Prevents excessive barking
+                        if (_time >= ((_helperUnit getVariable [QGVAR(timeBark), -1]) + 3) && {random 1 < 0.4}) then {
+                            playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+                            _helperUnit setVariable [QGVAR(timeBark), _time];
+                        };
+                    };
+                };
+            }, 0.1, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
+        }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _posX, _posY, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
     },
     {
         ["Aborted"] call zen_common_fnc_showMessage;

@@ -25,7 +25,7 @@ private _selectionNames = [];
     if (((_x find "door") isNotEqualTo -1) && {(_x find "handle") isEqualTo -1} && {(_x find "doorlocks") isEqualTo -1}) then {
         _selectionNames pushBack (toLower _x);
     };
-} forEach (selectionNames _building);
+} forEach selectionNames _building;
 
 // If no doors found, exit
 if (_selectionNames isEqualTo []) exitWith {

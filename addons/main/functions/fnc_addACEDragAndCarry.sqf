@@ -78,4 +78,4 @@
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _object] call zen_dialog_fnc_create;
-}] call zen_custom_modules_fnc_register;
+}, ICON_OBJECT] call zen_custom_modules_fnc_register;

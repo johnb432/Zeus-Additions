@@ -22,12 +22,12 @@
 
     ["Paradrop Units (Read tooltips! Use this in map screen to get best results)", [
         ["OWNERS", ["Players selected", "Select sides/groups/players."], [[], [], [], 0], true],
-        ["TOOLBOX:YESNO", ["Include context menu selection", "Paradrops units (AI or players) selected by the Zeus using the ZEN context menu."], false, true],
-        ["TOOLBOX:YESNO", ["Include vehicles", "Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only."], false],
-        ["TOOLBOX:YESNO", ["Include players in vehicles", "Takes players only out of their vehicles and paradrops the players only."], false],
-        ["SLIDER", ["Paradrop altitude", "Determines how far up units spawn over terrain level."], [200, 5000, 1000, 0]],
-        ["SLIDER", ["Player density", "Determines how far apart units are paradropped from each other."], [10, 100, 40, 0]],
-        ["TOOLBOX:YESNO", ["Give units parachutes", "Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back."], true]
+        ["TOOLBOX:YESNO", ["Include Context Menu Selection", "Paradrops units (AI or players) selected by the Zeus using the ZEN context menu."], false, true],
+        ["TOOLBOX:YESNO", ["Include Vehicles", "Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only."], false],
+        ["TOOLBOX:YESNO", ["Include Players in Vehicles", "Takes players only out of their vehicles and paradrops the players only."], false],
+        ["SLIDER", ["Paradrop Altitude", "Determines how far up units are paradropped over terrain level."], [150, 5000, 1000, 0]],
+        ["SLIDER", ["Unit Density", "Determines how far apart units are paradropped from each other."], [10, 100, 40, 0]],
+        ["TOOLBOX:YESNO", ["Give Units Parachutes", "Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back."], true]
     ],
     {
         params ["_results", "_pos"];
@@ -45,6 +45,7 @@
 
         private _unitList = [];
         private _vehicleList = [];
+        private _objectList = [];
         private _vehicle = objNull;
 
         // Find all players from the list
@@ -74,20 +75,30 @@
                 _vehicleList append GVAR(selectedParadropVehicles);
             };
 
+            if (!isNil QGVAR(selectedParadropMisc)) then {
+                _objectList append GVAR(selectedParadropMisc);
+            };
+
             // Reset choice for the next time
             GVAR(selectedParadropUnits) = nil;
             GVAR(selectedParadropVehicles) = nil;
+            GVAR(selectedParadropMisc) = nil;
         };
 
         // Try to make a square of parachuting units
         private _unitCount = count _unitList;
         private _vicCount = count _vehicleList;
-        private _unitVicCount = _unitCount + _vicCount;
-        private _sqrt = sqrt _unitVicCount;
+        private _objectCount = count _objectList;
+        private _vicObjCount = _vicCount + _objectCount;
+        private _allCount = _unitCount + _vicCount + _objectCount;
+
+        _vehicleList append _objectList;
+
+        private _sqrt = sqrt _allCount;
         private _width = round _sqrt;
         private _height = ceil _sqrt;
 
-        if (_width * _height < _unitVicCount) then {
+        if (_width * _height < _allCount) then {
             _width = _width + 1;
         };
 
@@ -100,7 +111,7 @@
         // Iterate through each spot in the rectangle
         for "_i" from 0 to (_width - 1) * _density step _density do {
             for "_j" from 0 to (_height - 1) * _density step _density do {
-                if (_unitVicCount isEqualTo (_indexUnits + _indexVics)) exitWith {};
+                if (_allCount isEqualTo (_indexUnits + _indexVics)) exitWith {};
 
                 // Spawn infantry
                 if (_indexUnits isNotEqualTo _unitCount) then {
@@ -140,12 +151,12 @@
                        ]
                    ], _unit] call CBA_fnc_targetEvent;
 
-                   // If automatic parachute disribution is disabled, don't continue
+                   // If automatic parachute distribution is disabled, don't continue
                    if (!_giveUnitsParachutes) then {
                        continue;
                    };
 
-                   // Store old backpack information and delete it
+                   // Store old backpack information, then delete backpack
                    _unit setVariable [QGVAR(backpackUnit), backpack _unit, true];
                    _unit setVariable [QGVAR(backpackContents), backpackItems _unit, true];
                    removeBackpackGlobal _unit;
@@ -155,7 +166,7 @@
                            CBA_fnc_waitUntilAndExecute, [
                                {
                                    // If the unit is on the ground or in water
-                                   isTouchingGround _this || {(eyePos _this) select 2 < 1} || {!alive _this};
+                                   isTouchingGround _this || {(eyePos _this) select 2 < 1}/* || {!alive _this}*/;
                                }, {
                                    // Unit is no longer paradropping
                                    _this setVariable [QGVAR(isParadropping), false, true];
@@ -186,11 +197,11 @@
                        ["zen_common_execute", [
                            CBA_fnc_waitUntilAndExecute, [
                                {
-                                   // If the units is <150m AGL, deploy parachute to prevent them splatting on the ground
-                                   (eyePos _this) select 2 < 150 || {!alive _this};
+                                   // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
+                                   (eyePos _this) select 2 < 100 || {!alive _this};
                                }, {
-                                   // If parachute is already open, don't do action
-                                   if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {!alive _this}) exitWith {};
+                                   // If parachute is already open or unit is unconscious or dead, don't do action
+                                   if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {!alive _this}) exitWith {};
 
                                    _this action ["OpenParachute", _this];
                                }, _this
@@ -201,10 +212,14 @@
                    _indexUnits = _indexUnits + 1;
                 } else {
                     // Spawn vehicles
-                    if (_indexVics isNotEqualTo _vicCount) then {
+                    if (_indexVics isNotEqualTo _vicObjCount) then {
                         _vehicle = _vehicleList select _indexVics;
                         _vehicle setPosATL (_topLeft vectorAdd [_i, _j, 0]);
-                        _vehicle attachTo [createVehicle ["i_parachute_02_f", getPos _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, 2]];
+
+                        private _bbr = boundingBoxReal _vehicle;
+
+                        // Attach parachute to the middle (in height)
+                        _vehicle attachTo [createVehicle ["i_parachute_02_f", getPos _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, ((_bbr select 1 select 2) - (_bbr select 0 select 2)) / 2]];
 
                         _indexVics = _indexVics + 1;
                     };
@@ -212,7 +227,7 @@
             };
         };
 
-        ["Paradropped %1 units & %2 vehicles", _unitCount, _vicCount] call zen_common_fnc_showMessage;
+        ["Paradropped %1 units, %2 vehicles & %3 objects", _unitCount, _vicCount, _objectCount] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

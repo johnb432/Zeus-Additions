@@ -47,7 +47,7 @@
     } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),nil);
 
     ["Added curator stats to RPT log"] call zen_common_fnc_showMessage;
-}] call zen_custom_modules_fnc_register;
+}, ICON_OBJECT] call zen_custom_modules_fnc_register;
 
 // When mission ends, add stuff to RPT
 addMissionEventHandler ["Ended", {

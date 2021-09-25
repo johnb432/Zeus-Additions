@@ -16,10 +16,10 @@
  * Public: No
  */
 
- ["Zeus Additions - AI", "[WIP] Remove Grenades from AI", {
+ ["Zeus Additions - AI", "Remove Grenades from AI", {
      params ["", "_unit"];
 
-     ["[WIP] Remove Grenades from AI", [
+     ["Remove Grenades from AI", [
          ["SIDES", ["AI selected", "Select AI from the list to remove grenades from."], []],
          ["TOOLBOX:YESNO", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false]
      ],
@@ -28,7 +28,7 @@
          _results params ["_sides", "_doGroup"];
 
          if (_sides isEqualTo [] && {isNull _unit}) exitWith {
-             ["Select a side!"] call zen_common_fnc_showMessage;
+             ["Select a side or place on unit!"] call zen_common_fnc_showMessage;
              playSound "FD_Start_F";
          };
 
@@ -48,7 +48,7 @@
                              };
                          } forEach (_magazines arrayIntersect _magazines);
                      };
-                 } forEach (units _x);
+                 } forEach units _x;
              } forEach _sides;
 
              ["Removed grenades from units"] call zen_common_fnc_showMessage;
@@ -65,7 +65,7 @@
                              };
                          } forEach (_magazines arrayIntersect _magazines);
                      };
-                 } forEach (units (group _unit));
+                 } forEach units group _unit;
 
                  ["Removed grenades from units in group"] call zen_common_fnc_showMessage;
              };
@@ -89,4 +89,4 @@
          ["Aborted"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
      }, _unit] call zen_dialog_fnc_create;
- }, ICON_EXPLOSION] call zen_custom_modules_fnc_register;
+ }, ICON_GRENADE] call zen_custom_modules_fnc_register;
