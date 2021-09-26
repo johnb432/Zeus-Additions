@@ -68,7 +68,7 @@ See LICENSE
 
 [h2]How to create PBOs[/h2]
 [list]
-[*] Download and install hemtt from [here](https://github.com/BrettMayson/HEMTT))
+[*] Download and install hemtt from [url=https://github.com/BrettMayson/HEMTT]here[/url]
 [*] Open command terminal, navigate to said folder (Windows: cd 'insert path')
 [*] Type "hemtt build" for pbo, "hemtt build --release" for entire release
 [/list]
