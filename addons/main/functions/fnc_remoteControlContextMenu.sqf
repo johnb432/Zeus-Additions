@@ -47,9 +47,9 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
 
 [{
     // Wait until the Zeus interface is closed
-    isNull (findDisplay IDD_RSCDISPLAYCURATOR)
+    isNull (findDisplay IDD_RSCDISPLAYCURATOR);
 }, {
-    // Check after we have taken over new unit whether it has been teleported; Randomly does that sometimes
+    // Check after we have taken over new unit whether it has been teleported; Randomly does that sometimes (could be locality issue)
     [{
         params ["_pos", "_unit"];
 
@@ -62,10 +62,10 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
     GVAR(remoteControlHandleID) = [missionNamespace, "OnGameInterrupt", {
         [{
             // Wait until the pause menu has been opened
-            !isNull (findDisplay IDD_INTERRUPT);
+            !isNull _this;
         }, {
             // Close the pause menu
-            (findDisplay IDD_INTERRUPT) closeDisplay IDC_CANCEL;
+            _this closeDisplay IDC_CANCEL;
 
             // Remove EH
             [missionNamespace, "OnGameInterrupt", GVAR(remoteControlHandleID)] call BIS_fnc_removeScriptedEventHandler;
@@ -96,6 +96,6 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
             {
                 openCuratorInterface;
             } call CBA_fnc_execNextFrame;
-        }] call CBA_fnc_waitUntilAndExecute;
+        }, _this select 0] call CBA_fnc_waitUntilAndExecute;
     }] call BIS_fnc_addScriptedEventHandler;
 }, [_pos, _unit]] call CBA_fnc_waitUntilAndExecute;

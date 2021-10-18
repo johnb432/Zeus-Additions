@@ -79,10 +79,9 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
                 };
             } else {
                 // Add preset to preset list if not preset in list
-                _presets pushBack _preset;
-                SETPRVAR(QGVAR(gearPresetNames),_presets);
+                GVAR(gearIndex) = _presets pushBack _preset;
                 GVAR(gearPreset) = _preset;
-                GVAR(gearIndex) = _presets findIf {_x isEqualTo _preset};
+                SETPRVAR(QGVAR(gearPresetNames),_presets);
 
                 {
                     SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_preset),_importData select _forEachIndex);
@@ -99,10 +98,9 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
             };
 
             // Add preset to preset list
-            _presets pushBack _newPreset;
-            SETPRVAR(QGVAR(gearPresetNames),_presets);
+            GVAR(gearIndex) = _presets pushBack _newPreset;
             GVAR(gearPreset) = _newPreset;
-            GVAR(gearIndex) = _presets findIf {_x isEqualTo _newPreset};
+            SETPRVAR(QGVAR(gearPresetNames),_presets);
 
             ["New preset '%1' created and chosen", _newPreset] call zen_common_fnc_showMessage;
         };
@@ -126,7 +124,8 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
                 SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),nil);
             } forEach GVAR(loadoutTypes);
 
-            private _index = _presets findIf {_x isEqualTo _selectedPreset};
+            private _index = _presets find _selectedPreset;
+
             if (_index isEqualTo -1) exitWith {};
 
             _presets deleteAt _index;
@@ -137,6 +136,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         };
 
         GVAR(gearPreset) = _selectedPreset;
+
         ["Chosen preset: %1", _selectedPreset] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
@@ -158,7 +158,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
     {
         params ["_results"];
 
-        private _result;
+        private _result = "";
 
         {
             _result = _results select _forEachIndex;
@@ -205,7 +205,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]"));
     } forEach GVAR(loadoutTypes);
 
-    private _loadout;
+    private _loadout = [];
 
     // If loadout is not defined, use default loadout instead
     {

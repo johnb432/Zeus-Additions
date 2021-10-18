@@ -11,8 +11,9 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Change AI Mine Detecting Behaviour:** Theoretically should change their ability to detect mines. However in practice it doesn't seem to do anything, so feedback and more work is needed.
 * **Change Channel Visibility:** Allows the Zeus to enable and disable specific channels including custom ones, both chat and VON.
 * **Change Grass Rendering:** Allows the Zeus to change grass rendering on players. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
+* **Change RHS APS:** Allow the Zeus to enable or disable the APS (Active Protection System) on the RHS T-14 and T-15 vehicles.
 * **Change TFAR Radio Range:** Allows the Zeus to change TFAR radio transmission distances.
-* **Configure Doors:** Allows the Zeus to set doors on a building to be open, locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
+* **Configure Doors (Extended):** Allows the Zeus to set doors on a building to be open, locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
 * **Create ACE Injuries:** Allows the Zeus to create injuries on AI or players. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Create Random ACE Injuries:** Creates random wounds, taking a damage value and type you are able to set. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Delete Object (forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
@@ -30,16 +31,17 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
 * **Show Mission Object Counter:** This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
 * **Spawn ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
-* **Spawn Ammo Resupply:** Spawns a magazine resupply using lists predefined in the CBA settings. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
+* **Spawn Ammo Resupply:** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Spawn Ammo Resupply for Unit:** Spawns a magazine resupply using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.
 * **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
 * **Toggle Snow Script:** Allows the Zeus to apply a snow script to players.
+* **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 
 **Numerous CBA settings to customize modules:** To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
 Inputs are arrays of strings.
 * **Blacklist:** Allows the user to set up a list of ammo that won't be put in the resupply using the "Spawn Ammo Resupply for unit" module.
-* **X Magazines:** Allows the user to set up custom arrays of ammunition to give to users using the "Spawn Ammo Resupply" module.
+* **X Ammunition:** Allows the user to set up custom arrays of ammunition to give to users using the "Spawn Ammo Resupply" module.
 * **Enable automatic blacklist detection for FK servers:** FK is a gaming community.
 * **Enable leave unconscious unit:** Allows the user to leave an unconscious remote controlled unit when pressing the ESCAPE key. Handy for people who have their Zeus key bound to a double tap.
 * **Enable no curator found hint:** If enabled, it will hint if no curator was found for JIP and object counter features.
@@ -47,6 +49,20 @@ Inputs are arrays of strings.
 * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
 * **Enable JIP features:** If enabled, it will add JIP functionality to the server, if the player is a curator.
 * **Enable Mission Object Counter:** This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.
+
+<h2>How to - Spawn Ammo Resupply</h2>
+
+* Select initial option in the first window. If you cancel in the first window, it will not open up the second one.
+* In the second window, select a category (magazinewell) of magazines you want to look at. It will then list all of the magazines in that category.
+    * Double click a magazine to add to the other column (works in both directions).
+    * Select one or multiple (for multiple use shift) magazine and use the arrow button.
+    * Use the other arrow button to remove your choice of magazines from the "selected" list. Trash can removes all.
+    * You can add as many magazines from different categories as you want.
+* In the "selected" window, you can select one, multiple or no items and change how many there are using the "+" and "-" buttons:
+    * "Shift" modifies the amount by 5.
+    * "Control" modifies the amount by 10.
+    * "Control" + "shift" modifies the amount by 50.
+* When you press ok, it will spawn the magazines.
 
 <h2>CREDITS</h2>
 
@@ -57,7 +73,7 @@ Gear script originally made by cineafx, revamped by johnb43.
 Snow script made by JW & AZCoder, reworked by johnb43.
 Dog attack module made by Fred, reworked by johnb43.
 
-Thanks to sh4rdknight for enduring testing sessions.
+Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions.
 
 <h2>LICENSE</h2>
 

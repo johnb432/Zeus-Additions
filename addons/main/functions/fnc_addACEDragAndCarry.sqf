@@ -19,7 +19,7 @@
 ["Zeus Additions - Utility", "[WIP] Add ACE Carry and Drag Options", {
     params ["", "_object"];
 
-    if (isNull _object || {_unit isKindOf "CAManBase"}) exitWith {
+    if (isNull _object || {_object isKindOf "CAManBase"}) exitWith {
          ["Select an object!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };

@@ -18,7 +18,7 @@
  * Public: No
  */
 
-["Zeus Additions - Utility", "Configure Doors", {
+["Zeus Additions - Utility", "Configure Doors (Extended)", {
     params ["_pos"];
 
     // Position has to be AGL/ATL, ZEN gives ASL

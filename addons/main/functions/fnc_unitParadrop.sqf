@@ -166,7 +166,7 @@
                            CBA_fnc_waitUntilAndExecute, [
                                {
                                    // If the unit is on the ground or in water
-                                   isTouchingGround _this || {(eyePos _this) select 2 < 1}/* || {!alive _this}*/;
+                                   isTouchingGround _this || {(eyePos _this) select 2 < 1};
                                }, {
                                    // Unit is no longer paradropping
                                    _this setVariable [QGVAR(isParadropping), false, true];

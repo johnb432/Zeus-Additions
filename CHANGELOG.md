@@ -1,3 +1,11 @@
+# Changelog for Zeus Additions 9.10.2021
+1.6.2.3
+- Added "Track Unit Death" module which tracks when a unit dies.
+- Added "Change RHS APS" module which allows to disable the APS system in RHS T-14 and T-15 vehicles.
+- Reworked "Spawn Ammo Resupply" module and settings.
+- Magazine lists for "Spawn Ammo Resupply" update immediately when changing in CBA settings.
+- General improvements.
+
 # Changelog for Zeus Additions 21.9.2021
 
 1.6.2.2
