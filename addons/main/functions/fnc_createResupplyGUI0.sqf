@@ -507,22 +507,14 @@ _display displayAddEventHandler ["KeyDown", {
 
     // Cancel
     if (_keyCode isEqualTo 0x01) then {
-        //["Only launcher ammunition spawned"] call zen_common_fnc_showMessage;
-
         _display closeDisplay 2;
     };
 
     // Ok
     if (_keyCode isEqualTo 0x1C) then {
         private _ctrl = uiNamespace getVariable ["zeus_additions_ctrlListSelected", controlNull];
-        private _object = uiNamespace getVariable ["zeus_additions_magazineInveotry", objNull];
 
-        // Spawn in magazines
-        for "_i" from 0 to (lbSize _ctrl - 1) step 1 do {
-            _object addItemCargoGlobal [_ctrl lbTooltip _i, _ctrl lbValue _i];
-        };
-
-        //["Ammo crate created"] call zen_common_fnc_showMessage;
+        // Do stuff with selection
 
         _display closeDisplay 1;
     };
