@@ -33,7 +33,6 @@ class CfgMods {
         overview = "A small mod that adds Zeus modules, made by johnb43.";
         picture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
         logo = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
-        logoOver = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
         overviewPicture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
     };
 };
