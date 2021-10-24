@@ -57,6 +57,8 @@ call FUNC(snowScript);
 call FUNC(toggleConsciousnessForced);
 call FUNC(trackUnitDeath);
 call FUNC(unitParadrop);
+call FUNC(unitParadropAction);
+call FUNC(unloadACECargo);
 
 [{
     // Wait for curator object

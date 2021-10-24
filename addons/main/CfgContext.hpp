@@ -20,7 +20,7 @@ class zen_context_menu_actions {
         displayName = "Open ACE Medical Menu";
         icon = ICON_MEDICAL;
         priority = 50;
-        statement = QUOTE((effectiveCommander _hoveredEntity) call FUNC(openMedicalMenuContextMenu));
+        statement = QUOTE([ARR_2(effectiveCommander _hoveredEntity,MEDICAL_MENU)] call FUNC(openACEMenu));
     };
 
     class GVAR(selectParadropContextMenu) {

@@ -5,7 +5,7 @@
  * Allows the Zeus to switch places with the selected AI unit.
  *
  * Arguments:
- * None
+ * 0: Unit <OBJECT>
  *
  * Return Value:
  * None

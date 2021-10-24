@@ -19,6 +19,9 @@
 ["Zeus Additions - AI", "Spawn Attack Dog", {
     params ["_pos"];
 
+    // Position has to be AGL/ATL, ZEN gives ASL
+    _pos set [2, 0];
+
     ["Spawn Attack Dog", [
         ["SIDES", ["Spawn as", "Only the first selected side will be taken into account."], []],
         ["SIDES", ["Attack", "Allows the dog to attack the given sides. If none are selected, it will attack no one and will be peaceful."], []],
@@ -32,7 +35,6 @@
     {
         params ["_results", "_pos"];
         _results params ["_sides", "_attackSides", "_radius", "_damage", "_spawnLightning", "_spawnBolt", "_animalBehaviour", "_name"];
-        _pos params ["_posX", "_posY"];
 
         if (_sides isEqualTo []) exitWith {
             ["You must select a side!"] call zen_common_fnc_showMessage;
@@ -43,7 +45,7 @@
 
         // Make lightning bolt
         if (_spawnLightning) then {
-            _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], [_posX, _posY, 0], [], 0, "CAN_COLLIDE"];
+            _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], _pos, [], 0, "CAN_COLLIDE"];
 
             [{
                 deleteVehicle _this;
@@ -52,18 +54,18 @@
 
         // Make sound for lightning bolt
         if (_spawnBolt) then {
-            (createvehicle ["LightningBolt", [_posX, _posY, 0], [], 0, "CAN_COLLIDE"]) setDamage 1;
+            (createvehicle ["LightningBolt", _pos, [], 0, "CAN_COLLIDE"]) setDamage 1;
         };
 
         [{
             // Wait until lightning bolt has been deleted
             isNull (_this select 0);
          }, {
-            params ["", "_side", "_attackSides", "_radius", "_damage", "_posX", "_posY", "_animalBehaviour", "_name"];
+            params ["", "_side", "_attackSides", "_radius", "_damage", "_pos", "_animalBehaviour", "_name"];
 
             // Create dog
             private _group = createGroup _side;
-            private _dog = _group createUnit ["Fin_random_F", [_posX, _posY, 0.3], [], 0, "CAN_COLLIDE"];
+            private _dog = _group createUnit ["Fin_random_F", _pos, [], 0, "CAN_COLLIDE"];
 
             ["zen_common_addObjects", [[_dog]]] call CBA_fnc_serverEvent;
 
@@ -81,7 +83,7 @@
             };
 
             // Create helper to which the dog is attached to; This way, orders can be given to the dog via Zeus
-            private _helperUnit = _group createUnit ["B_Soldier_F", [_posX, _posY, 0.3], [], 0, "CAN_COLLIDE"];
+            private _helperUnit = _group createUnit ["B_Soldier_F", _pos, [], 0, "CAN_COLLIDE"];
 
             // Make helper leader, otherwise problems arise
             [_helperUnit, _dog] joinSilent _group;
@@ -167,7 +169,7 @@
                     // If no valid target, find one
                     if (isNil "_dogNearestEnemy" || {!alive _dogNearestEnemy} || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false]}) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
-                        _dogNearestEnemy = (((getPos _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     };
 
@@ -176,7 +178,7 @@
 
                         // Only if the AI hasn't been ordered to do something else, move to target
                         if !(waypointType _currentWaypoint in ["MOVE", "SCRIPTED"]) then {
-                            private _pos = getPos _dogNearestEnemy;
+                            private _pos = getPosATL _dogNearestEnemy;
 
                             _helperUnit lookAt _pos;
 
@@ -187,7 +189,7 @@
 
                         // Inflict damage if in range
                         if (_distance <= 3) then {
-                            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab"]], _dogNearestEnemy] call CBA_fnc_targetEvent;
+                            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog]], _dogNearestEnemy] call CBA_fnc_targetEvent;
                         };
 
                         // Prevents excessive barking
@@ -198,7 +200,7 @@
                     };
                 };
             }, 0.1, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
-        }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _posX, _posY, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
+        }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _pos, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
     },
     {
         ["Aborted"] call zen_common_fnc_showMessage;

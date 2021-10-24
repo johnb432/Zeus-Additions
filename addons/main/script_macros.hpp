@@ -21,6 +21,10 @@
 #define PARADROP_ALL 2
 #define PARADROP_MISC 3
 
+#define MEDICAL_MENU 0
+#define CARGO_MENU 1
+
+#define ICON_CARGO "a3\ui_f\data\IGUI\Cfg\Actions\loadVehicle_ca.paa"
 #define ICON_CHANNEL "x\zen\addons\modules\ui\chat_ca.paa"
 #define ICON_DEATH_STARE "x\zen\addons\modules\ui\target_ca.paa"
 #define ICON_DELETE "\A3\ui_f\data\igui\cfg\commandbar\unitcombatmode_ca.paa"

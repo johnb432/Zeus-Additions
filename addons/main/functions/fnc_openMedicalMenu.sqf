@@ -27,5 +27,5 @@
          playSound "FD_Start_F";
     };
 
-    _unit call FUNC(openMedicalMenuContextMenu);
+    [_unit, MEDICAL_MENU] call FUNC(openACEMenu);
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;

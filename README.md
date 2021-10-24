@@ -26,6 +26,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Open ACE Medical Menu:** Allows the Zeus to open a unit's medical menu.
 * **Pause Time:** Allows the Zeus to nearly stop time. It sets time acceleration to a minimum and reverts time every 100 seconds.
 * **Place Map Markers:** Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
+* **Paradrop Unit Action:** Allows the Zeus to make a scroll wheel interaction for players to paradrop using the map. Module can be placed on an object to give interaction. If not placed on an object, it will spawn in a flag pole.
 * **Paradrop Units:** Allows the Zeus to paradrop units, vehicles and boxes.
 * **Prevent Vehicle from Exploding:** This module makes vehicles not able to blow up, but still allows them to take damage.
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
@@ -36,6 +37,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
 * **Toggle Snow Script:** Allows the Zeus to apply a snow script to players.
 * **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
+* **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.
 
 **Numerous CBA settings to customize modules:** To change them, go to Options -> Addon Options -> Zeus Additions - Main
 

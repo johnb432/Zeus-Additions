@@ -38,8 +38,7 @@
     "CHECKBOX",
     ["Enable no curator found hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    0
+    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -47,8 +46,7 @@
     "CHECKBOX",
     ["Enable Snow Script missing addon hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    0
+    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -56,8 +54,7 @@
     "CHECKBOX",
     ["Enable Radio Range Script addon missing hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    0
+    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -65,8 +62,7 @@
     "CHECKBOX",
     ["Enable RHS APS Script addon missing hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    0
+    true
 ] call CBA_fnc_addSetting;
 
 [

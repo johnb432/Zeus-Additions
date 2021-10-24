@@ -35,81 +35,76 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
     params ["_ctrlListCategories", "_selectedIndex"];
 
     [_ctrlListCategories, _selectedIndex] spawn {
-        disableSerialization;
-
         params ["_ctrlListCategories", "_selectedIndex"];
 
         private _display = ctrlParent _ctrlListCategories;
         private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;
-        private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
 
-        if (isNull _ctrlListCategories || isNull _ctrlListSelected) exitWith {};
+        if (isNull _ctrlListCategories) exitWith {};
 
-        diag_log text format ["ctrlListCategories, LBSelChanged: %1, %2, %4", _selectedIndex, _ctrlListMagazines, lbSelection _ctrlListMagazines];
+        // Set focus on the magazines tab; Needed so it doesn't crash
+        ctrlSetFocus _ctrlListMagazines;
+        waitUntil {focusedCtrl _display isEqualTo _ctrlListMagazines};
 
-        // Clear displayed magazines from previous category; lbClear causes crash
-        diag_log text "clearing";
+        // Unselect everything; Needed so it doesn't crash
+        private _curSelection = lbSelection _ctrlListMagazines;
 
-        private _size = lbSize _ctrlListMagazines;
-
-        if (_size isNotEqualTo 0) then {
-            /*
-            for "_i" from (_size - 1) to 0 step -1 do {
-                //_ctrl lbSetValue [_i, 0];
-                _ctrl lbDelete _i;
-            };
-            */
-
-            // CAUSES GAME TO CRASH FOR SOME REASON
-            lbClear _ctrlListMagazines;
+        if (_curSelection isNotEqualTo []) then {
+            {
+                _ctrlListMagazines lbSetSelected [_x, false];
+            } forEach _curSelection;
         };
 
+        waitUntil {lbSelection _ctrlListMagazines isEqualTo []};
+
+        // Select the first element only; Needed so it doesn't crash
+        _ctrlListMagazines lbSetCurSel 0;
+
+        // Set focus on the categories tab; Needed so it doesn't crash
+        ctrlSetFocus _ctrlListCategories;
+        waitUntil {focusedCtrl _display isEqualTo _ctrlListCategories};
+
+        // Clear displayed magazines from previous category; lbClear causes crash if no precautions taken
+        lbClear _ctrlListMagazines;
+
+        // Wait until list is empty; Needed so it doesn't crash
         waitUntil {lbSize _ctrlListMagazines isEqualTo 0};
 
-        diag_log text "cleared";
-
+        private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
         private _selectedMagazines = [];
 
-        // Get current selection in selected magazines
-        _size = lbSize _ctrlListSelected;
+        if (!isNull _ctrlListSelected) then {
+            // Get current selection in selected magazines
+            private _size = lbSize _ctrlListSelected;
 
-        if (_size isNotEqualTo 0) then {
-            for "_i" from 0 to (_size - 1) step 1 do {
-                _selectedMagazines pushBack (_ctrlListSelected lbTooltip _i);
+            if (_size isNotEqualTo 0) then {
+                for "_i" from 0 to (_size - 1) step 1 do {
+                    _selectedMagazines pushBack (_ctrlListSelected lbTooltip _i);
+                };
             };
         };
 
         private _cfgMagazines = configFile >> "CfgMagazines";
         private _addedIndex = -1;
 
-        diag_log text format ["selectedMagazines: %1", _selectedMagazines];
-
         // Add magazines from currently selected category
         {
-            // Name is magazine display name, picture is magazine icon & tooltip is classname
-            diag_log text format ["adding: %1, %2", _forEachIndex, _x];
-
             // Don't add magazines that are in the selected list
-            if (_x in _selectedMagazines || _x == "UK3CB_RPK_75rnd_762x39_RM") then {
+            if (_x in _selectedMagazines) then {
                 continue;
             };
 
-            diag_log text "checked";
-
+            // Name is magazine display name, picture is magazine icon & tooltip is classname
             _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
-            diag_log text "lbAdd";
-
             _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
             _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
             _ctrlListMagazines lbSetValue [_addedIndex, 0];
         } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeys),[]) select _selectedIndex));
 
-        diag_log text "finished added";
-
         // Sort alphabetically
         lbSort _ctrlListMagazines;
 
-        diag_log text "sorted";
+        _ctrlListMagazines lbSetCurSel 0;
     };
 }];
 
@@ -117,6 +112,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
 {
     _ctrlListCategories lbAdd _x;
 } forEach GETUVAR(QGVAR(sortedKeys),[]);
+_ctrlListCategories lbSetCurSel 0;
 
 // Magazines list for categories
 private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;

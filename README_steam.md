@@ -6,7 +6,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 
 [h2]Modules[/h2]
 [list]
-[*] Add ACE Drag and Carry Options
+[*] [WIP] Add ACE Drag and Carry Options
 [*] Change AI Dismount Behaviour
 [*] [WIP] Change AI Mine Detecting Behaviour
 [*] Change Channel Visibility
@@ -26,16 +26,18 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] Open ACE Medical Menu
 [*] Pause Time
 [*] Place Map Markers
+[*] [WIP] Paradrop Unit Action
 [*] Paradrop Units
 [*] Prevent Vehicle from Exploding
 [*] Remove Grenades from AI
-[*] Show Mission Object Counter
+[*] [WIP] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
 [*] Spawn Ammo Resupply
 [*] Spawn Ammo Resupply for Unit
 [*] Toggle Consciousness (forced)
 [*] Toggle Snow Script
 [*] Track Unit Death
+[*] [WIP] Unload ACE Cargo
 [/list]
 For more detailed information on the modules and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
 

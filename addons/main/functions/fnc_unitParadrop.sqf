@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Spawns a module that allows units to paradrop.
+ * Spawns a module that paradrops units, vehicles and crates.
  * With some help from https://github.com/zen-mod/ZEN/blob/master/addons/modules/functions/fnc_moduleCreateMinefield.sqf
  *
  * Arguments:
@@ -127,7 +127,7 @@
                    // If AI, don't need to transition screen or inform about paradrop
                    if (isPlayer _unit) then {
                        [["You are being paradropped...", "BLACK OUT", 2, true]] remoteExecCall ["cutText", _unit];
-                       ["zen_common_hint", ["The parachute will automatically deploy if you haven't deployed it before reaching 150m above ground level. Your backpack will be returned upon landing."], _unit] call CBA_fnc_targetEvent;
+                       ["zen_common_hint", ["The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing."], _unit] call CBA_fnc_targetEvent;
                    };
 
                    // Teleport and add parachute
@@ -219,7 +219,7 @@
                         private _bbr = boundingBoxReal _vehicle;
 
                         // Attach parachute to the middle (in height)
-                        _vehicle attachTo [createVehicle ["i_parachute_02_f", getPos _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, ((_bbr select 1 select 2) - (_bbr select 0 select 2)) / 2]];
+                        _vehicle attachTo [createVehicle ["i_parachute_02_f", getPosATL _vehicle, [], 0, "CAN_COLLIDE"], [0, 0, ((_bbr select 1 select 2) - (_bbr select 0 select 2)) / 2]];
 
                         _indexVics = _indexVics + 1;
                     };

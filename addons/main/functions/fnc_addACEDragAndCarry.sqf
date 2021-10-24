@@ -24,7 +24,7 @@
          playSound "FD_Start_F";
     };
 
-    ["[WIP] Add ACE Carry and Drag Options", [
+    ["Add ACE Carry and Drag Options", [
         ["TOOLBOX:YESNO", ["Add dragging", "Adds the ability for an object to be dragged."], true],
         ["TOOLBOX:YESNO", ["Add carrying", "Adds the ability for an object to be carried."], true],
         ["TOOLBOX:YESNO", ["Allow overweight dragging", "Ignores the weight limit for dragging."], true],
