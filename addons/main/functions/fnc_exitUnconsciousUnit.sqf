@@ -23,10 +23,10 @@ if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWi
 
         [{
             // Wait until the pause menus has been opened
-            !isNull (findDisplay IDD_INTERRUPT);
+            !isNull _this;
         }, {
             // Close the pause menu
-            (findDisplay IDD_INTERRUPT) closeDisplay IDC_CANCEL;
+            _this closeDisplay IDC_CANCEL;
 
             // Stop remote controlling unit
             objNull remoteControl bis_fnc_moduleRemoteControl_unit;
@@ -36,7 +36,7 @@ if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWi
             {
                 openCuratorInterface;
             } call CBA_fnc_execNextFrame;
-        }] call CBA_fnc_waitUntilAndExecute;
+        }, _this select 0] call CBA_fnc_waitUntilAndExecute;
     }] call BIS_fnc_addScriptedEventHandler;
 };
 

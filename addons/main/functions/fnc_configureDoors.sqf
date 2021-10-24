@@ -18,7 +18,7 @@
  * Public: No
  */
 
-["Zeus Additions - Utility", "Configure Doors", {
+["Zeus Additions - Utility", "Configure Doors (Extended)", {
     params ["_pos"];
 
     // Position has to be AGL/ATL, ZEN gives ASL
@@ -85,7 +85,7 @@
 
         // Remove all previous breaching actions from building
         {
-            if ("Breach door" in ((_building actionParams _x) select 0)) then {
+            if ("Breach door using explosives" in ((_building actionParams _x) select 0)) then {
                 [_building, _x] remoteExecCall ["removeAction", 0];
             };
         } forEach actionIDs _building;
@@ -296,7 +296,7 @@
                         true,
                         true,
                         "",
-                        "isClass (configFile >> 'CfgPatches' >> 'zen_main')",
+                        QUOTE(isClass (configFile >> 'CfgPatches' >> 'zen_main')),
                         2,
                         false,
                         _x

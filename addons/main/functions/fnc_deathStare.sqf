@@ -66,7 +66,7 @@
 
                         // If "lightning" type
                         if (_incapType isEqualTo 0) exitWith {
-                            (getPos _cursorTarget) params ["_posX", "_posY"];
+                            (getPosATL _cursorTarget) params ["_posX", "_posY"];
                             private _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], [_posX, _posY, 0], [], 0, "CAN_COLLIDE"];
 
                             // Make the bolt go off and add damage to unit

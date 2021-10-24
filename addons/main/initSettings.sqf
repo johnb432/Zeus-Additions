@@ -1,10 +1,24 @@
-#define MAGAZINES_SETTINGS(NAME)\
+#define MAGAZINES_SETTINGS(NAME,INDEX)\
 [\
     QGVAR(DOUBLES(NAME,mags)),\
     "EDITBOX",\
-    [format ["%1 Magazines", QUOTE(NAME)], RESUPPY_DESC],\
+    [format ["%1 Ammunition", QUOTE(NAME)], RESUPPY_DESC],\
     [COMPONENT_NAME, MAGAZINES_DESC],\
-    str GVAR(NAME)\
+    str GVAR(NAME),\
+    0,\
+    {\
+        private _list = GVAR(DOUBLES(NAME,mags));\
+        _list = if (!isNil "_list") then {\
+            if (_list isEqualType "") then {\
+                parseSimpleArray _list;\
+            } else {\
+                if (_list isEqualType []) then {\
+                    _list;\
+                };\
+            };\
+        };\
+        GVAR(magsTotal) set [INDEX, _list];\
+    }\
 ] call CBA_fnc_addSetting
 
 [
@@ -13,7 +27,7 @@
     ["Enable leave unconscious unit", "Allows people to leave an unconscious remote controlled unit by pressing the ESCAPE key."],
     [COMPONENT_NAME, "Units"],
     false,
-    false,
+    0,
     {
         call FUNC(exitUnconsciousUnit);
     }
@@ -24,8 +38,7 @@
     "CHECKBOX",
     ["Enable no curator found hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    false
+    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -33,17 +46,23 @@
     "CHECKBOX",
     ["Enable Snow Script missing addon hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    false
+    true
 ] call CBA_fnc_addSetting;
 
 [
     QGVAR(enableTFARHint),
     "CHECKBOX",
-    ["Enable TFAR addon missing hint", "Allows to toggle the hint on or off."],
+    ["Enable Radio Range Script addon missing hint", "Allows to toggle the hint on or off."],
     [COMPONENT_NAME, "Modules"],
-    true,
-    false
+    true
+] call CBA_fnc_addSetting;
+
+[
+    QGVAR(enableRHSHint),
+    "CHECKBOX",
+    ["Enable RHS APS Script addon missing hint", "Allows to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -52,7 +71,7 @@
     ["Enable JIP features", "Allows join-in-progress (JIP) functionality for some modules.\nIt requires a mission restart for it to be turned off."],
     [COMPONENT_NAME, "Modules"],
     false,
-    false,
+    0,
     {
         // If setting is off, already added or no curator object, don't do anything
         if (isNull (getAssignedCuratorLogic player)) exitWith {};
@@ -67,7 +86,7 @@
     ["Enable Mission Object Counter", "If enabled, all objects placed and deleted by the player's curator will be kept track of.\nIf turned off, it will remove everything related to the counter, but not resetting the counter in the process."],
     [COMPONENT_NAME, "Modules"],
     false,
-    false,
+    0,
     {
         // If there is no curator object, don't do anything
         if (isNull (getAssignedCuratorLogic player)) exitWith {};
@@ -94,7 +113,7 @@
     ["Enable automatic blacklist detection for FK servers", "Allows the automatic adoption of the premade blacklist on FK servers. FK is a EU based unit."],
     [COMPONENT_NAME, MAGAZINES_DESC],
     false,
-    false,
+    0,
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
             GVAR(blacklist) = [];
@@ -114,7 +133,7 @@
     ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only works for the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],
     [COMPONENT_NAME, MAGAZINES_DESC],
     "[]",
-    false,
+    0,
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
 
@@ -122,49 +141,11 @@
     }
 ] call CBA_fnc_addSetting;
 
-MAGAZINES_SETTINGS(545x39);
-MAGAZINES_SETTINGS(762x39);
-MAGAZINES_SETTINGS(762x54R);
-MAGAZINES_SETTINGS(oddBLU);
-MAGAZINES_SETTINGS(Stanag556);
-MAGAZINES_SETTINGS(Misc556);
-MAGAZINES_SETTINGS(Belt556);
-MAGAZINES_SETTINGS(QBZ58KH65);
-MAGAZINES_SETTINGS(MX65);
-MAGAZINES_SETTINGS(All762);
-MAGAZINES_SETTINGS(Belt762);
-MAGAZINES_SETTINGS(12G);
-MAGAZINES_SETTINGS(PistolBLU);
-MAGAZINES_SETTINGS(PistolRED);
-MAGAZINES_SETTINGS(UGLBLU);
-MAGAZINES_SETTINGS(UGLRED);
-MAGAZINES_SETTINGS(MATBLU);
-MAGAZINES_SETTINGS(MATRED);
-MAGAZINES_SETTINGS(HATRED);
-MAGAZINES_SETTINGS(HATBLUAMMO);
-MAGAZINES_SETTINGS(AABLU);
-MAGAZINES_SETTINGS(AARED);
-
-[
-    QGVAR(BLUFORLAT),
-    "EDITBOX",
-    ["BLUFOR LAT", RESUPPY_DESC],
-    [COMPONENT_NAME, MAGAZINES_DESC],
-    str GVAR(LATBLU)
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(REDFORLAT),
-    "EDITBOX",
-    ["REDFOR LAT", RESUPPY_DESC],
-    [COMPONENT_NAME, MAGAZINES_DESC],
-    str GVAR(LATRED)
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(BLUFORHAT),
-    "EDITBOX",
-    ["BLUFOR HAT (Launcher)", RESUPPY_DESC],
-    [COMPONENT_NAME, MAGAZINES_DESC],
-    str GVAR(HATBLU)
-] call CBA_fnc_addSetting;
+MAGAZINES_SETTINGS(LATBLU,0);
+MAGAZINES_SETTINGS(LATRED,1);
+MAGAZINES_SETTINGS(MATBLU,2);
+MAGAZINES_SETTINGS(MATRED,3);
+MAGAZINES_SETTINGS(HATBLU,4);
+MAGAZINES_SETTINGS(HATRED,5);
+MAGAZINES_SETTINGS(AABLU,6);
+MAGAZINES_SETTINGS(AARED,7);

@@ -65,10 +65,10 @@
         // Make array ready to be used with enableChannel
         {
             switch (_x) do {
-                case 0: {_enableArray pushBack [(_channelIDs select _forEachIndex), [false, false]]};
-                case 1: {_enableArray pushBack [(_channelIDs select _forEachIndex), [true, false]]};
-                case 2: {_enableArray pushBack [(_channelIDs select _forEachIndex), [false, true]]};
-                default {_enableArray pushBack [(_channelIDs select _forEachIndex), [true, true]]};
+                case 0: {_enableArray pushBack [_channelIDs select _forEachIndex, [false, false]]};
+                case 1: {_enableArray pushBack [_channelIDs select _forEachIndex, [true, false]]};
+                case 2: {_enableArray pushBack [_channelIDs select _forEachIndex, [false, true]]};
+                default {_enableArray pushBack [_channelIDs select _forEachIndex, [true, true]]};
             };
         } forEach _results;
 

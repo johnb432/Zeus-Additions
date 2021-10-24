@@ -30,9 +30,7 @@
     };
 
     if (!isNil {crew _object}) then {
-        {
-            _object deleteVehicleCrew _x;
-        } forEach crew _object;
+        deleteVehicleCrew _object;
     };
 
     deleteVehicle _object;

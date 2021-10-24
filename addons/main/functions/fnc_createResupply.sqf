@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Creates 2 modules that allow for resupplies in crates.
+ * Creates 3 modules that allow for resupplies in crates.
  *
  * Arguments:
  * None
@@ -19,32 +19,14 @@
 ["Zeus Additions - Resupply", "Spawn Ammo Resupply", {
     params ["_pos", "_object"];
 
-    ["Spawn Ammo Resupply Crate", [
-        ["SLIDER", ["AK/RPK 5.45x39mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["AK/RPK 7.62x39mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["PKM/SVD 7.62x54mmR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["Odd BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["STANAG 5.56x45mm", RESUPPLY_TEXT], [0, 200, 0, 0]], // 5
-        ["SLIDER", ["Misc 5.56x45mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["Belts/C-Mags 5.56x45mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["QBZ 5.8x42/KH2002 6.5x39", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["MX 6.5x39mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["ACE/FAL/SCAR 7.62x51mm", RESUPPLY_TEXT], [0, 200, 0, 0]], // 10
-        ["SLIDER", ["Belts 7.62x51mm", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["12 Gauge", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["Pistol BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["Pistol REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["UGL BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]], // 15
-        ["SLIDER", ["UGL REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
+    ["Spawn Ammo Resupply Crate (Magazine selection comes after this dialog)", [
         ["SLIDER", ["LAT BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["LAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["MAT BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["MAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]], // 20
-        ["SLIDER", ["HAT BLUFOR (Ammo)", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["HAT BLUFOR (Launcher)", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["CLU for BAF Javelin", "Spawns x amount of BAF CLUs."], [0, 200, 0, 0]],
+        ["SLIDER", ["MAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
+        ["SLIDER", ["HAT BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]], // 5
         ["SLIDER", ["HAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["SLIDER", ["AA BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]], // 25
+        ["SLIDER", ["AA BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["AA REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]], false]
     ],
@@ -82,15 +64,9 @@
 
         _results deleteAt (count _results - 1);
 
-        // Get weapons (so anything AT)
-        private _numAT = [_results select 16, _results select 17, _results select 21, _results select 22];
-
-        _results deleteRange [16, 2];
-        _results deleteRange [19, 2];
-
         private _num = 0;
 
-        // Spawn magazines
+        // Spawn items
         {
             _num = _x;
 
@@ -101,18 +77,11 @@
             };
         } forEach _results;
 
-        // Spawn weapons
-        {
-            _num = _x;
+        // Pass inventory object to uiNamespace
+        SETUVAR(QGVAR(magazineInventory),_object);
 
-            if (_num > 0) then {
-                {
-                    _object addWeaponCargoGlobal [_x, _num];
-                } forEach (GVAR(weaponsTotal) select _forEachIndex);
-            };
-        } forEach _numAT;
-
-        ["Ammo crate created"] call zen_common_fnc_showMessage;
+        // Spawn ammo GUI
+        [] spawn FUNC(createResupplyGUI);
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

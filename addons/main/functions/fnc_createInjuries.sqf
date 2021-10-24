@@ -125,7 +125,7 @@
         // Add fractures
         {
             if (_x) then {
-                _fractures set [(_forEachIndex + 2), 1];
+                _fractures set [_forEachIndex + 2, 1];
                 _runUpdateEffects = true;
             };
         } forEach [_setFractureLeftArm, _setFractureRightArm, _setFractureLeftLeg, _setFractureRightLeg];
