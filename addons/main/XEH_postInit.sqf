@@ -78,7 +78,7 @@ call FUNC(unloadACECargo);
 
 // Hint what is missing if wanted
 private _coreCUPLHint = GVAR(enableSnowScriptHint) && {!isClass (configFile >> "CfgPatches" >> "CUP_Worlds")};
-private _TFARHint = GVAR(enableTFARHint) && {!isClass (configFile >> "CfgPatches" >> "tfar_core")};
+private _TFARHint = GVAR(enableTFARHint) && {!isClass (configFile >> "CfgPatches" >> "tfar_core")} && {!isClass (configFile >> "CfgPatches" >> "task_force_radio")};
 private _RHSHint =  GVAR(enableRHSHint) && {!isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")};
 
 if (_coreCUPLHint || {_TFARHint} || {_RHSHint}) then {

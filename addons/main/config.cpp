@@ -16,6 +16,7 @@ class CfgPatches {
         };
         author = "johnb43";
         authors[] = {"johnb43", "cineafx"};
+        url = "https://github.com/johnb432/Zeus-Additions";
         VERSION_CONFIG;
     };
 };
@@ -33,7 +34,6 @@ class CfgMods {
         overview = "A small mod that adds Zeus modules, made by johnb43.";
         picture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
         logo = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
-        logoOver = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
         overviewPicture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
     };
 };

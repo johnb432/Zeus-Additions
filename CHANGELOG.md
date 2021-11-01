@@ -1,4 +1,10 @@
 # Changelog for Zeus Additions 24.10.2021
+
+1.6.2.4
+- Includes check for task force radio (non-beta) now.
+
+# Changelog for Zeus Additions 24.10.2021
+
 1.6.2.3
 - Added "Track Unit Death" module which tracks when a unit dies.
 - Added "Change RHS APS" module which allows to disable the APS system in RHS T-14 and T-15 vehicles.
