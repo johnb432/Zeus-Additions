@@ -17,7 +17,7 @@
  */
 
 // Check if TFAR is loaded
-if (!isClass (configFile >> "CfgPatches" >> "tfar_core")) exitWith {};
+if (!isClass (configFile >> "CfgPatches" >> "tfar_core") && {!isClass (configFile >> "CfgPatches" >> "task_force_radio")}) exitWith {};
 
 ["Zeus Additions - Players", "Change TFAR Radio Range", {
     params ["", "_unit"];
