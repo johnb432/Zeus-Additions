@@ -32,6 +32,7 @@ GVAR(magsTotal) = [GVAR(LATBLU_mags),GVAR(LATRED_mags),GVAR(MATBLU_mags),GVAR(MA
 
 // Add modules
 call FUNC(addACEDragAndCarry);
+call FUNC(allowTurnOutAI);
 call FUNC(behaviourAIModules);
 call FUNC(changeChannelVisibility);
 call FUNC(changeGrassRender);

@@ -6,7 +6,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 
 [h2]Modules[/h2]
 [list]
-[*] [WIP] Add ACE Drag and Carry Options
+[*] Add ACE Drag and Carry Options
 [*] Change AI Dismount Behaviour
 [*] [WIP] Change AI Mine Detecting Behaviour
 [*] Change Channel Visibility
@@ -53,7 +53,3 @@ Snow script made by JW & AZCoder, reworked by johnb43.
 Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to [url=https://gitlab.com/sh4rdknight]sh4rdknight[/url] for enduring testing sessions.
-
-[h2]LICENSE[/h2]
-
-See LICENSE

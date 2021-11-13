@@ -36,17 +36,16 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             }, {
                 params ["_uid", "_name"];
 
-                // If player is Virtual Curator, UID will not work for some reason
                 private _player = _uid call BIS_fnc_getUnitByUID;
 
+                // If player is Virtual Curator, UID will not work for some reason; Find the player through his name
                 if (isNull _player) then {
-                    // Find the player through his name
-                    private _playerNames = allPlayers apply {name _x};
-                    private _index = _playerNames find _name;
+                    _player = (allPlayers select {name _x isEqualTo _name}) param [0, objNull];
+                };
 
-                    if (_index isEqualTo -1) exitWith {};
-
-                    _player = _playerNames select _index;
+                // If player can't be found, exit
+                if (isNull _player) exitWith {
+                    ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _name, _uid]], allCurators] call CBA_fnc_targetEvent;
                 };
 
                 // For chat channels
@@ -92,9 +91,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
                     };
                 };
             }, [_uid, _name], 60, {
-                params ["_uid", "_name"];
-
-                ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _name, _uid]], allCurators] call CBA_fnc_targetEvent;
+                ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _this select 1, _this select 0]], allCurators] call CBA_fnc_targetEvent;
             }] call CBA_fnc_waitUntilAndExecute;
         }];
     }

@@ -25,7 +25,7 @@
     };
 
     ["Prevent Vehicle from Exploding", [
-        ["TOOLBOX:YESNO", ["Prevent Vehicle from Exploding", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false, true]
+        ["TOOLBOX:YESNO", ["Prevent Vehicle from Exploding", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false, false]
     ],
     {
         params ["_results", "_object"];

@@ -77,10 +77,6 @@ Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions.
 
-<h2>LICENSE</h2>
-
-See LICENSE
-
 <h2>How to create PBOs</h2>
 
 * Download and install hemtt from [here](https://github.com/BrettMayson/HEMTT)
