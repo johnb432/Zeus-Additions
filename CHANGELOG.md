@@ -1,4 +1,10 @@
-# Changelog for Zeus Additions 24.10.2021
+# Changelog for Zeus Additions 13.11.2021
+
+1.6.2.5
+- Fixed bug in JIP module.
+- General improvements.
+
+# Changelog for Zeus Additions 1.11.2021
 
 1.6.2.4
 - Includes check for task force radio (non-beta) now.

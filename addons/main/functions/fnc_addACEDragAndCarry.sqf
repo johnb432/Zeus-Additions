@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions - Utility", "[WIP] Add ACE Carry and Drag Options", {
+["Zeus Additions - Utility", "Add ACE Carry and Drag Options", {
     params ["", "_object"];
 
     if (isNull _object || {_object isKindOf "CAManBase"}) exitWith {
