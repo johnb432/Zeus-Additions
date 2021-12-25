@@ -19,7 +19,7 @@
 if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWith {
     // To exit the unit, the player must get to the pause menu
     GVAR(exitUnconsciousID) = [missionNamespace, "OnGameInterrupt", {
-        if (isNil "bis_fnc_moduleRemoteControl_unit" || {!(bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false])}) exitWith {};
+        if (isNil "bis_fnc_moduleRemoteControl_unit" || {!(bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false])} || {(lifeState bis_fnc_moduleRemoteControl_unit) isNotEqualTo "INCAPACITATED"}) exitWith {};
 
         [{
             // Wait until the pause menus has been opened

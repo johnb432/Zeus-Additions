@@ -20,7 +20,7 @@
 ["Zeus Additions - Utility", "Paradrop Units", {
     params ["_pos"];
 
-    ["Paradrop Units (Read tooltips! Use this in map screen to get best results)", [
+    ["Paradrop Units (Read tooltips!)", [
         ["OWNERS", ["Players selected", "Select sides/groups/players."], [[], [], [], 0], true],
         ["TOOLBOX:YESNO", ["Include Context Menu Selection", "Paradrops units (AI or players) selected by the Zeus using the ZEN context menu."], false, true],
         ["TOOLBOX:YESNO", ["Include Vehicles", "Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only."], false],
@@ -115,101 +115,76 @@
 
                 // Spawn infantry
                 if (_indexUnits isNotEqualTo _unitCount) then {
-                   _unit = _unitList select _indexUnits;
+                    _unit = _unitList select _indexUnits;
 
-                   // If unit is already paradropping, don't TP
-                   if (_unit getVariable [QGVAR(isParadropping), false]) then {
+                    // If unit is already paradropping, don't TP
+                    if (_unit getVariable [QGVAR(isParadropping), false]) then {
                        continue;
-                   };
+                    };
 
-                   _unit setVariable [QGVAR(isParadropping), true, true];
+                    _unit setVariable [QGVAR(isParadropping), true, true];
 
-                   // If AI, don't need to transition screen or inform about paradrop
-                   if (isPlayer _unit) then {
-                       [["You are being paradropped...", "BLACK OUT", 2, true]] remoteExecCall ["cutText", _unit];
-                       ["zen_common_hint", ["The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing."], _unit] call CBA_fnc_targetEvent;
-                   };
+                    // Start paradrop
+                    ["zen_common_execute", [{
+                        // If AI, don't do transition screen or inform about paradrop
+                        if (isPlayer (_this select 0)) then {
+                            cutText ["You are being paradropped...", "BLACK OUT", 2, true];
+                            hint "The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing.";
+                        };
 
-                   // Teleport and add parachute
-                   ["zen_common_execute", [
-                       CBA_fnc_waitAndExecute, [
-                           {
-                               params ["_unit", "_topLeft", "_i", "_j", "_giveUnitsParachutes"];
+                        [{
+                            params ["_unit", "_pos", "_giveUnitParachute"];
 
-                               _unit setPosATL (_topLeft vectorAdd [_i, _j, 0]);
+                            _unit setPosATL _pos;
 
-                               // Spawn parachute
-                               if (_giveUnitsParachutes) then {
-                                   _unit addBackpack "B_Parachute";
-                               };
+                            // If AI, don't do transition screen
+                            if (isPlayer _unit) then {
+                                cutText ["", "BLACK IN", 2, true];
+                            };
 
-                               // Don't do effect if unit is AI
-                               if (!isPlayer _unit) exitWith {};
+                            // If automatic parachute distribution is disabled, don't continue
+                            if (!_giveUnitParachute) exitWith {};
 
-                               [["", "BLACK IN", 2, true]] remoteExecCall ["cutText", _unit];
-                           }, [_unit, _topLeft, _i, _j, _giveUnitsParachutes], 3
-                       ]
-                   ], _unit] call CBA_fnc_targetEvent;
+                            [{
+                                // If the unit is on the ground or in water
+                                isTouchingGround (_this select 0) || {(eyePos (_this select 0)) select 2 < 1};
+                            }, {
+                                params ["_unit", "_backpack", "_backpackContent"];
 
-                   // If automatic parachute distribution is disabled, don't continue
-                   if (!_giveUnitsParachutes) then {
-                       continue;
-                   };
+                                // Unit is no longer paradropping
+                                _unit setVariable [QGVAR(isParadropping), false, true];
 
-                   // Store old backpack information, then delete backpack
-                   _unit setVariable [QGVAR(backpackUnit), backpack _unit, true];
-                   _unit setVariable [QGVAR(backpackContents), backpackItems _unit, true];
-                   removeBackpackGlobal _unit;
+                                // Remove parachute and give old backpack back
+                                removeBackpack _unit;
 
-                   [{
-                       ["zen_common_execute", [
-                           CBA_fnc_waitUntilAndExecute, [
-                               {
-                                   // If the unit is on the ground or in water
-                                   isTouchingGround _this || {(eyePos _this) select 2 < 1};
-                               }, {
-                                   // Unit is no longer paradropping
-                                   _this setVariable [QGVAR(isParadropping), false, true];
+                                if (_backpack isEqualTo "") exitWith {};
 
-                                   // Remove parachute and give old backpack back
-                                   removeBackpackGlobal _this;
-                                   private _backpack = _this getVariable QGVAR(backpackUnit);
+                                _unit addBackpack _backpack;
 
-                                   if (isNil "_backpack") exitWith {};
+                                if (_backpackContent isEqualTo []) exitWith {};
 
-                                   _this addBackpack _backpack;
-                                   _this setVariable [QGVAR(backpackUnit), nil, true];
+                                {
+                                    _unit addItemToBackpack _x;
+                                } forEach _backpackContent;
+                            }, [_unit, backpack _unit, backpackItems _unit]] call CBA_fnc_waitUntilAndExecute;
 
-                                   // Return old content
-                                   private _contents = _this getVariable [QGVAR(backpackContents), []];
+                            [{
+                                // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
+                                (getPosATL _this) select 2 < 100 || {!alive _this};
+                            }, {
+                                // If parachute is already open or unit is unconscious or dead, don't do action
+                                if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {(lifeState _this) isEqualTo "INCAPACITATED"} || {!alive _this}) exitWith {};
 
-                                   if (_contents isEqualTo []) exitWith {};
+                                _this action ["OpenParachute", _this];
+                            }, _unit] call CBA_fnc_waitUntilAndExecute;
 
-                                   {
-                                       _this addItemToBackpack _x;
-                                   } forEach _contents;
+                            // Add parachute last so that other commands have time to update
+                            removeBackpack _unit;
+                            _unit addBackpack "B_Parachute";
+                        }, _this, 3] call CBA_fnc_waitAndExecute;
+                    }, [_unit, _topLeft vectorAdd [_i, _j, 0], _giveUnitParachute]], _unit] call CBA_fnc_targetEvent;
 
-                                   _this setVariable [QGVAR(backpackContents), nil, true];
-                               }, _this
-                           ]
-                       ], _this] call CBA_fnc_targetEvent;
-
-                       ["zen_common_execute", [
-                           CBA_fnc_waitUntilAndExecute, [
-                               {
-                                   // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
-                                   (eyePos _this) select 2 < 100 || {!alive _this};
-                               }, {
-                                   // If parachute is already open or unit is unconscious or dead, don't do action
-                                   if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {!alive _this}) exitWith {};
-
-                                   _this action ["OpenParachute", _this];
-                               }, _this
-                           ]
-                       ], _this] call CBA_fnc_targetEvent;
-                   }, _unit, 3.5] call CBA_fnc_waitAndExecute;
-
-                   _indexUnits = _indexUnits + 1;
+                    _indexUnits = _indexUnits + 1;
                 } else {
                     // Spawn vehicles
                     if (_indexVics isNotEqualTo _vicObjCount) then {

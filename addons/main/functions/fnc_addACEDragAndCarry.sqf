@@ -16,27 +16,34 @@
  * Public: No
  */
 
-["Zeus Additions - Utility", "Add ACE Carry and Drag Options", {
+if (!GVAR(ACEDraggingLoaded)) exitWith {};
+
+["Zeus Additions - Utility", "Add ACE Drag and Carry Options", {
     params ["", "_object"];
 
-    if (isNull _object || {_object isKindOf "CAManBase"}) exitWith {
+    if (isNull _object) exitWith {
          ["Select an object!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };
 
-    ["Add ACE Carry and Drag Options", [
-        ["TOOLBOX:YESNO", ["Add dragging", "Adds the ability for an object to be dragged."], true],
-        ["TOOLBOX:YESNO", ["Add carrying", "Adds the ability for an object to be carried."], true],
-        ["TOOLBOX:YESNO", ["Allow overweight dragging", "Ignores the weight limit for dragging."], true],
-        ["TOOLBOX:YESNO", ["Allow overweight carrying", "Ignores the weight limit for carrying."], true]
+    if (_object isKindOf "CAManBase") exitWith {
+         ["Select a non-unit!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
+    };
+
+    ["Add ACE Drag and Carry Options", [
+        ["TOOLBOX:ENABLED", ["Dragging", "Enables the dragging of an object."], true],
+        ["TOOLBOX:ENABLED", ["Carrying", "Enables the carrying of an object."], true],
+        ["TOOLBOX:ENABLED", ["Overweight dragging", "Ignores the weight limit for dragging if enabled."], true],
+        ["TOOLBOX:ENABLED", ["Overweight carrying", "Ignores the weight limit for carrying if enabled."], true]
     ],
     {
         params ["_results", "_object"];
 
         // Try to calculate offset and angle
-        (boundingBoxReal _object) params ["_minPos", "_maxPos", "_boundingSphereDiameter"];
-        _minPos params ["_xMin", "_yMin", "_zMin"];
-        _maxPos params ["_xMax", "_yMax", "_zMax"];
+        (boundingBoxReal _object) params ["_minPos", "_maxPos"];
+        _minPos params ["_xMin", "_yMin"];
+        _maxPos params ["_xMax", "_yMax"];
 
         (boundingCenter _object) params ["_xCenter", "_yCenter"];
 
@@ -45,35 +52,20 @@
 
         private _isWiderThanLonger = _dX > _dY;
         private _distance = 0.75 + ([_dY / 2, _dX / 2] select _isWiderThanLonger) + ([_yCenter, _xCenter] select _isWiderThanLonger);
-        private _offset = [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger;
 
-        // Dragging
-        if (_results select 0) then {
-            ["zen_common_execute", [
-                ace_dragging_fnc_setDraggable, [
-                    _object,
-                    true,
-                    [configOf _object, "ace_dragging_dragPosition", _offset] call BIS_fnc_returnConfigEntry,
-                    [configOf _object, "ace_dragging_dragDirection", [0, 90] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry,
-                    _results select 2
-                ]
-            ]] call CBA_fnc_globalEventJIP;
-        };
+        // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility. Overwrite previous item in JIP queue
+        // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
+        [["zen_common_execute", [{
+            params ["_object", "_results", "_offset", "_isWiderThanLonger"];
 
-        // Carrying
-        if (_results select 1) then {
-            ["zen_common_execute", [
-                ace_dragging_fnc_setCarryable, [
-                    _object,
-                    true,
-                    [configOf _object, "ace_dragging_carryPosition", _offset] call BIS_fnc_returnConfigEntry,
-                    [configOf _object, "ace_dragging_carryDirection", [90, 0] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry,
-                    _results select 3
-                ]
-            ]] call CBA_fnc_globalEventJIP;
-        };
+            // Dragging
+            [_object, _results select 0, [configOf _object, "ace_dragging_dragPosition", _offset] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_dragDirection", [0, 90] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 2] call ace_dragging_fnc_setDraggable;
 
-        ["Changed carrying and dragging abilities"] call zen_common_fnc_showMessage;
+            // Carrying
+            [_object, _results select 1, [configOf _object, "ace_dragging_carryPosition", _offset] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_carryDirection", [90, 0] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 3] call ace_dragging_fnc_setCarryable;
+        }, [_object, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], [_object, "zeus_additions_main_dragging_"] call BIS_fnc_objectVar] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+
+        ["Changed ACE drag and carry abilities"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

@@ -42,6 +42,30 @@
 ] call CBA_fnc_addSetting;
 
 [
+    QGVAR(enableACECargoHint),
+    "CHECKBOX",
+    ["Enable ACE Cargo missing addon hint", "Allows to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true
+] call CBA_fnc_addSetting;
+
+[
+    QGVAR(enableACEDragHint),
+    "CHECKBOX",
+    ["Enable ACE Dragging missing addon hint", "Allows to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true
+] call CBA_fnc_addSetting;
+
+[
+    QGVAR(enableACEMedicalHint),
+    "CHECKBOX",
+    ["Enable ACE Medical missing addon hint", "Allows to toggle the hint on or off."],
+    [COMPONENT_NAME, "Modules"],
+    true
+] call CBA_fnc_addSetting;
+
+[
     QGVAR(enableSnowScriptHint),
     "CHECKBOX",
     ["Enable Snow Script missing addon hint", "Allows to toggle the hint on or off."],
@@ -74,7 +98,7 @@
     0,
     {
         // If setting is off, already added or no curator object, don't do anything
-        if (isNull (getAssignedCuratorLogic player)) exitWith {};
+        if (isNull (getAssignedCuratorLogic player) || {!GVAR(enableJIP)}) exitWith {};
 
         call FUNC(handleJIP);
     }
@@ -110,7 +134,7 @@
 [
     QGVAR(blacklistFKEnable),
     "CHECKBOX",
-    ["Enable automatic blacklist detection for FK servers", "Allows the automatic adoption of the premade blacklist on FK servers. FK is a EU based unit."],
+    ["Enable automatic blacklist detection for FK servers", "Allows the automatic adoption of the premade blacklist on FK servers. FK is an EU based unit."],
     [COMPONENT_NAME, MAGAZINES_DESC],
     false,
     0,
@@ -130,7 +154,7 @@
 [
     QGVAR(blacklistSettings),
     "EDITBOX",
-    ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only works for the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],
+    ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only applies to the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],
     [COMPONENT_NAME, MAGAZINES_DESC],
     "[]",
     0,

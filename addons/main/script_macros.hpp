@@ -37,7 +37,7 @@
 #define ICON_INVENTORY "\a3\Modules_F_Curator\Data\portraitRespawnInventory_ca.paa"
 #define ICON_MEDICAL "x\zen\addons\context_actions\ui\medical_cross_ca.paa"
 #define ICON_OBJECT "x\zen\addons\modules\ui\edit_obj_ca.paa"
-#define ICON_PARADROP "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
+#define ICON_PARADROP "x\zen\addons\modules\ui\heli_ca.paa"//"\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
 #define ICON_PERSON "x\zen\addons\modules\ui\person_ca.paa"
 #define ICON_RADIO "\a3\Modules_F_Curator\Data\portraitRadio_ca.paa"
 #define ICON_REMOTECONTROL "\a3\modules_f_curator\data\portraitremotecontrol_ca.paa"

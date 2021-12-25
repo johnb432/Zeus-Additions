@@ -4,7 +4,7 @@ class zen_context_menu_actions {
         displayName = "Disable AI Pathing";
         icon = ICON_PERSON;
         priority = 50;
-        statement = QUOTE({[ARR_3('zen_common_disableAI',[ARR_2(_x,'PATH')],_x)] call CBA_fnc_targetEvent} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}}));
+        statement = QUOTE({[ARR_2(_x,'PATH')] remoteExecCall [ARR_2('disableAI',_x)]} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}}));
     };
 
     class GVAR(enablePathingContextMenu) {
@@ -12,11 +12,11 @@ class zen_context_menu_actions {
         displayName = "Enable AI Pathing";
         icon = ICON_PERSON;
         priority = 50;
-        statement = QUOTE({[ARR_3('zen_common_enableAI',[ARR_2(_x,'PATH')],_x)] call CBA_fnc_targetEvent} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}}));
+        statement = QUOTE({[ARR_2(_x,'PATH')] remoteExecCall [ARR_2('enableAI',_x)]} forEach (_objects select {!isPlayer _x && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}}));
     };
 
     class GVAR(openMedicalMenuContextMenu) {
-        condition = QUOTE(_hoveredEntity isEqualType objNull && {(effectiveCommander _hoveredEntity) isKindOf 'CAManBase'});
+        condition = QUOTE(GVAR(ACEMedicalLoaded) && {_hoveredEntity isEqualType objNull && {(effectiveCommander _hoveredEntity) isKindOf 'CAManBase'}});
         displayName = "Open ACE Medical Menu";
         icon = ICON_MEDICAL;
         priority = 50;

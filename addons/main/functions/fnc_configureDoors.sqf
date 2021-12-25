@@ -80,19 +80,23 @@
             // Remove action from JIP
             if (!isNil "_handleJIP") then {
                 remoteExecCall ["", _handleJIP];
+
+                _building setVariable [FORMAT_2(QGVAR(doorJIP_%1_%2),_door,_doorID), nil, true];
             };
         } forEach _sortedSelectionNames;
 
         // Remove all previous breaching actions from building
-        {
-            if ("Breach door using explosives" in ((_building actionParams _x) select 0)) then {
-                [_building, _x] remoteExecCall ["removeAction", 0];
-            };
-        } forEach actionIDs _building;
+        ["zen_common_execute", [{
+            {
+                if ("Breach door using explosives" in ((_this actionParams _x) select 0)) then {
+                    _this removeAction _x;
+                };
+            } forEach actionIDs _this;
+        }, _building]] call CBA_fnc_globalEvent;
 
         [(["Building doors locked (not breachable)", "Building doors locked (breachable)", "Building doors unlocked", "Building doors opened"] select _mode)] call zen_common_fnc_showMessage;
 
-        // 0 unbreachable, 1 breachable, 2 unlocked
+        // 0 unbreachable, 1 breachable, 2 closed, 3 open
         if (_mode isNotEqualTo 1) exitwith {};
 
         {
@@ -108,8 +112,20 @@
                             if (([_target, _doorID] call zen_doors_fnc_getState) isNotEqualTo 1) exitWith {
                                 hint "You find the door to be unlocked.";
 
-                                // Remove the action globally
-                                [_target, _actionID] remoteExecCall ["removeAction", 0];
+                                // Remove the action globally; actionIDs are not the same on all clients!!!
+                                ["zen_common_execute", [{
+                                    params ["_object", "_door"];
+
+                                    private _actionParams = [];
+
+                                    {
+                                        _actionParams = _object actionParams _x;
+
+                                        if ("Breach door using explosives" in (_actionParams select 0) && {_door == (_actionParams select 12)}) then {
+                                            _object removeAction _x;
+                                        };
+                                    } forEach actionIDs _object;
+                                }, [_target, _door]]] call CBA_fnc_globalEvent;
                             };
 
                             private _explosive = nil;
@@ -157,15 +173,31 @@
 
                                 _timer = round _timer;
 
-                                // Remove the action globally
-                                [_target, _actionID] remoteExecCall ["removeAction", 0];
+                                // Remove the action globally; actionIDs are not the same on all clients!!!
+                                ["zen_common_execute", [{
+                                    params ["_object", "_door"];
+
+                                    private _actionParams = [];
+
+                                    {
+                                        _actionParams = _object actionParams _x;
+
+                                        if ("Breach door using explosives" in (_actionParams select 0) && {_door == (_actionParams select 12)}) then {
+                                            _object removeAction _x;
+                                        };
+                                    } forEach actionIDs _object;
+                                }, [_target, _door]]] call CBA_fnc_globalEvent;
 
                                 if (_timer > 5) then {
-                                    [format ["Breaching in %1s!", _timer], false, 1, 2] call ace_common_fnc_displayText;
+                                    hint format ["Breaching in %1s!", _timer];
+
+                                    [{
+                                        hint "";
+                                    }, nil, 2] call CBA_fnc_waitAndExecute;
                                 };
 
                                 // Do place explosive animation
-                                [_caller, "PutDown"] call ace_common_fnc_doGesture;
+                                _caller playActionNow "PutDown";
                                 _caller setVariable ["ace_explosives_PlantingExplosive", true];
 
                                 [{
@@ -218,56 +250,67 @@
                                     hint "Breaching in 2...";
                                 }, nil, _timer - 2] call CBA_fnc_waitAndExecute;
                                 [{
-                                    ["Breaching in 1...", false, 1, 2] call ace_common_fnc_displayText;
+                                    hint "Breaching in 1...";
                                 }, nil, _timer - 1] call CBA_fnc_waitAndExecute;
-
-                                // Spawn grenade effect to make an explosion
                                 [{
-                                    params ["_posHelperObject", "_helperObject"];
+                                    hint "";
+                                }, nil, _timer] call CBA_fnc_waitAndExecute;
 
-                                    // Create blast effect
-                                    private _source1 = "#particlesource" createVehicle _posHelperObject;
-                                    _source1 setParticleClass "GrenadeExp";
-                                    _source1 setParticleParams [
-                                        ["\A3\data_f\ParticleEffects\Universal\Universal", 16, 0, 32, 0], "", "Billboard", 0.3, 0.3, [0, 0, 0], [0, 1, 0], 0, 10, 7.9, 0.1,
-                                        [0.0125 * 0.3 + 4, 0.0125 * 0.3 + 1], [[1, 1, 1, -6], [1, 1, 1, 0]], [1], 0.2, 0.2, "", "", "", 0, false, 0.6, [[30, 30, 30, 0], [0, 0, 0, 0]]
-                                    ];
-                                    _source1 setParticleRandom [0, [0.4, 0.1, 0.4], [0.2, 0.5, 0.2], 90, 0.5, [0, 0, 0, 0], 0, 0, 1, 0.0];
-                                    _source1 setParticleCircle [0, [0, 0, 0]];
+                                // Spawn grenade effect to make an explosion globally
+                                [{
+                                    ["zen_common_execute", [{
+                                        if (!hasInterface) exitWith {};
 
-                                    // Create smoke effect
-                                    private _source2 = "#particlesource" createVehicle _posHelperObject;
-                                    _source2 setParticleClass "GrenadeSmoke1";
-                                    _source2 setParticleParams [
-                                        ["\A3\data_f\ParticleEffects\Universal\Universal", 16, 9, 1, 0], "", "Billboard", 1, 8, [0, 0, 0], [0, 1.5, 0], 0, 0.0522, 0.04, 0.24, [0.013 * 8 + 3, 0.0125 * 8 + 6, 0.013 * 8 + 8, 0.013 * 8 + 10],
-                                        [[0.7, 0.7, 0.7, 0.36], [0.8, 0.8, 0.8, 0.24], [0.85, 0.85, 0.85, 0.14], [0.9, 0.9, 0.9, 0.08], [0.9, 0.9, 0.9, 0.04], [1, 1, 1, 0.01]], [1000], 0.2, 0.2, "", "", "", 0, false, 0.6, [[30, 30, 30, 0], [0, 0, 0, 0]]
-                                    ];
-                                    _source2 setParticleRandom [2, [0.8, 0.2, 0.8], [2.5, 3.5, 2.5], 3, 0.4, [0, 0, 0, 0], 0.5, 0.02, 1, 0.0];
-                                    _source2 setParticleCircle [0, [0, 0, 0]];
-                                    _source2 setDropInterval 0.08;
+                                        private _pos = getPosATL _this;
 
-                                    // Create lighting change
-                                    private _light = "#lightPoint" createVehicle _posHelperObject;
-                                    _light setLightAmbient [0, 0, 0];
-                                    _light setLightBrightness 10;
-                                    _light setLightColor [1, 0.6, 0.4];
-                                    _light setLightIntensity 10000;
-                                    _light setLightAttenuation [0, 0, 0, 2.2, 500, 1000];
+                                        // Create blast effect
+                                        private _source1 = "#particlesource" createVehicleLocal _pos;
+                                        _source1 setParticleClass "IEDFlameS";
+                                        _source1 setParticleParams [
+                                        	["\A3\data_f\ParticleEffects\Universal\Universal", 16, 0, 32, 0], "", "Billboard", 0.3, 0.3, [0, 0, 0], [0, 1, 0], 0, 10, 7.9, 0.1, [1.00375, 0.50375],
+                                        	[[1, 1, 1, -6], [1, 1, 1, 0]], [1], 0.2, 0.2, "", "", "", 0, false, 0.6, [[30, 30, 30, 0], [0, 0, 0, 0]]
+                                        ];
+                                        _source1 setParticleRandom [0, [0.4, 0.1, 0.4], [0.2, 0.5, 0.2], 90, 0.5, [0, 0, 0, 0], 0, 0, 1, 0.0];
+                                        _source1 setParticleCircle [0, [0, 0, 0]];
 
-                                    // Delete objects after set amount of time
-                                    [{
-                                        {
-                                            deleteVehicle _x;
-                                        } forEach _this;
-                                    }, [_source1, _light], 0.3] call CBA_fnc_waitAndExecute;
+                                        // Create smoke effect
+                                        private _source2 = "#particlesource" createVehicleLocal _pos;
+                                        _source2 setParticleClass "LaptopSmoke";
+                                        _source2 setParticleParams [
+                                        	["\A3\data_f\ParticleEffects\Universal\Universal", 16, 9, 1, 0], "", "Billboard", 1, 8, [0, 0, 0], [0, 1.5, 0], 0, 0.0522, 0.04, 0.24, [3.104, 6.1, 8.104, 10.104],
+                                        	[[0.7, 0.7, 0.7, 0.36], [0.8, 0.8, 0.8, 0.24], [0.85, 0.85, 0.85, 0.14], [0.9, 0.9, 0.9, 0.08], [0.9, 0.9, 0.9, 0.04], [1, 1, 1, 0.01]], [1000], 0.2, 0.2, "", "", "", 0, false, 0.6, [[30, 30, 30, 0], [0, 0, 0, 0]]
+                                        ];
+                                        _source2 setParticleRandom [2, [0.8, 0.2, 0.8], [2.5, 3.5, 2.5], 3, 0.4, [0, 0, 0, 0], 0.5, 0.02, 1, 0.0];
+                                        _source2 setParticleCircle [0, [0, 0, 0]];
+                                        _source2 setDropInterval 0.08;
 
-                                    [{deleteVehicle _this}, _source2, 5] call CBA_fnc_waitAndExecute;
+                                        // Create lighting change
+                                        private _light = "#lightPoint" createVehicleLocal _pos;
+                                        _light setLightAmbient [0, 0, 0];
+                                        _light setLightBrightness 10;
+                                        _light setLightColor [1, 0.6, 0.4];
+                                        _light setLightIntensity 10000;
+                                        _light setLightAttenuation [0, 0, 0, 2.2, 500, 1000];
 
-                                    playSound3D ["A3\Sounds_F\arsenal\explosives\grenades\Explosion_HE_grenade_01.wss", _helperObject];
+                                        // Delete objects after set amount of time
+                                        [{
+                                        	{
+                                        		deleteVehicle _x;
+                                        	} forEach _this;
+                                        }, [_source1, _light], 0.1] call CBA_fnc_waitAndExecute;
+
+                                        [{deleteVehicle _this}, _source2, 1] call CBA_fnc_waitAndExecute;
+
+                                        // Play locally because it doesn't always work globally
+                                        playSound3D ["A3\Sounds_F\arsenal\explosives\grenades\Explosion_HE_grenade_01.wss", _this, false, getPosASL _this, 1, 1, 0, 0, true];
+                                    }, _this]] call CBA_fnc_globalEvent;
+
+                                    // Only execute once after this
+                                    if (!local _this) exitWith {};
 
                                     // Hide helper; This makes it as if it had blown up, however it can't be deleted too quickly, otherwise sound doesn't play
-                                    ["zen_common_hideObjectGlobal", [_helperObject, true]] call CBA_fnc_serverEvent;
-                                }, [getPosATL _helperObject, _helperObject], _timer] call CBA_fnc_waitAndExecute;
+                                    [_this, true] remoteExecCall ["hideObjectGlobal", 2];
+                                }, _helperObject, _timer] call CBA_fnc_waitAndExecute;
 
                                 [{
                                     params ["_helperObject", "_surfaceNormal", "_useStun", "_target", "_door", "_doorID"];
@@ -275,7 +318,7 @@
                                     // Delay lets the sound play correctly
                                     deleteVehicle _helperObject;
 
-                                    if (_useStun) then {
+                                    if (_useStun && {isClass (configFile >> "CfgPatches" >> "ace_grenades")}) then {
                                         ["ACE_G_M84" createVehicle ((getPosATL _helperObject) vectorAdd (_surfaceNormal vectorMultiply -0.3))] call ace_grenades_fnc_flashbangThrownFuze;
                                     };
 
@@ -288,6 +331,8 @@
 
                                     // Remove action from JIP
                                     remoteExecCall ["", _handleJIP];
+
+                                    _target setVariable [FORMAT_2(QGVAR(doorJIP_%1_%2),_door,_doorID), nil, true];
                                 }, [_helperObject, _surfaceNormal, _useStun, _target, _door, _doorID], _timer + 0.5] call CBA_fnc_waitAndExecute;
                             }, {}, [_target, _caller, _explosive, _actionID, _door, _doorID]] call zen_dialog_fnc_create;
                         },
@@ -296,7 +341,7 @@
                         true,
                         true,
                         "",
-                        QUOTE(isClass (configFile >> 'CfgPatches' >> 'zen_main')),
+                        "true",
                         2,
                         false,
                         _x

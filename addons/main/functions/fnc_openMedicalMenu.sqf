@@ -16,6 +16,8 @@
  * Public: No
  */
 
+if (!GVAR(ACEMedicalLoaded)) exitWith {};
+
 ["Zeus Additions - Medical", "Open ACE Medical Menu", {
     params ["", "_unit"];
 

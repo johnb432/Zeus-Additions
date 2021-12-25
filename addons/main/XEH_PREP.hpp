@@ -1,5 +1,4 @@
 PREP(addACEDragAndCarry);
-PREP(allowTurnOutAI);
 PREP(behaviourAIModules);
 PREP(changeChannelVisibility);
 PREP(changeGrassRender);

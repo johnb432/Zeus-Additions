@@ -35,13 +35,11 @@
         private _isGroup = !isNil {_groups select 0};
 
         // Create unit based on which side we want to make a marker in; Important for group markers
-        private _unitType = "C_man_1";
-
-        switch ([_sides select 0, side (_groups select 0)] select _isGroup) do {
-            case west: {_unitType = "B_Survivor_F"};
-            case east: {_unitType = "O_Survivor_F"};
-            case independent: {_unitType = "I_Survivor_F"};
-            default {};
+        private _unitType = switch ([_sides select 0, side (_groups select 0)] select _isGroup) do {
+            case west: {"B_Survivor_F"};
+            case east: {"O_Survivor_F"};
+            case independent: {"I_Survivor_F"};
+            default {"C_man_1"};
         };
 
         // Create a helper unit to open map and place marker from there; Make unit join specific group for group markers
@@ -56,11 +54,11 @@
         _helperUnit linkItem "ItemWatch";
 
         // Do not allow the unit to move or interact with other objects
-        ["zen_common_enableSimulationGlobal", [_helperUnit, false]] call CBA_fnc_serverEvent;
+        _helperUnit enableSimulationGlobal false;
 
         // Make invisible and invincible
-        ["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
-        ["zen_common_allowDamage", [_helperUnit, false]] call CBA_fnc_localEvent;
+        _helperUnit allowDamage false;
+        [_helperUnit, false] remoteExecCall ["hideObjectGlobal", 2];
 
         // Save old player object
         private _oldPlayer = player;
@@ -71,12 +69,12 @@
 
         // If virtual curator, ignore
         if !(_oldPlayer isKindOf "VirtualCurator_F") then {
-            //Freeze the old unit; AI will take over and do dumb stuff
-            ["zen_common_disableAI", [_oldPlayer, "all"]] call CBA_fnc_localEvent;
+            // Freeze the old unit; AI will take over and do dumb stuff
+            _oldPlayer disableAI "all";
 
             // Disable damage until Zeus has control of unit again
             if (_isDamageAllowed) then {
-                ["zen_common_allowDamage", [_oldPlayer, false]] call CBA_fnc_serverEvent;
+                _oldPlayer allowDamage false;
             };
         };
 
@@ -144,11 +142,11 @@
                 // If virtual curator, ignore
                 if !(_oldPlayer isKindOf "VirtualCurator_F") then {
                     // Unfreeze the old unit
-                    ["zen_common_enableAI", [_oldPlayer, "all"]] call CBA_fnc_localEvent;
+                    [_oldPlayer, "all"] remoteExecCall ["enableAI", _oldPlayer];
 
                     // Enable damage again
                     if (_isDamageAllowed) then {
-                        ["zen_common_allowDamage", [_oldPlayer, false]] call CBA_fnc_serverEvent;
+                        [_oldPlayer, false] remoteExecCall ["allowDamage", _oldPlayer];
                     };
                 };
 

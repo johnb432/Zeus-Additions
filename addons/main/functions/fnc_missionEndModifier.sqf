@@ -19,27 +19,29 @@
 ["Zeus Additions - Utility", "End Scenario with Player Modifier", {
     ["End Scenario with Player Modifier", [
         ["LIST", ["Mission ending", "Sets the type of ending."], [["EveryoneWon", "EveryoneLost", "SideScore", "GroupScore", "PlayerScore", "SideTickets"], ["Mission completed", "Mission failed", "Side with best score wins", "Group with best score wins", "Player with best score wins", "Side with most tickets wins"], 0, 6]],
-        ["TOOLBOX:YESNO", ["Add Invincibility", "Invincibility will be applied with the modifier below."], false, false],
-        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player movement", "Disables player movement and user input."], ["Death", "All player die."]], 0], false],
-        ["EDIT:MULTI", ["Debrief text", "Text that will show up in the debriefing screen."], ["", {}, 5], false]
+        ["TOOLBOX:YESNO", ["Add Invincibility", "Invincibility will be applied with the modifier below."], false],
+        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player movement", "Disables player movement and user input."], ["Death", "All player die."]], 0]],
+        ["EDIT:MULTI", ["Debrief text", "Text that will show up in the debriefing screen."], ["", {}, 5]]
     ],
     {
         params ["_results"];
         _results params ["_endType", "_invincible", "_setting", "_debriefText"];
 
-        // (call CBA_fnc_players) does not include curators
+        // CBA_fnc_players does not include curators
         private _allPlayers = call CBA_fnc_players;
+        private _vehicles = [];
+
+        {
+            if (!isNull objectParent _x) then {
+                _vehicles pushBackUnique (objectParent _x);
+            };
+        } forEach _allPlayers;
 
         // If 2nd modifier isn't death, apply invincibility
         if (_invincible && {_setting isNotEqualTo 3}) then {
             {
-                ["zen_common_allowDamage", [_x, false], _x] call CBA_fnc_targetEvent;
-
-                // If player is in a vehicle, make that invincible too
-                if (!isNull objectParent _x) then {
-                    ["zen_common_allowDamage", [objectParent _x, false], objectParent _x] call CBA_fnc_targetEvent;
-                };
-            } forEach _allPlayers;
+                [_x, false] remoteExecCall ["allowDamage", _x];
+            } forEach (_allPlayers + _vehicles);
         };
 
         switch (_setting) do {
@@ -47,11 +49,16 @@
                 {
                      _x remoteExecCall ["removeAllWeapons", _x];
                 } forEach _allPlayers;
+
+                // Remove all ammo from vics
+                {
+                    [_x, 0] remoteExecCall ["setVehicleAmmoDef", _x];
+                } forEach _vehicles;
             };
             case 2: {
                 // Stops the player from spinning if player was in the middle of turning
                 {
-                     ["zen_common_enableSimulationGlobal", [_x, false]] call CBA_fnc_serverEvent;
+                     [_x, false] remoteExecCall ["enableSimulation", _x];
                 } forEach _allPlayers;
 
                 true remoteExecCall ["disableUserInput", _allPlayers, true];

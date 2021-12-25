@@ -16,6 +16,8 @@
  * Public: No
  */
 
+if (!GVAR(ACEMedicalLoaded)) exitWith {};
+
 ["Zeus Additions - Medical", "Create ACE Injuries", {
     params ["", "_unit"];
 
@@ -28,25 +30,25 @@
     };
 
     ["Create ACE Injuries", [
-        ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Head", [0, 20, 0, 0]],
 
-        ["TOOLBOX", "Damage Torso", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Torso", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Torso", [0, 20, 0, 0]],
 
-        ["TOOLBOX", "Damage Left Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Left Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Left Arm", [0, 20, 0, 0]],
         ["CHECKBOX", ["Set Fracture to Left Arm", "Forces a fracture to occur."], false],
 
-        ["TOOLBOX", "Damage Right Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Right Arm", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Right Arm", [0, 20, 0, 0]],
         ["CHECKBOX", ["Set Fracture to Right Arm", "Forces a fracture to occur."], false],
 
-        ["TOOLBOX", "Damage Left Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Left Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Left Leg", [0, 20, 0, 0]],
         ["CHECKBOX", ["Set Fracture to Left Leg", "Forces a fracture to occur."], false],
 
-        ["TOOLBOX", "Damage Right Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]], false],
+        ["TOOLBOX", "Damage Right Leg", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Right Leg", [0, 20, 0, 0]],
         ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur."], false],
 
@@ -56,7 +58,7 @@
         params ["_results", "_unit"];
 
         private _formattedResults = [];
-        private _temp;
+        private _temp = 0;
 
         // Iterate over results and copy all values except last one, so (count - 1) - 1 + 2 = count
         for "_i" from 0 to (count _results) step 1 do {
@@ -80,7 +82,7 @@
 
         // Notify the player if affected unit is a player; for fairness reasons
         if (isPlayer _unit) then {
-            ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
+            "Zeus has injured you using a module." remoteExecCall ["hint", _unit];
         };
 
         ["Injuries created"] call zen_common_fnc_showMessage;
@@ -107,20 +109,18 @@
         ["TOOLBOX:YESNO", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Right Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
-        ["TOOLBOX:WIDE", ["Damage Type", "Various types of damages produce different results."], [0, 1, 6, ["Grenade", "Explosive", "Shell", "Vehicle Crash", "Collision", "Backblast"]], false]
+        ["TOOLBOX:WIDE", ["Damage Type", "Various types of damages produce different results."], [0, 1, 6, ["Grenade", "Explosive", "Shell", "Vehicle Crash", "Collision", "Backblast"]]]
     ],
     {
         params ["_results", "_unit"];
         _results params ["_damage", "_setFractureLeftArm", "_setFractureRightArm", "_setFractureLeftLeg", "_setFractureRightLeg", "_damageType"];
 
-        _damageType = ["grenade", "explosive", "shell", "vehiclecrash", "collision", "backblast"] select _damageType;
+        if (_damage > 0) then {
+            [_unit, _damage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], ["grenade", "explosive", "shell", "vehiclecrash", "collision", "backblast"] select _damageType] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _unit];
+        };
 
         private _runUpdateEffects = false;
         private _fractures = _unit getVariable ["ace_medical_fractures", [0, 0, 0, 0, 0, 0]];
-
-        if (_damage > 0) then {
-            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_unit, _damage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], _damageType]], _unit] call CBA_fnc_targetEvent;
-        };
 
         // Add fractures
         {
@@ -132,12 +132,12 @@
 
         // Notify the player if affected unit is a player; for fairness reasons
         if (isPlayer _unit) then {
-            ["zen_common_hint", ["Zeus has injured you using a module."], _unit] call CBA_fnc_targetEvent;
+            "Zeus has injured you using a module." remoteExecCall ["hint", _unit];
         };
 
         if (_runUpdateEffects) then {
             _unit setVariable ["ace_medical_fractures", _fractures, true];
-            ["zen_common_execute", [ace_medical_engine_fnc_updateDamageEffects, [_unit]], _unit] call CBA_fnc_targetEvent;
+            [_unit] remoteExecCall ["ace_medical_engine_fnc_updateDamageEffects", _unit];
         };
 
         ["Random injuries created"] call zen_common_fnc_showMessage;

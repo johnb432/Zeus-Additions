@@ -26,7 +26,7 @@
         ["SIDES", ["Spawn as", "Only the first selected side will be taken into account."], []],
         ["SIDES", ["Attack", "Allows the dog to attack the given sides. If none are selected, it will attack no one and will be peaceful."], []],
         ["SLIDER", ["Search Radius", "The dogs will search within given radius for targets."], [0, 1000, 100, 0]],
-        ["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 50, 3, 2]],
+        [["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 50, 3, 2]], ["SLIDER:PERCENT", ["Dog Damage", "How much damage the dog deals."], [0, 1, 0.1]]] select GVAR(ACEMedicalLoaded),
         ["TOOLBOX:YESNO", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
         ["TOOLBOX:YESNO", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false],
         ["TOOLBOX:YESNO", ["Turn off pathing", "Turns off animal AI behaviour and pathing. Only applies if dog is peaceful."], false],
@@ -91,8 +91,8 @@
             ["zen_common_addObjects", [[_helperUnit]]] call CBA_fnc_serverEvent;
 
             // Make helper invisible and invincible
-            ["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
-            ["zen_common_allowDamage", [_helperUnit, false]] call CBA_fnc_localEvent;
+            [_helperUnit, true] remoteExecCall ["hideObjectGlobal", 2];
+            _helperUnit allowDamage false;
 
             _dog attachTo [_helperUnit];
 
@@ -157,7 +157,7 @@
 
                 // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
-                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {(lifeState _x) isNotEqualTo "INCAPACITATED"} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     _helperUnit setVariable [QGVAR(currentPosWP), _posWaypoint];
                 };
@@ -167,9 +167,9 @@
                     _helperUnit setVariable [QGVAR(timeDog), _time];
 
                     // If no valid target, find one
-                    if (isNil "_dogNearestEnemy" || {!alive _dogNearestEnemy} || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false]}) then {
+                    if (isNil "_dogNearestEnemy" || {!alive _dogNearestEnemy} || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false]} || {(lifeState _dogNearestEnemy) isEqualTo "INCAPACITATED"}) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
-                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {(lifeState _x) isNotEqualTo "INCAPACITATED"} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     };
 
@@ -189,7 +189,12 @@
 
                         // Inflict damage if in range
                         if (_distance <= 3) then {
-                            ["zen_common_execute", [ace_medical_fnc_addDamageToUnit, [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog]], _dogNearestEnemy] call CBA_fnc_targetEvent;
+                            if (GVAR(ACEMedicalLoaded)) then {
+                                [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy];
+                            } else {
+                                private _hitPoint = selectRandom ["hitarms", "hithands", "hitlegs"];
+                                [_dogNearestEnemy, [_hitPoint, _damage + (_dogNearestEnemy getHitPointDamage _hitPoint), true, _dog]] remoteExecCall ["setHitPointDamage", _dogNearestEnemy];
+                            };
                         };
 
                         // Prevents excessive barking
@@ -199,7 +204,7 @@
                         };
                     };
                 };
-            }, 0.1, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
+            }, 0.25, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
         }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _pos, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
     },
     {

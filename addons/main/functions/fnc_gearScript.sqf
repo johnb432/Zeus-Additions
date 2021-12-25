@@ -23,7 +23,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 ["Zeus Additions - Loadout", "Loadout: Presets", {
     ["Set Loadout Presets", [
         ["EDIT", ["Create new loadout preset", "Allows you to store multiple presets of loadouts. Profiles names are case insensitive. DO NOT USE PUNCUATION MARKS."], "", true],
-        ["COMBO", ["Select loadout preset", "Allows you to select a preset to edit and apply."], [GETPRVAR(QGVAR(gearPresetNames),["default"]), GETPRVAR(QGVAR(gearPresetNames),["default"]), GVAR(gearIndex)], false],
+        ["COMBO", ["Select loadout preset", "Allows you to select a preset to edit and apply."], [GETPRVAR(QGVAR(gearPresetNames),["default"]), GETPRVAR(QGVAR(gearPresetNames),["default"]), GVAR(gearIndex)]],
         ["EDIT", ["Import new loadout preset", "Place the array of loadouts here if you are importing a profile."], "", true],
         ["TOOLBOX:YESNO", ["Export current preset", "Exports preset to clipboard."], false, true],
         ["TOOLBOX:YESNO", ["Reset saved loadouts", "Resets saved loadouts in currently selected preset."], false, true],
@@ -40,8 +40,12 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 
         // If preset is supposed to be exported
         if (_exportPreset) exitWith {
+            if (!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")) exitWith {
+                ["ACE clipboard is disabled!"] call zen_common_fnc_showMessage;
+            };
+
             if (_selectedPreset isEqualTo "") exitWith {
-                ["No preset was chosen!", _selectedPreset] call zen_common_fnc_showMessage;
+                ["No preset was chosen!"] call zen_common_fnc_showMessage;
             };
 
             private _loadouts = [];
@@ -67,14 +71,21 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
             _importData = parseSimpleArray _importData;
 
             // If preset already exists, ask if overwrite or not
-            if ((toLower _preset) in (_presets apply {toLower _x})) then {
-                [_preset, _presets, _importData] spawn {
-                    params ["_preset", "_presets", "_importData"];
+            private _presetIndex = (_presets apply {toLower _x}) find (toLower _preset);
 
-                    if ([format ["Are you sure you want to overwrite preset '%1'?", _preset], "Confirmation", "Yes", "No"] call BIS_fnc_guiMessage) then {
+            if (_presetIndex isNotEqualTo -1) then {
+                [_preset, _presetIndex, _importData] spawn {
+                    params ["_preset", "_presetIndex", "_importData"];
+
+                    if ([format ["Are you sure you want to overwrite preset '%1'?", _preset], "Confirmation", "Yes", "No", findDisplay IDD_RSCDISPLAYCURATOR] call BIS_fnc_guiMessage) then {
+                        GVAR(gearIndex) = _presetIndex;
+                        GVAR(gearPreset) = _preset;
+
                         {
                             SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_preset),_importData select _forEachIndex);
                         } forEach GVAR(loadoutTypes);
+
+                        ["Preset '%1' overwritten and chosen", _preset] call zen_common_fnc_showMessage;
                     };
                 };
             } else {
@@ -87,7 +98,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
                     SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_preset),_importData select _forEachIndex);
                 } forEach GVAR(loadoutTypes);
 
-                ["New preset '%1' imported and chosen", _newPreset] call zen_common_fnc_showMessage;
+                ["New preset '%1' imported and chosen", _preset] call zen_common_fnc_showMessage;
             };
         };
 
@@ -145,6 +156,8 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 }, ICON_PERSON] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Loadout", "Loadout: Set", {
+    ["Preset '%1' is selected", GVAR(gearPreset)] call zen_common_fnc_showMessage;
+
     ["Set Loadout (Uses ACE arsenal export format)", [
         ["EDIT", ["Default", "Riflemen, Crew, etc. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearDefault_" + GVAR(gearPreset),"[]"), true],
         ["EDIT", ["Leader", "Squad leaders, Team leaders. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearLeader_" + GVAR(gearPreset),"[]"), true],
@@ -165,7 +178,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
             SETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),[ARR_2("[]",_result)] select (_result isNotEqualTo ""));
         } forEach GVAR(loadoutTypes);
 
-        ["Loadouts saved"] call zen_common_fnc_showMessage;
+        ["Loadouts saved to '%1'", GVAR(gearPreset)] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
@@ -174,6 +187,9 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 
 ["Zeus Additions - Loadout", "Loadout: Apply to single unit", {
     params ["", "_unit"];
+
+    // If opening on a vehicle
+    _unit = effectiveCommander _unit;
 
     if !(_unit isKindOf "CAManBase") exitWith {
          ["Select a unit!"] call zen_common_fnc_showMessage;
@@ -188,11 +204,14 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 
     _unit setUnitLoadout (parseSimpleArray _loadoutString);
 
-    ["Loadout applied"] call zen_common_fnc_showMessage;
+    ["Preset '%1' applied", GVAR(gearPreset)] call zen_common_fnc_showMessage;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Loadout", "Loadout: Apply to group", {
     params ["", "_unit"];
+
+    // If opening on a vehicle
+    _unit = effectiveCommander _unit;
 
     if !(_unit isKindOf "CAManBase") exitWith {
          ["Select a unit!"] call zen_common_fnc_showMessage;
@@ -213,5 +232,5 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         _x setUnitLoadout ([_loadouts select 0, _loadout] select (_loadout isNotEqualTo []));
     } forEach units group _unit;
 
-    ["Loadouts applied"] call zen_common_fnc_showMessage;
+    ["Preset '%1' applied", GVAR(gearPreset)] call zen_common_fnc_showMessage;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;

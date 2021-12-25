@@ -9,8 +9,6 @@ class CfgPatches {
         requiredAddons[] = {
             "cba_main",
             "cba_xeh",
-            "ace_common",
-            "ace_medical",
             "zen_main",
             "zen_modules"
         };

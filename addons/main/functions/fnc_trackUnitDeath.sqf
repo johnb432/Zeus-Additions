@@ -58,7 +58,7 @@ addMissionEventHandler ["EntityKilled", {
     ],
     {
         params ["_results", "_unit"];
-        _results params ["_selected", "_remove", "_hint", "_systemChat", "_zeusBanner", "_log"];
+        _results params ["_selected", "_add", "_hint", "_systemChat", "_zeusBanner", "_log"];
         _selected params ["", "", "_players"];
 
         // If no unit was selected in the dialog, check if module was placed on a unit
@@ -73,8 +73,9 @@ addMissionEventHandler ["EntityKilled", {
         };
 
         // If remove EH
-        if (_remove) exitWith {
+        if (!_add) exitWith {
             GVAR(trackUnit) = GVAR(trackUnit) - [_unit];
+            ["Unit is no longer being tracked"] call zen_common_fnc_showMessage;
         };
 
         // If no method of notification was selected, exit
