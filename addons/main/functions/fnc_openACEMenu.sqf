@@ -7,7 +7,7 @@
  * Arguments:
  * 0: Object <OBJECT>
  * 1: Menu type: <NUMBER>
- * 2: Additional parameters <ARRAY>
+ * 2: Additional parameters <NUMBER>
  *
  * Return Value:
  * None
@@ -39,15 +39,16 @@ removeGoggles _helperUnit;
 _helperUnit setVariable ["ACE_medical_medicClass", 2, true];
 
 // Do not allow the unit to move or interact with other objects
-["zen_common_enableSimulationGlobal", [_helperUnit, false]] call CBA_fnc_serverEvent;
+_helperUnit enableSimulationGlobal false;
 
 // Make invisible and invincible
-["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
-["zen_common_allowDamage", [_helperUnit, false]] call CBA_fnc_localEvent;
+[_helperUnit, true] remoteExecCall ["hideObjectGlobal", 2];
+_helperUnit allowDamage false;
 
 // Start remote controlling
 _helperUnit call zen_remote_control_fnc_start;
 
+// ACE common is required by both cargo and medical gui, so it can be used here
 private _display = switch (_menuType) do {
     case MEDICAL_MENU: {
         // Open medical menu once in new unit

@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Adds a module that forces a unit to wake up or go unconscious, regardless if they have stable vitals or not.
+ * Adds a module that forces a unit to wake up or go unconscious, regardless if they have stable vitals or not (for ACE).
  *
  * Arguments:
  * None
@@ -33,10 +33,14 @@
     };
 
     // Toggle consciousness
-    ["zen_common_execute", [ace_medical_status_fnc_setUnconsciousState, [_unit, !(_unit getVariable ["ACE_isUnconscious", false])]], _unit] call CBA_fnc_targetEvent;
+    if (isClass (configFile >> "CfgPatches" >> "ace_medical_status")) then {
+        [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] remoteExecCall ["ace_medical_status_fnc_setUnconsciousState", _unit];
+    } else {
+        [_unit, ((lifeState _unit) isNotEqualTo "INCAPACITATED")] remoteExecCall ["setUnconscious", _unit];
+    };
 
     // Notify the player if affected unit is a player; for fairness reasons
     if (isPlayer _unit) then {
-        ["zen_common_hint", ["Zeus has toggled your consciousness using a module."], _unit] call CBA_fnc_targetEvent;
+        "Zeus has toggled your consciousness using a module." remoteExecCall ["hint", _unit];
     };
-}, ICON_UNCONSCIOUS] call zen_custom_modules_fnc_register;
+}, [ICON_PERSON, ICON_UNCONSCIOUS] select (isClass (configFile >> "CfgPatches" >> "ace_zeus"))] call zen_custom_modules_fnc_register;

@@ -1,12 +1,9 @@
-**Zeus Additions** adds a handful of modules to the Zeus interface. Requires ZEN and ACE. This mod is a client side mod.
-
-<h2>JIP feature</h2>
-
-Only 1 client needs it to be enabled for it to be added to the server. If multiple clients have Zeus Additions, one or more have it turned on but the others not, the latter can still set JIP features in modules.
+**Zeus Additions** adds a handful of modules to the Zeus interface. Requires ZEN on all clients. This mod is a client side mod.
 
 <h2>Modules</h2>
 
 * **Add ACE Drag and Carry Options:** Allows the Zeus to set object to be ACE draggable and carriable. The module can also set whether weight limits should be respected when trying to drag or carry the selected object.
+* **Allow AI to Turn Out:** Allows the Zeus to change if AI can turn out or not.
 * **Change AI Dismount Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized.
 * **Change AI Mine Detecting Behaviour:** Theoretically should change their ability to detect mines. However in practice it doesn't seem to do anything, so feedback and more work is needed.
 * **Change Channel Visibility:** Allows the Zeus to enable and disable specific channels including custom ones, both chat and VON.
@@ -66,13 +63,17 @@ Inputs are arrays of strings.
     * "Control" + "shift" modifies the amount by 50.
 * When you press ok, it will spawn the magazines.
 
-<h2>CREDITS</h2>
+<h2>JIP feature</h2>
+
+Only 1 client needs it to be enabled for it to be added to the server. If multiple clients have Zeus Additions, one or more have it turned on but the others not, the latter can still set JIP features in modules.
+
+<h2>Credit</h2>
 
 Mod by johnb43<br/>
 [GitHub](https://github.com/johnb432/Zeus-Additions)
 
-Gear script originally made by cineafx, revamped by johnb43.
-Snow script made by JW & AZCoder, reworked by johnb43.
+Gear script originally made by cineafx, revamped by johnb43.<br/>
+Snow script made by JW & AZCoder, reworked by johnb43.<br/>
 Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions.

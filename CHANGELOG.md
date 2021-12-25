@@ -1,3 +1,14 @@
+# Changelog for Zeus Additions 24.12.2021
+
+1.6.3.0
+- Removed ACE dependency.
+- Added the ability to apply loadouts on units in vehicles.
+- Added the ability to turn off ACE dragging or carrying using the module.
+- Fixed a bug with the "Track Unit Death" module.
+- Fixed grenade explosion effect spamming log entries.
+- Fixed multiple MP issues.
+- General improvements.
+
 # Changelog for Zeus Additions 13.11.2021
 
 1.6.2.5

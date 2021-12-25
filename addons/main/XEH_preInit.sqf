@@ -41,7 +41,7 @@ private _cfgMagazines = configFile >> "CfgMagazines";
         _keys pushBack configName _x;
         _values pushBack _magazinesList;
     };
-} foreach configProperties [(configFile >> "CfgMagazineWells"), "isClass _x", true];
+} foreach configProperties [configFile >> "CfgMagazineWells", "isClass _x", true];
 
 // Store hashmap with all info necessary
 SETUVAR(QGVAR(magazinesHashmap),_keys createHashMapFromArray _values);

@@ -28,7 +28,7 @@
         ["SLIDER", ["HAT REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["AA BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["AA REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
-        ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]], false]
+        ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]]]
     ],
     {
         params ["_results", "_args"];
@@ -42,8 +42,17 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
-            ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [configOf _object, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
-            ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [configOf _object, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
+            if (!GVAR(ACEDraggingLoaded)) exitWith {};
+
+            // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
+            // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
+            [["zen_common_execute", [{
+                // Dragging
+                [_this, true, [configOf _this, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
+
+                // Carrying
+                [_this, true, [configOf _this, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
+            }, _object]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         private _config = configOf _object;
@@ -98,7 +107,7 @@
         ["SLIDER", ["Tertiary Magazine", "Spawns in x amount of each launcher compatible magazines (not x total!)."], [0, 200, 5, 0]],
         ["TOOLBOX:YESNO", ["Include UGL ammo", "Also checks for UGLs and spawns ammo for UGLs if enabled."], false, true],
         ["TOOLBOX:YESNO", ["Allow blacklisted ammo", "Allows ammo that is normally blacklisted to be spawned in."], false, true],
-        ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory. Units are excluded from this."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]], false]
+        ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory. Units are excluded from this."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]]]
     ],
     {
         params ["_results", "_args"];
@@ -115,7 +124,7 @@
             playSound "FD_Start_F";
         };
 
-        // Select first player from dialog
+        // Select first player from dialog, has priority over unit that module was placed on
         private _player = _players select 2 select 0;
 
         // If no player found, take unit on which the module was placed
@@ -129,8 +138,17 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
-            ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [configOf _object, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
-            ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [configOf _object, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
+            if (!GVAR(ACEDraggingLoaded)) exitWith {};
+
+            // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
+            // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
+            [["zen_common_execute", [{
+                // Dragging
+                [_this, true, [configOf _this, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
+
+                // Carrying
+                [_this, true, [configOf _this, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
+            }, _object]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         if (_numPrim isEqualTo 0 && {_numHand isEqualTo 0} && {_numSec isEqualTo 0}) exitWith {
@@ -157,32 +175,34 @@
         private _blackList = [GVAR(blacklist), []] select _allowBlackList;
 
         // Add primary weapon ammo
-        if (_numPrim > 0 && {!isNil {primaryWeapon _unit}}) then {
+        if (_numPrim > 0 && {primaryWeapon _unit isNotEqualTo ""}) then {
             {
                 _object addItemCargoGlobal [_x, _numPrim];
             } forEach (([primaryWeapon _unit, _allowUGL] call CBA_fnc_compatibleMagazines) - _blackList);
         };
 
         // Add side arm ammo
-        if (_numHand > 0 && {!isNil {handgunWeapon _unit}}) then {
+        if (_numHand > 0 && {handgunWeapon _unit isNotEqualTo ""}) then {
             {
                 _object addItemCargoGlobal [_x, _numHand];
             } forEach (([handgunWeapon _unit] call CBA_fnc_compatibleMagazines) - _blackList);
         };
 
         // Add tertiary weapon ammo (launchers etc)
-        if (_numSec > 0 && {!isNil {secondaryWeapon _unit}}) then {
+        if (_numSec > 0 && {secondaryWeapon _unit isNotEqualTo ""}) then {
             {
                 _object addItemCargoGlobal [_x, _numSec];
             } forEach (([secondaryWeapon _unit] call CBA_fnc_compatibleMagazines) - _blackList);
         };
 
-        ["Ammo crate created"] call zen_common_fnc_showMessage;
+        ["Ammo resupply created"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, [_pos, _object]] call zen_dialog_fnc_create;
 }, ICON_INVENTORY] call zen_custom_modules_fnc_register;
+
+if (!isClass (configFile >> "CfgPatches" >> "ace_medical_treatment")) exitWith {};
 
 ["Zeus Additions - Resupply", "Spawn ACE Medical Resupply", {
     params ["_pos", "_object"];
@@ -209,7 +229,7 @@
         ["SLIDER", "Bodybag", [0, 50, GETPRVAR(QGVAR(bodybag),20), 0], true],
         ["SLIDER", "Surgical Kit", [0, 100, GETPRVAR(QGVAR(surgical),0), 0], true],
         ["SLIDER", "Personal Aid Kit", [0, 100, GETPRVAR(QGVAR(PAK),0), 0], true],
-        ["TOOLBOX:WIDE", ["Spawn Medical Crate", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Medical Crate", "Insert in inventory", "Clear inventory and insert"]], false],
+        ["TOOLBOX:WIDE", ["Spawn Medical Crate", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Medical Crate", "Insert in inventory", "Clear inventory and insert"]]],
         ["CHECKBOX", ["Reset to default"], false, true]
     ],
     {
@@ -252,9 +272,17 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearItemCargoGlobal _object;
 
+            if (!GVAR(ACEDraggingLoaded)) exitWith {};
+
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
-            ["zen_common_execute", [ace_dragging_fnc_setDraggable, [_object, true, [configOf _object, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_dragDirection", 90] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
-            ["zen_common_execute", [ace_dragging_fnc_setCarryable, [_object, true, [configOf _object, "ace_dragging_carryPosition", [0, 0.8, 0.8]] call BIS_fnc_returnConfigEntry, [configOf _object, "ace_dragging_carryDirection", 0] call BIS_fnc_returnConfigEntry, true]]] call CBA_fnc_globalEventJIP;
+            // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
+            [["zen_common_execute", [{
+                // Dragging
+                [_this, true, [configOf _this, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_dragDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
+
+                // Carrying
+                [_this, true, [configOf _this, "ace_dragging_carryPosition", [0, 0.8, 0.8]] call BIS_fnc_returnConfigEntry, [configOf _this, "ace_dragging_carryDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
+            }, _object]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         private _config = configOf _object;
@@ -311,7 +339,7 @@
             QGVAR(bodybag), QGVAR(surgical), QGVAR(PAK)
         ];
 
-        ["Medical crate created"] call zen_common_fnc_showMessage;
+        ["Medical resupply created"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

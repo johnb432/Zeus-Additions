@@ -22,52 +22,49 @@
     ],
     {
         params ["_results"];
-        _results params ["_setPaused"];
 
-        private _string = "Time paused";
-
-        if (_setPaused) then {
+        private _string = if (_results select 0) then {
             if (isNil {GETMVAR(QGVAR(setTimeAcc),nil)}) then {
                 // Get old time multiplier
                 private _timeMult = timeMultiplier;
                 0.1 remoteExecCall ["setTimeMultiplier", 2];
 
-                // Do on server in case client disconnects
-                ["zen_common_execute", [
-                    CBA_fnc_waitUntilAndExecute, [
-                        {
-                            // Wait for new time multiplier to be active
-                            timeMultiplier isNotEqualTo _this;
-                        }, {
-                            missionNamespace setVariable [QGVAR(setTimeAcc),
-                                [{
-                                    params ["_startSeconds", "_handleID"];
+                ["zen_common_execute", [{
+                    [{
+                        // Wait for new time multiplier to be active
+                        timeMultiplier isNotEqualTo _this;
+                    }, {
 
-                                    // If time acceleration has been changed, stop
-                                    if (timeMultiplier > 0.11) exitWith {
-                                        _handleID call CBA_fnc_removePerFrameHandler;
+                        private _handleID = [{
+                            params ["_startSeconds", "_handleID"];
 
-                                        SETMVAR(QGVAR(setTimeAcc),nil,true);
+                            // If time acceleration has been changed, stop
+                            if (timeMultiplier > 0.11) exitWith {
+                                _handleID call CBA_fnc_removePerFrameHandler;
 
-                                        ["zen_common_execute", [zen_common_fnc_showMessage, ["[Zeus Additions]: Unpaused time because time acceleration has been changed."]], allCurators] call CBA_fnc_targetEvent;
-                                    };
+                                SETMVAR(QGVAR(setTimeAcc),nil,true);
 
-                                    // Looking just at the seconds is enough
-                                    private _deltaSec = (parseNumber ((([daytime] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
+                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+                            };
 
-                                    if (_deltaSec < 0) then {
-                                        _deltaSec = _deltaSec + 60;
-                                    };
+                            // Looking just at the seconds is enough
+                            private _deltaSec = (parseNumber ((([daytime] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
 
-                                    (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
-                                }, 100, (([daytime] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler, true
-                            ];
-                        }, _timeMult, 10
-                    ]
-                ]] call CBA_fnc_serverEvent;
+                            if (_deltaSec < 0) then {
+                                _deltaSec = _deltaSec + 60;
+                            };
+
+                            (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
+                        }, 100, (([daytime] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler;
+
+                        SETMVAR(QGVAR(setTimeAcc),_handleID,true);
+                    }, _this, 10] call CBA_fnc_waitUntilAndExecute;
+                }, _timeMult]] call CBA_fnc_serverEvent;
+
+                "Time paused";
             } else {
-                _string = "Time already paused!";
                 playSound "FD_Start_F";
+                "Time already paused!";
             };
         } else {
             private _handleID = GETMVAR(QGVAR(setTimeAcc),nil);
@@ -79,10 +76,10 @@
 
                 SETMVAR(QGVAR(setTimeAcc),nil,true);
 
-                _string = "Time resumed back to normal (1x)";
+                "Time reverted back to normal (1x)";
             } else {
-                _string = "Time already normal (1x)!";
                 playSound "FD_Start_F";
+                "Time already normal (1x)!";
             };
         };
 

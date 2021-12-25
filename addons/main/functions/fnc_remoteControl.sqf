@@ -27,5 +27,10 @@
          playSound "FD_Start_F";
     };
 
+    if (isPlayer _unit) exitWith {
+         ["Select a non-player unit!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
+    };
+
     _unit call FUNC(remoteControlContextMenu);
 }, ICON_REMOTECONTROL] call zen_custom_modules_fnc_register;

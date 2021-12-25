@@ -23,12 +23,12 @@
     private _dialogChoices = [
         ["OWNERS", ["Players selected", "Select sides/groups/players. Module can also be placed on a player."], [[], [], [], 0], true],
         ["TOOLBOX:YESNO", ["Change yourself", "You can use this whilst as a curator to change your channel visibility."], false, true],
-        ["TOOLBOX:WIDE", ["Global channel", "Allows to change the global chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false],
-        ["TOOLBOX:WIDE", ["Side channel", "Allows to change the side chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false],
-        ["TOOLBOX:WIDE", ["Command channel", "Allows to change the command chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false],
-        ["TOOLBOX:WIDE", ["Group channel", "Allows to change the group chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false],
-        ["TOOLBOX:WIDE", ["Vehicle channel", "Allows to change the vehicle chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false],
-        ["TOOLBOX:WIDE", ["Direct channel", "Allows to change the direct chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false]
+        ["TOOLBOX:WIDE", ["Global channel", "Allows to change the global chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
+        ["TOOLBOX:WIDE", ["Side channel", "Allows to change the side chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
+        ["TOOLBOX:WIDE", ["Command channel", "Allows to change the command chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
+        ["TOOLBOX:WIDE", ["Group channel", "Allows to change the group chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
+        ["TOOLBOX:WIDE", ["Vehicle channel", "Allows to change the vehicle chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
+        ["TOOLBOX:WIDE", ["Direct channel", "Allows to change the direct chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]]
     ];
 
     // Add default channels
@@ -53,12 +53,9 @@
         _args params ["_unit", "_channelIDs"];
 
         // Save results so that they can be deleted; to get all channel settings in one array
-        (_results select 0) params ["_sides", "_groups", "_players"];
-        private _self = _results select 1;
-        private _doJIP = _results select (count _results - 1);
-
-        _results deleteRange [0, 2];
-        _results deleteAt (count _results - 1);
+        private _doJIP = _results deleteAt (count _results - 1);
+        private _self = _results deleteAt 1;
+        (_results deleteAt 0) params ["_sides", "_groups", "_players"];
 
         private _enableArray = [];
 
@@ -72,33 +69,31 @@
             };
         } forEach _results;
 
-        private _string = "Changed channel visibility on selected players";
-
         // If self is checked
         if (_self) then {
             {
-                _x remoteExecCall ["enableChannel", player];
+                (_x select 0) enableChannel (_x select 1);
             } forEach _enableArray;
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
-            if (isPlayer _unit) then {
+            private _string = if (isPlayer _unit) then {
                 {
                     _x remoteExecCall ["enableChannel", _unit];
                 } forEach _enableArray;
 
-                ["zen_common_hint", ["Zeus has changed channel visibility for you."], _unit] call CBA_fnc_targetEvent;
+                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _unit];
 
-                _string = "Changed channel visibility on player";
+                "Changed channel visibility on player";
             } else {
                 // If unit is AI, null or otherwise invalid, display error if not something done to self
                 if (_self) then {
-                    _string = "Changed channel visibility on yourself";
+                    "Changed channel visibility on yourself";
                 } else {
-                    _string = "Select a side/group/player or even yourself (must be a player)!";
                     playSound "FD_Start_F";
+                    "Select a side/group/player or even yourself (must be a player)!";
                 };
             };
 
@@ -111,7 +106,7 @@
                 GVAR(channelSettingsJIP) = [_enableArray, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(channelSettingsJIP);
             } else {
-                ["JIP disabled. Turn on in CBA Settings to enable it.", false, 10, 2] call ace_common_fnc_displayText;
+                hint "JIP disabled. Turn on in CBA Settings to enable it.";
             };
         };
 
@@ -125,7 +120,7 @@
 
         "Zeus has changed channel visibility for you." remoteExecCall ["hint", _players];
 
-        [_string] call zen_common_fnc_showMessage;
+        ["Changed channel visibility on selected players"] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

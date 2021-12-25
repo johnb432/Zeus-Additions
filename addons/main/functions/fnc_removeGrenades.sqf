@@ -27,64 +27,59 @@
          params ["_results", "_unit"];
          _results params ["_sides", "_doGroup"];
 
-         if (_sides isEqualTo [] && {isNull _unit}) exitWith {
+         // If no units are selected at all
+         if (isNull _unit && {_sides isEqualTo []}) exitWith {
              ["Select a side or place on unit!"] call zen_common_fnc_showMessage;
              playSound "FD_Start_F";
          };
 
-         private _magazines = [];
+         // If module was placed on a player
+         if (!_doGroup && {isPlayer _unit}) exitWith {
+             ["Select AI units!"] call zen_common_fnc_showMessage;
+             playSound "FD_Start_F";
+         };
 
-         if (isNull _unit) then {
+         private _units = [];
+
+         private _string = if (isNull _unit) then {
              {
-                 {
-                     _unit = _x;
-
-                     if (!isPlayer _unit) then {
-                         _magazines = magazines _unit;
-
-                         {
-                             if (_x call BIS_fnc_isThrowable) then {
-                                 _unit removeMagazines _x;
-                             };
-                         } forEach (_magazines arrayIntersect _magazines);
-                     };
-                 } forEach units _x;
+                 _units append units _x;
              } forEach _sides;
 
-             ["Removed grenades from units"] call zen_common_fnc_showMessage;
+             "Removed grenades from units";
          } else {
              if (_doGroup) exitWith {
-                 {
-                     _unit = _x;
-                     _magazines = magazines _unit;
+                 _units = units _unit;
 
-                     if (!isPlayer _unit) then {
-                         {
-                             if (_x call BIS_fnc_isThrowable) then {
-                                 _unit removeMagazines _x;
-                             };
-                         } forEach (_magazines arrayIntersect _magazines);
-                     };
-                 } forEach units group _unit;
-
-                 ["Removed grenades from units in group"] call zen_common_fnc_showMessage;
+                 "Removed grenades from units in group";
              };
 
-             if (!isPlayer _unit) then {
-                 _magazines = magazines _unit;
+             _units pushBack _unit;
 
-                 {
-                     if (_x call BIS_fnc_isThrowable) then {
-                         _unit removeMagazines _x;
-                     };
-                 } forEach (_magazines arrayIntersect _magazines);
-
-                 ["Removed grenades from unit"] call zen_common_fnc_showMessage;
-             } else {
-                 ["Select an AI unit!"] call zen_common_fnc_showMessage;
-                 playSound "FD_Start_F";
-             };
+             "Removed grenades from unit";
          };
+
+         _units = _units select {!isPlayer _x};
+
+         if (_units isEqualTo []) exitWith {
+             ["No AI units were found!"] call zen_common_fnc_showMessage;
+         };
+
+         private _magazines = [];
+
+         // Remove grenades from all AI units
+         {
+             _unit = _x;
+             _magazines = magazines _unit;
+
+             {
+                 if (_x call BIS_fnc_isThrowable) then {
+                     _unit removeMagazines _x;
+                 };
+             } forEach (_magazines arrayIntersect _magazines);
+         } forEach _units;
+
+         [_string] call zen_common_fnc_showMessage;
      }, {
          ["Aborted"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";

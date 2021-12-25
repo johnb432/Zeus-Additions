@@ -16,7 +16,7 @@
  * Public: No
  */
 
-["Zeus Additions - Utility", "[WIP] Show Mission Object Counter", {
+["Zeus Additions - Utility", "Show Mission Object Counter", {
     if (!GVAR(enableMissionCounter)) exitWith {
         ["Module is turned off in CBA settings!"] call zen_common_fnc_showMessage;
     };

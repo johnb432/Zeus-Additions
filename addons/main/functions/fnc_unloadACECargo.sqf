@@ -11,12 +11,14 @@
  * None
  *
  * Example:
- * call zeus_additions_main_fnc_addACEDragAndCarry;
+ * call zeus_additions_main_fnc_unloadACECargo;
  *
  * Public: No
  */
 
-["Zeus Additions - Utility", "[WIP] Unload ACE Cargo", {
+if (!isClass (configFile >> "CfgPatches" >> "ace_cargo")) exitWith {};
+
+["Zeus Additions - Utility", "Unload ACE Cargo", {
     params ["", "_object"];
 
     if (!(_object isKindOf "AllVehicles")) exitWith {
@@ -29,12 +31,12 @@
          playSound "FD_Start_F";
     };
 
-    if (!(_object getVariable ["ace_cargo_hasCargo", getNumber (configFile >> "CfgVehicles" >> (typeOf _object) >> "ace_cargo_hasCargo") == 1])) exitWith {
+    if (!(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") isEqualTo 1])) exitWith {
          ["This vehicle doesn't have ACE Cargo!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };
 
-    private _loadTimeCoeff = +ace_cargo_loadTimeCoefficient;
+    private _loadTimeCoeff = ace_cargo_loadTimeCoefficient;
     ace_cargo_loadTimeCoefficient = 0;
 
     [_object, CARGO_MENU, _loadTimeCoeff] call FUNC(openACEMenu);

@@ -42,6 +42,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
 
         if (isNull _ctrlListCategories) exitWith {};
 
+        // Ticket: https://feedback.bistudio.com/T161512
         // Set focus on the magazines tab; Needed so it doesn't crash
         ctrlSetFocus _ctrlListMagazines;
         waitUntil {focusedCtrl _display isEqualTo _ctrlListMagazines};
@@ -138,7 +139,7 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if (_key isNotEqualTo DIK_C || {!_control}) exitWith {};
+    if (_key isNotEqualTo DIK_C || {!_control} || {!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
@@ -174,7 +175,7 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if (_key isNotEqualTo DIK_C || {!_control}) exitWith {};
+    if (_key isNotEqualTo DIK_C || {!_control} || {!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");
@@ -195,7 +196,7 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
         _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
     };
 
-    ["Ammo crate created"] call zen_common_fnc_showMessage;
+    ["Ammo resupply created"] call zen_common_fnc_showMessage;
 
     _display closeDisplay IDC_OK;
 }];
@@ -416,7 +417,7 @@ _display displayAddEventHandler ["KeyDown", {
             _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
         };
 
-        ["Ammo crate created"] call zen_common_fnc_showMessage;
+        ["Ammo resupply created"] call zen_common_fnc_showMessage;
 
         _display closeDisplay IDC_OK;
 

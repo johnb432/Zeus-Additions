@@ -19,78 +19,125 @@
 ["Zeus Additions - Utility", "Prevent Vehicle from Exploding", {
     params ["", "_object"];
 
-    if (!(_object isKindOf "AllVehicles") || {isNull (driver _object)}) exitWith {
+    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
         ["Select a vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
     ["Prevent Vehicle from Exploding", [
-        ["TOOLBOX:YESNO", ["Prevent Vehicle from Exploding", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false, false]
+        ["TOOLBOX:YESNO", ["Prevent Vehicle from Exploding", "Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability."], false]
     ],
     {
         params ["_results", "_object"];
 
-        private _string = "Changed vehicle exploding prevention";
-
         // If prevention is turned on
-        if (_results select 0) then {
-            if (isNil {_object getVariable QGVAR(explodingID)}) then {
-                // "HandleDamage" only fires where the vehicle is local, therefore we need to add it to every client & JIP
-                _object setVariable [QGVAR(explodingJIP),
-                    [
-                        _object,
-                        {
-                            _this setVariable [QGVAR(explodingID),
-                                _this addEventHandler ["HandleDamage", {
-                                    params ["", "", "_damage", "", "", "", "", "_hitPoint"];
+        private _string = if (_results select 0) then {
+            if (!isNil {_object getVariable QGVAR(explodingJIP)}) exitWith {
+                playSound "FD_Start_F";
+                "Vehicle already has this feature enabled!";
+            };
+
+            // "HandleDamage" only fires where the vehicle is local, therefore we need to add it to every client & JIP
+            private _id = ["zen_common_execute", [{
+                // Local EH
+                _this setVariable [QGVAR(localID),
+                    _this addEventHandler ["Local", {
+                        params ["_object", "_isLocal"];
+
+                        // If object becomes local, add damage handler there
+                        if (_isLocal) then {
+                            _object setVariable [QGVAR(explodingID),
+                                _object addEventHandler ["HandleDamage", {
+                                    params ["_object", "", "_damage", "", "", "", "", "_hitPoint"];
 
                                     // Convert to lower case string for string comparison
                                     _hitPoint = toLower _hitPoint;
 
                                     // Incoming wheel/track damage will not be changed; Allow immobilisation
-                                    if ("wheel" in _hitPoint || {"track" in _hitPoint}) exitWith {
+                                    if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {
                                         _damage;
+                                    } else {
+                                        // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
+                                        _object setHitPointDamage ["hithull", (_object getHitPointDamage "hithull") min 0.75];
+                                        ([0.75, 0.95] select (_hitPoint isNotEqualTo "" && {_hitPoint isNotEqualTo "hithull"})) min _damage;
                                     };
-
-                                    // Above 75% hull damage a vehicle can blow up
-                                    ([0.95, 0.75] select (_hitPoint isEqualTo "hithull")) min _damage;
-                                }], true
+                                }]
                             ];
-                        }
-                    ] remoteExecCall ["call", 0, true], true
+                        } else {
+                            // When not local anymore, remove handle damage EH
+                            private _handleID = _object getVariable QGVAR(explodingID);
+
+                            if (isNil "_handleID") exitWith {};
+
+                            _object removeEventHandler ["HandleDamage", _handleID];
+                            _object setVariable [QGVAR(explodingID), nil];
+                        };
+                    }]
                 ];
-            } else {
-                _string = "Vehicle already has this feature enabled!";
-                playSound "FD_Start_F";
-            };
+
+                if (!local _this) exitWith {};
+
+                // If local, add handle damage EH now
+                _this setVariable [QGVAR(explodingID),
+                    _this addEventHandler ["HandleDamage", {
+                        params ["_object", "", "_damage", "", "", "", "", "_hitPoint"];
+
+                        // Convert to lower case string for string comparison
+                        _hitPoint = toLower _hitPoint;
+
+                        // Incoming wheel/track damage will not be changed; Allow immobilisation
+                        if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {
+                            _damage;
+                        } else {
+                            // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
+                            _object setHitPointDamage ["hithull", (_object getHitPointDamage "hithull") min 0.75];
+                            ([0.75, 0.95] select (_hitPoint isNotEqualTo "" && {_hitPoint isNotEqualTo "hithull"})) min _damage;
+                        };
+                    }]
+                ];
+            }, _object]] call CBA_fnc_globalEventJIP;
+
+            _object setVariable [QGVAR(explodingJIP), _id, true];
+            _object setVariable ["ace_cookoff_enable", 0, true];
+
+            // In case object is deleted
+            [_id, _object] call CBA_fnc_removeGlobalEventJIP;
+
+            "Vehicle exploding prevention has been enabled";
         } else {
             // If prevention is turned off
-            private _handleID = _object getVariable QGVAR(explodingID);
+            private _jipID = _object getVariable QGVAR(explodingJIP);
 
-            if (isNil "_handleID") exitWith {
-                _string = "Vehicle already has this feature disabled!";
+            if (isNil "_jipID") exitWith {
                 playSound "FD_Start_F";
+                "Vehicle already has this feature disabled!";
             };
 
-            [
-                _object,
-                {
-                    // Remove JIP event
-                    if (!isNil {_this getVariable QGVAR(explodingJIP)}) then {
-                        remoteExecCall ["", _this getVariable QGVAR(explodingJIP)];
+            // Remove JIP event
+            [_jipID] call CBA_fnc_removeGlobalEventJIP;
 
-                        _this setVariable [QGVAR(explodingJIP), nil, true];
-                    };
+            _object setVariable [QGVAR(explodingJIP), nil, true];
+            _object setVariable ["ace_cookoff_enable", nil, true];
 
-                    // If prevention is turned off
-                    private _handleID = _this getVariable QGVAR(explodingID);
+            ["zen_common_execute", [{
+                // Remove handle damage EH for object
+                private _handleID = _this getVariable QGVAR(explodingID);
 
-                    if (isNil "_handleID") exitWith {};
-
+                if (!isNil "_handleID") then {
                     _this removeEventHandler ["HandleDamage", _handleID];
-                    _this setVariable [QGVAR(explodingID), nil, true];
-                }
-            ] remoteExecCall ["call", 0];
+                    _this setVariable [QGVAR(explodingID), nil];
+                };
+
+                // Remove local EH for object
+                private _localID = _this getVariable QGVAR(localID);
+
+                if (isNil "_localID") exitWith {};
+
+                _this removeEventHandler ["Local", _localID];
+                _this setVariable [QGVAR(localID), nil];
+            }, _object]] call CBA_fnc_globalEvent;
+
+            "Vehicle exploding prevention has been disabled";
         };
 
         [_string] call zen_common_fnc_showMessage;

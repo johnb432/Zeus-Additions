@@ -28,11 +28,11 @@ private _name = name _oldPlayer;
 // If virtual curator, ignore
 if !(_oldPlayer isKindOf "VirtualCurator_F") then {
     // Freeze the old unit; AI will take over and do dumb stuff
-    ["zen_common_disableAI", [_oldPlayer, "all"]] call CBA_fnc_localEvent;
+    _oldPlayer disableAI "all";
 
     // Disable damage until Zeus has control of unit again
     if (_isDamageAllowed) then {
-        ["zen_common_allowDamage", [_oldPlayer, false]] call CBA_fnc_serverEvent;
+        _oldPlayer allowDamage false;
     };
 };
 
@@ -75,11 +75,11 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
             // If virtual curator, ignore
             if !(_oldPlayer isKindOf "VirtualCurator_F") then {
                 // Unfreeze the old unit
-                ["zen_common_enableAI", [_oldPlayer, "all"]] call CBA_fnc_localEvent;
+                [_oldPlayer, "all"] remoteExecCall ["enableAI", _oldPlayer];
 
                 // Enable damage again
                 if (_isDamageAllowed) then {
-                    ["zen_common_allowDamage", [_oldPlayer, false]] call CBA_fnc_serverEvent;
+                    [_oldPlayer, false] remoteExecCall ["allowDamage", _oldPlayer];
                 };
             };
 

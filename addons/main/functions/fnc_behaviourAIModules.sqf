@@ -2,7 +2,7 @@
 
 /*
  * Author: johnb43
- * Creates modules that can change dismount and mine detecting behaviour on AI.
+ * Creates modules that can change dismount, turn out and mine detecting behaviour on AI.
  *
  * Arguments:
  * None
@@ -19,7 +19,9 @@
 ["Zeus Additions - AI", "Change AI Dismount Behaviour", {
     params ["", "_object"];
 
-    if (!(_object isKindOf "AllVehicles") || {isNull (driver _object)}) exitWith {
+    _object = vehicle _object;
+
+    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
         ["Select a vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
@@ -33,8 +35,13 @@
         params ["_results", "_object"];
         _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew"];
 
-        _object setUnloadInCombat [_dismountPassengers, _dismountCrew];
-        _object allowCrewInImmobile _stayCrew;
+        // Execute where AI is local
+        ["zen_common_execute", [{
+            params ["_object", "_dismountPassengers", "_dismountCrew", "_stayCrew"];
+
+            _object setUnloadInCombat [_dismountPassengers, _dismountCrew];
+            _object allowCrewInImmobile _stayCrew;
+        }, [_object, _dismountPassengers, _dismountCrew, _stayCrew]], _object] call CBA_fnc_targetEvent;
 
         ["Changed dismount behaviour on vehicle"] call zen_common_fnc_showMessage;
     }, {
@@ -60,39 +67,77 @@
             playSound "FD_Start_F";
         };
 
-        private _function = ["zen_common_disableAI", "zen_common_enableAI"] select _allowMinedetection;
+        private _units = [];
 
-        if (isNull _unit) then {
+        private _string = if (isNull _unit) then {
             {
-                {
-                    if (!isPlayer _x) then {
-                        [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
-                    };
-                } forEach units _x;
+                _units append units _x;
             } forEach _sides;
 
-            ["Changed mine detecting behaviour"] call zen_common_fnc_showMessage;
+            "Changed mine detecting behaviour on units";
         } else {
             if (_doGroup) exitWith {
-                {
-                    if (!isPlayer _x) then {
-                        [_function, [_x, "MINEDETECTION"], _x] call CBA_fnc_targetEvent;
-                    };
-                } forEach units group _unit;
+                _units = units _unit;
 
-                ["Changed mine detecting behaviour on group"] call zen_common_fnc_showMessage;
+                "Changed mine detecting behaviour on group";
             };
 
-            if (!isPlayer _unit) then {
-                [_function, [_unit, "MINEDETECTION"], _unit] call CBA_fnc_targetEvent;
-                ["Changed mine detecting behaviour on unit"] call zen_common_fnc_showMessage;
-            } else {
-                ["Select an AI unit!"] call zen_common_fnc_showMessage;
-                playSound "FD_Start_F";
-            };
+            _units pushBack _unit;
+
+            "Changed mine detecting behaviour on unit";
         };
+
+        _units = _units select {!isPlayer _x};
+
+        if (_units isEqualTo []) exitWith {
+            ["No AI units were found!"] call zen_common_fnc_showMessage;
+            playSound "FD_Start_F";
+        };
+
+        private _function = ["disableAI", "enableAI"] select _allowMinedetection;
+
+        {
+            [_x, "MINEDETECTION"] remoteExecCall [_function, _x];
+        } forEach _units;
+
+        [_string] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _unit] call zen_dialog_fnc_create;
 }, ICON_EXPLOSION] call zen_custom_modules_fnc_register;
+
+["Zeus Additions - AI", "[WIP] Allow AI to Turn Out", {
+    params ["", "_object"];
+
+    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
+        ["Select a vehicle!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    };
+
+    if (((crew _object) select {!isPlayer _x}) isEqualTo []) exitWith {
+        ["Select a vehicle with AI crew!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    };
+
+    ["Allow AI to Turn Out", [
+        ["TOOLBOX:YESNO", ["Allow AI to Turn Out", "Makes the AI able to turn out or not."], true]
+    ],
+    {
+        params ["_results", "_object"];
+        _results params ["_allowTurnOut"];
+
+        private _behaviour = ["COMBAT", "SAFE"] select _allowTurnOut;
+
+        {
+            // Execute where AI is local
+            [_x, ["AUTOCOMBAT", _allowTurnOut]] remoteExecCall ["enableAIFeature", _x];
+            [_x, _behaviour] remoteExecCall ["setCombatBehaviour", _x];
+        } forEach ((crew _object) select {!isPlayer _x});
+
+        ["Changed turning out ability on AI crew members"] call zen_common_fnc_showMessage;
+    }, {
+        ["Aborted"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
+    }, _object] call zen_dialog_fnc_create;
+}, ICON_TRUCK] call zen_custom_modules_fnc_register;

@@ -1,12 +1,9 @@
-[b]Zeus Additions[/b] adds a handful of modules to the Zeus interface. Requires ZEN and ACE. This mod is a client side mod.
-
-[h2]JIP feature[/h2]
-
-Only 1 client needs it to be enabled for it to be added to the server. If multiple clients have Zeus Additions, one or more have it turned on but the others not, the latter can still set JIP features in modules.
+[b]Zeus Additions[/b] adds a handful of modules to the Zeus interface. Requires ZEN on all clients. This mod is a client side mod.
 
 [h2]Modules[/h2]
 [list]
 [*] Add ACE Drag and Carry Options
+[*] [WIP] Allow AI to Turn Out
 [*] Change AI Dismount Behaviour
 [*] [WIP] Change AI Mine Detecting Behaviour
 [*] Change Channel Visibility
@@ -26,24 +23,24 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 [*] Open ACE Medical Menu
 [*] Pause Time
 [*] Place Map Markers
-[*] [WIP] Paradrop Unit Action
+[*] Paradrop Unit Action
 [*] Paradrop Units
 [*] Prevent Vehicle from Exploding
 [*] Remove Grenades from AI
-[*] [WIP] Show Mission Object Counter
+[*] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
 [*] Spawn Ammo Resupply
 [*] Spawn Ammo Resupply for Unit
 [*] Toggle Consciousness (forced)
 [*] Toggle Snow Script
 [*] Track Unit Death
-[*] [WIP] Unload ACE Cargo
+[*] Unload ACE Cargo
 [/list]
 For more detailed information on the modules and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
 
 [b]Numerous CBA settings to customize modules:[/b] To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
-[h2]CREDITS[/h2]
+[h2]Credit[/h2]
 
 Mod by johnb43
 [url=https://github.com/johnb432/Zeus-Additions]GitHub[/url]
