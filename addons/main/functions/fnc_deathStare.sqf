@@ -16,7 +16,7 @@
  * Public: No
  */
 
-if (!GVAR(ACEMedicalLoaded) || {!isClass (configFile >> "CfgPatches" >> "ace_interact_menu")}) exitWith {};
+if (!zen_common_aceMedical || {!isClass (configFile >> "CfgPatches" >> "ace_interact_menu")}) exitWith {};
 
 ["Zeus Additions - Utility", "Give Death Stare Ability", {
     params ["", "_unit"];

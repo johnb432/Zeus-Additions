@@ -16,7 +16,7 @@
  * Public: No
  */
 
-if (!GVAR(ACEMedicalLoaded)) exitWith {};
+if (!zen_common_aceMedical) exitWith {};
 
 ["Zeus Additions - Medical", "Create ACE Injuries", {
     params ["", "_unit"];
