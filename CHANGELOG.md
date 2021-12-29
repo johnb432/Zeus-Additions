@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 29.12.2021
+
+1.6.3.1
+- Fixed minor bug with mission end module not removing all ammunition in vehicles.
+- General improvements.
+
 # Changelog for Zeus Additions 24.12.2021
 
 1.6.3.0

@@ -50,9 +50,9 @@
                      _x remoteExecCall ["removeAllWeapons", _x];
                 } forEach _allPlayers;
 
-                // Remove all ammo from vics
+                // Remove all ammo from all vics
                 {
-                    [_x, 0] remoteExecCall ["setVehicleAmmoDef", _x];
+                    [_x, 0] remoteExecCall ["zen_common_fnc_setVehicleAmmo", _x];
                 } forEach _vehicles;
             };
             case 2: {

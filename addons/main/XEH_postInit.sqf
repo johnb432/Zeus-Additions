@@ -31,7 +31,11 @@ GVAR(magsTotal) = [GVAR(LATBLU_mags),GVAR(LATRED_mags),GVAR(MATBLU_mags),GVAR(MA
 };
 
 GVAR(ACEDraggingLoaded) = isClass (configFile >> "CfgPatches" >> "ace_dragging");
-GVAR(ACEMedicalLoaded) = isClass (configFile >> "CfgPatches" >> "ace_medical");
+
+// If for some reason this postInit loads before the other one, make sure there is something
+if (isNil "zen_common_aceMedical") then {
+    zen_common_aceMedical = isClass (configFile >> "CfgPatches" >> "ace_medical");
+};
 
 // Add modules
 call FUNC(addACEDragAndCarry);
@@ -85,7 +89,7 @@ private _TFARHint = GVAR(enableTFARHint) && {!isClass (configFile >> "CfgPatches
 private _RHSHint =  GVAR(enableRHSHint) && {!isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")};
 private _ACECargoHint = GVAR(enableACECargoHint) && {!isClass (configFile >> "CfgPatches" >> "ace_cargo")};
 private _ACEDragHint = GVAR(enableACEDragHint) && {!GVAR(ACEDraggingLoaded)};
-private _ACEMedicalHint = GVAR(enableACEMedicalHint) && {!GVAR(ACEMedicalLoaded)};
+private _ACEMedicalHint = GVAR(enableACEMedicalHint) && {!zen_common_aceMedical};
 
 if (_coreCUPLHint || {_TFARHint} || {_RHSHint} || {_ACECargoHint} || _ACEDragHint) then {
     systemChat "[Zeus Additions]:";

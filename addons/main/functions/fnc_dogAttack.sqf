@@ -26,7 +26,7 @@
         ["SIDES", ["Spawn as", "Only the first selected side will be taken into account."], []],
         ["SIDES", ["Attack", "Allows the dog to attack the given sides. If none are selected, it will attack no one and will be peaceful."], []],
         ["SLIDER", ["Search Radius", "The dogs will search within given radius for targets."], [0, 1000, 100, 0]],
-        [["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 50, 3, 2]], ["SLIDER:PERCENT", ["Dog Damage", "How much damage the dog deals."], [0, 1, 0.1]]] select GVAR(ACEMedicalLoaded),
+        [["SLIDER", ["Dog Damage", "How much damage the dog deals."], [0, 50, 3, 2]], ["SLIDER:PERCENT", ["Dog Damage", "How much damage the dog deals."], [0, 1, 0.1]]] select zen_common_aceMedical,
         ["TOOLBOX:YESNO", ["Spawn lightning", "Spawns a lightning bolt where the module is placed."], false],
         ["TOOLBOX:YESNO", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false],
         ["TOOLBOX:YESNO", ["Turn off pathing", "Turns off animal AI behaviour and pathing. Only applies if dog is peaceful."], false],
@@ -189,7 +189,7 @@
 
                         // Inflict damage if in range
                         if (_distance <= 3) then {
-                            if (GVAR(ACEMedicalLoaded)) then {
+                            if (zen_common_aceMedical) then {
                                 [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy];
                             } else {
                                 private _hitPoint = selectRandom ["hitarms", "hithands", "hitlegs"];
