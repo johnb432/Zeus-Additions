@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Creates a module preventing vehicles from exploding/destruction.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_preventExplodingVehicle;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Prevent Vehicle from Exploding", {
@@ -38,7 +25,7 @@
             };
 
             // "HandleDamage" only fires where the vehicle is local, therefore we need to add it to every client & JIP
-            private _id = ["zen_common_execute", [{
+            private _jipID = ["zen_common_execute", [{
                 // Local EH
                 _this setVariable [QGVAR(localID),
                     _this addEventHandler ["Local", {
@@ -97,11 +84,11 @@
                 ];
             }, _object]] call CBA_fnc_globalEventJIP;
 
-            _object setVariable [QGVAR(explodingJIP), _id, true];
+            _object setVariable [QGVAR(explodingJIP), _jipID, true];
             _object setVariable ["ace_cookoff_enable", 0, true];
 
             // In case object is deleted
-            [_id, _object] call CBA_fnc_removeGlobalEventJIP;
+            [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
 
             "Vehicle exploding prevention has been enabled";
         } else {
@@ -114,7 +101,7 @@
             };
 
             // Remove JIP event
-            [_jipID] call CBA_fnc_removeGlobalEventJIP;
+            _jipID call CBA_fnc_removeGlobalEventJIP;
 
             _object setVariable [QGVAR(explodingJIP), nil, true];
             _object setVariable ["ace_cookoff_enable", nil, true];

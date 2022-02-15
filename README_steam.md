@@ -3,6 +3,7 @@
 [h2]Modules[/h2]
 [list]
 [*] Add ACE Drag and Carry Options
+[*] [WIP] Add ACE Drag Body Option
 [*] [WIP] Allow AI to Turn Out
 [*] Change AI Dismount Behaviour
 [*] [WIP] Change AI Mine Detecting Behaviour
@@ -30,7 +31,8 @@
 [*] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
 [*] Spawn Ammo Resupply
-[*] Spawn Ammo Resupply for Unit
+[*] Spawn Ammo Resupply for Units
+[*] Spawn Ammo Resupply for Units (Selection)
 [*] Toggle Consciousness (forced)
 [*] Toggle Snow Script
 [*] Track Unit Death
@@ -50,3 +52,7 @@ Snow script made by JW & AZCoder, reworked by johnb43.
 Dog attack module made by Fred, reworked by johnb43.
 
 Thanks to [url=https://gitlab.com/sh4rdknight]sh4rdknight[/url] for enduring testing sessions.
+
+[h2]License[/h2]
+
+See LICENSE.

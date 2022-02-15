@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43, cineafx
  * cineafx's gearscript updated and modified by johnb43.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_gearScript;
- *
- * Public: No
  */
 
 GVAR(gearIndex) = 0;
@@ -40,7 +27,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 
         // If preset is supposed to be exported
         if (_exportPreset) exitWith {
-            if (!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")) exitWith {
+            if (!GVAR(ACEClipboardLoaded)) exitWith {
                 ["ACE clipboard is disabled!"] call zen_common_fnc_showMessage;
             };
 
@@ -188,12 +175,15 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 ["Zeus Additions - Loadout", "Loadout: Apply to single unit", {
     params ["", "_unit"];
 
-    // If opening on a vehicle
-    _unit = effectiveCommander _unit;
+    // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
+    if (alive _unit) then {
+        _unit = effectiveCommander _unit;
+    };
 
+    // Can be applied to dead units too!
     if !(_unit isKindOf "CAManBase") exitWith {
-         ["Select a unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["Select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     private _loadoutString = GETPRVAR("zeus_additions_main_gearSingle_" + GVAR(gearPreset),"[]");
@@ -210,12 +200,15 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 ["Zeus Additions - Loadout", "Loadout: Apply to group", {
     params ["", "_unit"];
 
-    // If opening on a vehicle
-    _unit = effectiveCommander _unit;
+    // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
+    if (alive _unit) then {
+        _unit = effectiveCommander _unit;
+    };
 
+    // Can be applied to dead units too!
     if !(_unit isKindOf "CAManBase") exitWith {
-         ["Select a unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["Select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     private _loadouts = [];
@@ -230,7 +223,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
     {
         _loadout = _loadouts select (_x call FUNC(getRole));
         _x setUnitLoadout ([_loadouts select 0, _loadout] select (_loadout isNotEqualTo []));
-    } forEach units group _unit;
+    } forEach units _unit;
 
     ["Preset '%1' applied", GVAR(gearPreset)] call zen_common_fnc_showMessage;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;

@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Creates a module that allows the Zeus to place down markers more easily.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_placeMapMarker;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Place Map Markers", {

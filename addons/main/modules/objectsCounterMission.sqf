@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Spawns a module that keeps track of what stuff has been spawned by you as a curator.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_objectsCounterMission;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Show Mission Object Counter", {

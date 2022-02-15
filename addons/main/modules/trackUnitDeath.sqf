@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Adds a module that can inform the Zeus when a unit dies.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_trackUnitDeath;
- *
- * Public: No
  */
 
 GVAR(trackUnits) = [];
@@ -21,24 +8,26 @@ GVAR(trackUnits) = [];
 addMissionEventHandler ["EntityKilled", {
     params ["_unit", "_killer"];
 
-    if (GVAR(trackUnits) isEqualTo [] || {!(_unit in GVAR(trackUnits))}) exitWith {};
+    if !(GVAR(trackUnits) isNotEqualTo [] && {_unit in GVAR(trackUnits)}) exitWith {};
 
     private _nameUnit = name _unit;
     _killer = name _killer;
 
-    if (_unit getVariable [QGVAR(displayHint), false]) then {
+    private _notification = _unit getVariable [QGVAR(displayDeath), [false, false, false, false]];
+
+    if (_notification select 0) then {
         hint format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
     };
 
-    if (_unit getVariable [QGVAR(displaySystemChat), false]) then {
+    if (_notification select 1) then {
         systemChat format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
     };
 
-    if (_unit getVariable [QGVAR(displayZeusBanner), false]) then {
+    if (_notification select 2) then {
         ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer] call zen_common_fnc_showMessage;
     };
 
-    if (_unit getVariable [QGVAR(displayLog), false]) then {
+    if (_notification select 3) then {
         diag_log text format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
     };
 
@@ -49,7 +38,7 @@ addMissionEventHandler ["EntityKilled", {
     params ["", "_unit"];
 
     ["Track Unit Death", [
-        ["OWNERS", ["Player selected", "Select unit. Module can also be placed on a unit."], [[], [], [], 0], true],
+        ["OWNERS", ["Player selected", "Select unit. Module can also be placed on a unit."], [[], [], [], 2], true],
         ["TOOLBOX:ENABLED", ["Tracking", "Adds/removes tracking from the selected unit."], false],
         ["TOOLBOX:YESNO", ["Display in a Hint", "Displays notification as hint."], true],
         ["TOOLBOX:YESNO", ["Display in System Chat", "Displays notification in system chat."], false],
@@ -67,8 +56,8 @@ addMissionEventHandler ["EntityKilled", {
         };
 
         // If object is not unit, exit
-        if !(_unit isKindOf "CAManBase") exitWith {
-            ["Select a unit!"] call zen_common_fnc_showMessage;
+        if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
+            ["Select a living unit!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
 
@@ -84,15 +73,10 @@ addMissionEventHandler ["EntityKilled", {
             playSound "FD_Start_F";
         };
 
+        _unit setVariable [QGVAR(displayDeath), [_hint, _systemChat, _zeusBanner, _log]];
+
         // Add unit to tracking
-        GVAR(trackUnits) pushBackUnique _unit;
-
-        _unit setVariable [QGVAR(displayHint), _hint];
-        _unit setVariable [QGVAR(displaySystemChat), _systemChat];
-        _unit setVariable [QGVAR(displayZeusBanner), _zeusBanner];
-        _unit setVariable [QGVAR(displayLog), _log];
-
-        ["Unit is being tracked"] call zen_common_fnc_showMessage;
+        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) isEqualTo -1)] call zen_common_fnc_showMessage
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

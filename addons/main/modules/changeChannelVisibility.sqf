@@ -1,23 +1,10 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Creates a module that can change various channel's visibility (including custom ones, which can be added or removed during mission without issues).
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_changeChannelVisibility;
- *
- * Public: No
  */
 
 ["Zeus Additions - Players", "Change Channel Visibility", {
-    params ["", "_unit"];
+    params ["", "object"];
 
     // Make array of default dialog choices
     private _dialogChoices = [
@@ -50,7 +37,7 @@
     ["Change Channel Visibility", _dialogChoices,
     {
         params ["_results", "_args"];
-        _args params ["_unit", "_channelIDs"];
+        _args params ["_object", "_channelIDs"];
 
         // Save results so that they can be deleted; to get all channel settings in one array
         private _doJIP = _results deleteAt (count _results - 1);
@@ -76,15 +63,20 @@
             } forEach _enableArray;
         };
 
+        // If alive, commander, in case it's a vehicle
+        if (alive _object) then {
+            _object = effectiveCommander _object;
+        };
+
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
-            private _string = if (isPlayer _unit) then {
+            private _string = if (isPlayer _object) then {
                 {
-                    _x remoteExecCall ["enableChannel", _unit];
+                    _x remoteExecCall ["enableChannel", _object];
                 } forEach _enableArray;
 
-                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _unit];
+                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _object];
 
                 "Changed channel visibility on player";
             } else {
@@ -124,5 +116,5 @@
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
-    }, [_unit, _channelIDs]] call zen_dialog_fnc_create;
+    }, [_object, _channelIDs]] call zen_dialog_fnc_create;
 }, ICON_CHANNEL] call zen_custom_modules_fnc_register;

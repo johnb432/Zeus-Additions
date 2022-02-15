@@ -6,7 +6,7 @@
  * MUST BE CALLED WITH 'spawn' (see example)
  *
  * Arguments:
- * None
+ * 0: Weapons <STRING>|<ARRAY> (Optional)
  *
  * Return Value:
  * None
@@ -25,6 +25,30 @@ if (!createDialog QGVAR(RscDisplay)) exitWith {};
 private _display = GETUVAR(QGVAR(display),displayNull);
 
 if (isNull _display) exitWith {};
+
+params [["_weapons", [], [[], ""]]];
+
+if (_weapons isNotEqualTo []) then {
+    if (_weapons isEqualType "") then {
+        _weapons = [_weapons];
+    };
+
+    // Get magazines compatible with weapons
+    private _keys = [];
+    private _cfgWeapons = configFile >> "CfgWeapons";
+
+    {
+        {
+            if (_x in GETUVAR(QGVAR(sortedKeys),[])) then {
+                _keys pushBackUnique _x;
+            };
+        } foreach getArray (_cfgWeapons >> _x >> "magazineWell");
+    } forEach _weapons;
+
+    SETUVAR(QGVAR(sortedKeysMagazines),_keys);
+} else {
+    SETUVAR(QGVAR(sortedKeysMagazines),GETUVAR(QGVAR(sortedKeys),[]));
+};
 
 // Lists and their background
 // Categories list
@@ -45,7 +69,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
         // Ticket: https://feedback.bistudio.com/T161512
         // Set focus on the magazines tab; Needed so it doesn't crash
         ctrlSetFocus _ctrlListMagazines;
-        waitUntil {focusedCtrl _display isEqualTo _ctrlListMagazines};
+        waitUntil {(focusedCtrl _display) isEqualTo _ctrlListMagazines};
 
         // Unselect everything; Needed so it doesn't crash
         private _curSelection = lbSelection _ctrlListMagazines;
@@ -63,13 +87,13 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
 
         // Set focus on the categories tab; Needed so it doesn't crash
         ctrlSetFocus _ctrlListCategories;
-        waitUntil {focusedCtrl _display isEqualTo _ctrlListCategories};
+        waitUntil {(focusedCtrl _display) isEqualTo _ctrlListCategories};
 
         // Clear displayed magazines from previous category; lbClear causes crash if no precautions taken
         lbClear _ctrlListMagazines;
 
         // Wait until list is empty; Needed so it doesn't crash
-        waitUntil {lbSize _ctrlListMagazines isEqualTo 0};
+        waitUntil {(lbSize _ctrlListMagazines) isEqualTo 0};
 
         private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
         private _selectedMagazines = [];
@@ -100,7 +124,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
             _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
             _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
             _ctrlListMagazines lbSetValue [_addedIndex, 0];
-        } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeys),[]) select _selectedIndex));
+        } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
 
         // Sort alphabetically
         lbSort _ctrlListMagazines;
@@ -112,7 +136,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
 // Add items to list
 {
     _ctrlListCategories lbAdd _x;
-} forEach GETUVAR(QGVAR(sortedKeys),[]);
+} forEach GETUVAR(QGVAR(sortedKeysMagazines),[]);
 _ctrlListCategories lbSetCurSel 0;
 
 // Magazines list for categories
@@ -139,13 +163,13 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if (_key isNotEqualTo DIK_C || {!_control} || {!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")}) exitWith {};
+    if !(_key isEqualTo DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
     "ace_clipboard" callExtension "--COMPLETE--";
 
-    false;
+    true;
 }];
 
 // List for selected magazines
@@ -159,9 +183,9 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
     private _toolTip = _ctrlListSelected lbTooltip _selectedIndex;
 
     // Move magazine back into selection if correct category
-    if (_toolTip in (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeys),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES))))) then {
+    if (_toolTip in (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES))))) then {
         // Name is magazine display name, picture is magazine icon & tooltip is classname
-        private _addedIndex = _ctrlListMagazines lbAdd (_ctrlListSelected lbText _selectedIndex);
+        private _addedIndex = _ctrlListMagazines lbAdd (getText (configFile >> "CfgMagazines" >> _toolTip >> "displayName"));
         _ctrlListMagazines lbSetPicture [_addedIndex, _ctrlListSelected lbPicture _selectedIndex];
         _ctrlListMagazines lbSetTooltip [_addedIndex, _toolTip];
     };
@@ -175,13 +199,13 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if (_key isNotEqualTo DIK_C || {!_control} || {!isClass (configFile >> "ACE_Extensions" >> "ace_clipboard")}) exitWith {};
+    if !(_key isEqualTo DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");
     "ace_clipboard" callExtension "--COMPLETE--";
 
-    false;
+    true;
 }];
 
 // Buttons
@@ -191,20 +215,22 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
     private _object = GETUVAR(QGVAR(magazineInventory),objNull);
 
-    // Spawn in magazines
-    for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
-        _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
-    };
+    if (!alive _object) then {
+        ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
+    } else {
+        // Spawn in magazines
+        for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
+            _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
+        };
 
-    ["Ammo resupply created"] call zen_common_fnc_showMessage;
+        ["Ammo resupply created"] call zen_common_fnc_showMessage;
+    };
 
     _display closeDisplay IDC_OK;
 }];
 
 // Cancel
 (_display displayCtrl IDC_CANCEL) ctrlAddEventHandler ["ButtonClick", {
-    ["Only launcher ammunition spawned"] call zen_common_fnc_showMessage;
-
     (ctrlParent (_this select 0)) closeDisplay IDC_CANCEL;
 }];
 
@@ -262,14 +288,16 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;
     private _addedIndex = -1;
     private _toolTip = "";
-    private _currentlySelected = GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeys),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES)));
+    private _cfgMagazines = configFile >> "CfgMagazines";
+    private _currentlySelected = GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES)));
 
     {
         _toolTip = _ctrlListSelected lbTooltip _x;
+
         // Move magazines back into selection if correct category
         if (_toolTip in _currentlySelected) then {
             // Name is magazine display name, picture is magazine icon & tooltip is classname
-            _addedIndex = _ctrlListMagazines lbAdd (_ctrlListSelected lbText _x);
+            _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _toolTip >> "displayName"));
             _ctrlListMagazines lbSetPicture [_addedIndex, _ctrlListSelected lbPicture _x];
             _ctrlListMagazines lbSetTooltip [_addedIndex, _toolTip];
         };
@@ -290,6 +318,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
 // Clear current selection of magazines
 (_display displayCtrl IDC_BUTTON_CLR) ctrlAddEventHandler ["ButtonClick", {
     private _display = ctrlParent (_this select 0);
+
     // Get selected category
     private _selectedIndex = lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES);
 
@@ -311,7 +340,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
          _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
          _ctrlListMagazines lbSetPicture [_forEachIndex, getText (_cfgMagazines >> _x >> "picture")];
          _ctrlListMagazines lbSetTooltip [_forEachIndex, _x];
-    } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeys),[]) select _selectedIndex));
+    } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
 
     // Sort alphabetically
     lbSort _ctrlListMagazines;
@@ -330,20 +359,8 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     // Exit if nothing selected
     if (_selectedArray isEqualTo []) exitWith {};
 
-    private _inc = 1;
-
-    // Determine increments
-    if (_shift) then {
-        if (_control) then {
-            _inc = 50;
-        } else {
-            _inc = 5;
-        };
-    } else {
-        if (_control) then {
-            _inc = 10;
-        };
-    };
+    // Determine increment
+    private _inc = ([1, 5] select _shift) * ([1, 10] select _control);
 
     private _cfgMagazines = configFile >> "CfgMagazines";
     private _value = 0;
@@ -363,37 +380,31 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     // If button is not left click, exit
     if (_button isNotEqualTo 0) exitWith {};
 
-    private _ctrlListSelected = (ctrlParent _ctrlButtonInc) displayCtrl IDC_LIST_SELECTED;
+    private _ctrlListSelected = (ctrlParent _ctrlButtonDec) displayCtrl IDC_LIST_SELECTED;
     private _selectedArray = lbSelection _ctrlListSelected;
 
     // Exit if nothing selected
     if (_selectedArray isEqualTo []) exitWith {};
 
-    private _inc = -1;
-
-    // Determine increments
-    if (_shift) then {
-        if (_control) then {
-            _inc = -50;
-        } else {
-            _inc = -5;
-        };
-    } else {
-        if (_control) then {
-            _inc = -10;
-        };
-    };
+    // Determine decrement
+    private _dec = ([-1, -5] select _shift) * ([1, 10] select _control);
 
     private _cfgMagazines = configFile >> "CfgMagazines";
     private _value = 0;
 
     {
         // Get old value and decrement it; if below 0, set to 0
-        _value = ((_ctrlListSelected lbValue _x) + _inc) max 0;
+        _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
         _ctrlListSelected lbSetValue [_x, _value];
         // Do not show "0x"
         _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value isNotEqualTo 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
     } forEach _selectedArray;
+}];
+
+// Prevent scroll wheel from moving curator camera
+_display setVariable [QGVAR(cameraPos), getPosASL curatorCamera];
+_display displayAddEventHandler ["MouseZChanged", {
+    curatorCamera setPosASL ((_this select 0) getVariable QGVAR(cameraPos));
 }];
 
 // Add display EH for Enter and Escape buttons
@@ -401,28 +412,29 @@ _display displayAddEventHandler ["KeyDown", {
     params ["_display", "_keyCode"];
 
     // Cancel
-    if (_keyCode isEqualTo DIK_ESCAPE) exitWith {
-        ["Only launcher ammunition spawned"] call zen_common_fnc_showMessage;
-
-        false;
-    };
+    if (_keyCode isEqualTo DIK_ESCAPE) exitWith {};
 
     // Ok
     if (_keyCode isEqualTo DIK_RETURN) exitWith {
         private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
         private _object = GETUVAR(QGVAR(magazineInventory),objNull);
 
-        // Spawn in magazines
-        for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
-            _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
-        };
+        if (!alive _object) then {
+            ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
+        } else {
+            // Spawn in magazines
+            for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
+                _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
+            };
 
-        ["Ammo resupply created"] call zen_common_fnc_showMessage;
+            ["Ammo resupply created"] call zen_common_fnc_showMessage;
+        };
 
         _display closeDisplay IDC_OK;
 
-        false;
+        true;
     };
 
-    false;
+    // Don't let random input change background stuff
+    true;
 }];

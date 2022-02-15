@@ -1,22 +1,7 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Spawns a module that units to gain death staring abilities.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_deathStare;
- *
- * Public: No
  */
-
-if (!zen_common_aceMedical || {!isClass (configFile >> "CfgPatches" >> "ace_interact_menu")}) exitWith {};
 
 ["Zeus Additions - Utility", "Give Death Stare Ability", {
     params ["", "_unit"];

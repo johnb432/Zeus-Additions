@@ -59,7 +59,7 @@ for "_i" from 0 to (count _args - 3) step 3 do {
         private _worstDamage = [2, 1, 4, 4, 4, 4] select _bodyPartNToAdd;
 
         // More wounds means more likely to get nasty wound
-        private _countModifier = 1 + random(_woundNumber - 1);
+        private _countModifier = 1 + random (_woundNumber - 1);
 
         // Config specifies bleeding and pain for worst possible wound
         // Worse wound correlates to higher damage, damage is not capped at 1

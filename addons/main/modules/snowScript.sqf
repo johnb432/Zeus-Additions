@@ -1,24 +1,8 @@
-#include "script_component.hpp"
-
 /*
  * Author: JW, AZCoder, modified by johnb43
  * Spawns a module that adds a snow script.
  * https://forums.bohemia.net/forums/topic/215391-light-snowfall-script/?tab=comments#comment-3276526
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_snowScript;
- *
- * Public: No
  */
-
-// Check if CUP is loaded
-if (!isClass (configFile >> "CfgPatches" >> "CUP_Worlds")) exitWith {};
 
 ["Zeus Additions - Players", "Toggle Snow Script", {
     params ["", "_unit"];
@@ -142,6 +126,7 @@ if (!isClass (configFile >> "CfgPatches" >> "CUP_Worlds")) exitWith {};
             if (GETMVAR(QGVAR(handleServerJIP),false)) then {
                 GVAR(snowSettingsJIP) = [_intensitySnow, _players apply {getPlayerUID _x}, _groups, _sides];
                 publicVariableServer QGVAR(snowSettingsJIP);
+                _string = "Snow script JIP setting changed";
             } else {
                 hint "JIP disabled. Turn on in CBA Settings to enable it.";
             };

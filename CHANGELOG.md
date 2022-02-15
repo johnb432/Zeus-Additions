@@ -1,3 +1,17 @@
+# Changelog for Zeus Additions 15.2.2022
+
+1.6.3.2
+- Added the ability to drag dead bodies using a new "Add ACE Drag Body Option" module.
+- Added the module "Spawn Ammo Resupply for Units (Selection)" for more tailored selection of magazines for a resupply of given units.
+- Added the ability to choose multiple units for the "Spawn Ammo Resupply for Units" module.
+- Fixed ACE medical menu context action.
+- Fixed numerous unwanted things that could be applied to dead units.
+- Fixed ammo resupply interface (decrement & move out of buttons weren't working).
+- Fixed Pause Time module (stopped working entirely after last update & it wouldn't reset).
+- Fixed multiple various issues.
+- Modules are no longer functions, they will only be registered once at postInit.
+- General improvements.
+
 # Changelog for Zeus Additions 29.12.2021
 
 1.6.3.1

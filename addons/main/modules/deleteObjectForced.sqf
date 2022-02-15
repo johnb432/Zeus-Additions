@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Adds a module that can delete an entity forcefully.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_deleteObjectForced;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Delete Object (forced)", {
@@ -29,11 +16,20 @@
         playSound "FD_Start_F";
     };
 
-    if (!isNil {crew _object}) then {
-        deleteVehicleCrew _object;
-    };
+    // Check if there is crew
+    if ((crew _object) isNotEqualTo []) then {
+        // Delete units where vehicle is local
+        _object remoteExecCall ["deleteVehicleCrew", _object];
 
-    deleteVehicle _object;
+        [{
+            (crew _this) isEqualTo [];
+        }, {
+            deleteVehicle _this;
+        }, _object] call CBA_fnc_waitUntilAndExecute;
+    } else {
+        // No crew
+        deleteVehicle _object;
+    };
 
     ["Deleted %1", getText (configOf _object >> "displayName")] call zen_common_fnc_showMessage;
 }, ICON_DELETE] call zen_custom_modules_fnc_register;

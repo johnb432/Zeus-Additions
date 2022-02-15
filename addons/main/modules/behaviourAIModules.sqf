@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Creates modules that can change dismount, turn out and mine detecting behaviour on AI.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_behaviourAIModules;
- *
- * Public: No
  */
 
 ["Zeus Additions - AI", "Change AI Dismount Behaviour", {
@@ -21,8 +8,8 @@
 
     _object = vehicle _object;
 
-    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
-        ["Select a vehicle!"] call zen_common_fnc_showMessage;
+    if !(alive _object && {(fullCrew [_object, "driver", true]) isNotEqualTo []}) exitWith {
+        ["Select an undestroyed vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
@@ -35,13 +22,30 @@
         params ["_results", "_object"];
         _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew"];
 
-        // Execute where AI is local
+        // Execute where vehicle is local
         ["zen_common_execute", [{
             params ["_object", "_dismountPassengers", "_dismountCrew", "_stayCrew"];
 
             _object setUnloadInCombat [_dismountPassengers, _dismountCrew];
             _object allowCrewInImmobile _stayCrew;
         }, [_object, _dismountPassengers, _dismountCrew, _stayCrew]], _object] call CBA_fnc_targetEvent;
+
+        private _behaviour = ["COMBAT", "SAFE"] select _stayCrew;
+
+        _stayCrew = !_stayCrew;
+
+        // ACE forces AI crew to dismount if critical hit; can't be fixed until ACE adds something
+        {
+            // Execute where AI is local
+            ["zen_common_execute", [{
+                params ["_unit", "_stayCrew", "_behaviour"];
+
+                _unit enableAIFeature ["AUTOCOMBAT", _stayCrew];
+                _unit enableAIFeature ["FSM", _stayCrew];
+                _unit setBehaviour _behaviour;
+                _unit setCombatBehaviour _behaviour;
+            }, [_x, _stayCrew, _behaviour]], _x] call CBA_fnc_targetEvent;
+        } forEach ((crew _object) select {alive _x && {!isPlayer _x}});
 
         ["Changed dismount behaviour on vehicle"] call zen_common_fnc_showMessage;
     }, {
@@ -87,7 +91,7 @@
             "Changed mine detecting behaviour on unit";
         };
 
-        _units = _units select {!isPlayer _x};
+        _units = _units select {alive _x && {!isPlayer _x}};
 
         if (_units isEqualTo []) exitWith {
             ["No AI units were found!"] call zen_common_fnc_showMessage;
@@ -110,12 +114,14 @@
 ["Zeus Additions - AI", "[WIP] Allow AI to Turn Out", {
     params ["", "_object"];
 
-    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
-        ["Select a vehicle!"] call zen_common_fnc_showMessage;
+    _object = vehicle _object;
+
+    if !(alive _object && {(fullCrew [_object, "driver", true]) isNotEqualTo []}) exitWith {
+        ["Select an undestroyed vehicle!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
 
-    if (((crew _object) select {!isPlayer _x}) isEqualTo []) exitWith {
+    if (((crew _object) select {alive _x && {!isPlayer _x}}) isEqualTo []) exitWith {
         ["Select a vehicle with AI crew!"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     };
@@ -131,9 +137,14 @@
 
         {
             // Execute where AI is local
-            [_x, ["AUTOCOMBAT", _allowTurnOut]] remoteExecCall ["enableAIFeature", _x];
-            [_x, _behaviour] remoteExecCall ["setCombatBehaviour", _x];
-        } forEach ((crew _object) select {!isPlayer _x});
+            ["zen_common_execute", [{
+                params ["_unit", "_allowTurnOut", "_behaviour"];
+
+                _unit enableAIFeature ["AUTOCOMBAT", _allowTurnOut];
+                _unit setBehaviour _behaviour;
+                _unit setCombatBehaviour _behaviour;
+            }, [_x, _allowTurnOut, _behaviour]], _x] call CBA_fnc_targetEvent;
+        } forEach ((crew _object) select {alive _x && {!isPlayer _x}});
 
         ["Changed turning out ability on AI crew members"] call zen_common_fnc_showMessage;
     }, {
