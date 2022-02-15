@@ -1,36 +1,20 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Spawns a module that allows Zeus to enable and disable RHS vehicles' active protection system (APS).
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_changeRHSAPS;
- *
- * Public: No
  */
-
- // Check if RHS AFRF is loaded
-if (!isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")) exitWith {};
 
 ["Zeus Additions - Utility", "Change RHS APS", {
     params ["", "_object"];
 
     ["Change RHS APS", [
         ["TOOLBOX:ENABLED", ["APS", "Allows you to change the APS (Active Protection System) on a vehicle with RHS APS."], true],
-        ["TOOLBOX", ["APS", "Changes APS on selected object only or all vehicles with RHS APS."], [0, 1, 2, ["Object only", "All Vehicles"]]]
+        ["TOOLBOX", ["Selection", "Changes APS on selected object only or all vehicles with RHS APS."], [0, 1, 2, ["Object only", "All Vehicles"]]]
     ],
     {
         params ["_result", "_object"];
         _result params ["_enabled", "_all"];
 
-        private _apsVehicles = GETMVAR("rhs_aps_vehicles",[]);
+        private _apsVehicles = (GETMVAR("rhs_aps_vehicles",[])) select {alive _x};
 
         // All vehicles
         if (_all isEqualTo 1) exitWith {
@@ -48,7 +32,7 @@ if (!isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")) exitWith {};
                 _apsVehicles = _apsVehicles arrayIntersect _apsVehicles;
 
                 // See if any vehicles were added
-                if (count _apsVehicles isEqualTo _count) then {
+                if ((count _apsVehicles) isEqualTo _count) then {
                     playSound "FD_Start_F";
                     "All Vehicles already had RHS APS enabled!";
                 } else {
@@ -68,8 +52,8 @@ if (!isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")) exitWith {};
         };
 
         // If not valid vehicle
-        if !(_object isKindOf "rhs_t14_base" || {_object isKindOf "rhs_t15_base"}) exitWith {
-             ["Place on an RHS vehicle with APS!"] call zen_common_fnc_showMessage;
+        if !(alive _object && {(_object isKindOf "rhs_t14_base" || {_object isKindOf "rhs_t15_base"})}) exitWith {
+             ["Place on an undestroyed vehicle with RHS APS!"] call zen_common_fnc_showMessage;
              playSound "FD_Start_F";
         };
 

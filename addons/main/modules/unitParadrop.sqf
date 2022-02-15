@@ -1,20 +1,7 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Spawns a module that paradrops units, vehicles and crates.
  * With some help from https://github.com/zen-mod/ZEN/blob/master/addons/modules/functions/fnc_moduleCreateMinefield.sqf
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_unitParadrop;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Paradrop Units", {
@@ -50,15 +37,15 @@
 
         // Find all players from the list
         {
-            if (_includePlayersInVehicles || {isNull objectParent _x}) then {
+            _vehicle = objectParent _x;
+
+            if (_includePlayersInVehicles || {isNull _vehicle}) then {
                 _unitList pushBack _x;
             };
 
             if (!_includeVehicles) then {
                 continue;
             };
-
-            _vehicle = objectParent _x;
 
             if (_vehicle isKindOf "LandVehicle" || {_vehicle isKindOf "Ship"}) then {
                 _vehicleList pushBackUnique _vehicle;
@@ -169,8 +156,8 @@
                             }, [_unit, backpack _unit, backpackItems _unit]] call CBA_fnc_waitUntilAndExecute;
 
                             [{
-                                // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
-                                (getPosATL _this) select 2 < 100 || {!alive _this};
+                                // If the unit is <100m AGL, deploy parachute to prevent them splatting on the ground
+                                (getPos _this) select 2 < 100 || {!alive _this};
                             }, {
                                 // If parachute is already open or unit is unconscious or dead, don't do action
                                 if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {(lifeState _this) isEqualTo "INCAPACITATED"} || {!alive _this}) exitWith {};

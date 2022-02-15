@@ -1,32 +1,20 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Adds two modules that can create ACE medical injuries on units.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_createInjuries;
- *
- * Public: No
  */
-
-if (!zen_common_aceMedical) exitWith {};
 
 ["Zeus Additions - Medical", "Create ACE Injuries", {
     params ["", "_unit"];
 
-    // If opening on a vehicle
-    _unit = effectiveCommander _unit;
+    // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
+    if (alive _unit) then {
+        _unit = effectiveCommander _unit;
+    };
 
+    // Can be applied to dead units too!
     if !(_unit isKindOf "CAManBase") exitWith {
-         ["Select a unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["Select a unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     ["Create ACE Injuries", [
@@ -98,13 +86,13 @@ if (!zen_common_aceMedical) exitWith {};
     // If opening on a vehicle
     _unit = effectiveCommander _unit;
 
-    if !(_unit isKindOf "CAManBase") exitWith {
-         ["Select a unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+    if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
+        ["Select a living unit!"] call zen_common_fnc_showMessage;
+        playSound "FD_Start_F";
     };
 
     ["Create Random ACE Injuries", [
-        ["SLIDER", ["Damage amount", "More damage will usually make more wounds. It can be lethal! Minor [0.25-0.5], Medium [0.5-0.75], Large [0.75+]"], [0, 20, 0, 2]],
+        ["SLIDER", ["Damage amount", "More damage will usually make more wounds. It can be lethal! Minor [0.25-0.5], Medium [0.5-0.75], Large [0.75+]"], [0, 30, 0, 2]],
         ["TOOLBOX:YESNO", ["Set Fracture to Left Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],

@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: Fred, with modifications made by johnb43
  * Creates a module that spawns a dog.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_dogAttack;
- *
- * Public: No
  */
 
 ["Zeus Additions - AI", "Spawn Attack Dog", {
@@ -124,14 +111,14 @@
             _helperUnit setVariable [QGVAR(currentPosWP), [0, 0, 0]];
 
             [{
-                params ["_args", "_handleID"];
+                params ["_args", "_pfhID"];
                 _args params ["_dog", "_helperUnit", "_attackSides", "_radius", "_damage"];
 
                 // If dog has died, stop looking for targets
                 if (!alive _dog) exitWith {
                     deleteVehicle _helperUnit;
 
-                    _handleID call CBA_fnc_removePerFrameHandler;
+                    _pfhID call CBA_fnc_removePerFrameHandler;
                 };
 
                 // Set various animations for various speeds

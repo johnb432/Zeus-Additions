@@ -1,28 +1,15 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Adds a module that allows you to open the medical menu of a unit.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_openMedicalMenu;
- *
- * Public: No
  */
-
-if (!zen_common_aceMedical) exitWith {};
 
 ["Zeus Additions - Medical", "Open ACE Medical Menu", {
     params ["", "_unit"];
 
-    // If opening on a vehicle
-    _unit = effectiveCommander _unit;
+    // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
+    if (alive _unit) then {
+        _unit = effectiveCommander _unit;
+    };
 
     if !(_unit isKindOf "CAManBase") exitWith {
          ["Select a unit!"] call zen_common_fnc_showMessage;

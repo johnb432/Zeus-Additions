@@ -1,26 +1,13 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Adds a module that allows you to change if people can kill each other at mission end.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_missionEndModifier;
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "End Scenario with Player Modifier", {
     ["End Scenario with Player Modifier", [
         ["LIST", ["Mission ending", "Sets the type of ending."], [["EveryoneWon", "EveryoneLost", "SideScore", "GroupScore", "PlayerScore", "SideTickets"], ["Mission completed", "Mission failed", "Side with best score wins", "Group with best score wins", "Player with best score wins", "Side with most tickets wins"], 0, 6]],
         ["TOOLBOX:YESNO", ["Add Invincibility", "Invincibility will be applied with the modifier below."], false],
-        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player movement", "Disables player movement and user input."], ["Death", "All player die."]], 0]],
+        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player input", "Disables player movement and user input."], ["Death", "All players die."]], 0]],
         ["EDIT:MULTI", ["Debrief text", "Text that will show up in the debriefing screen."], ["", {}, 5]]
     ],
     {
@@ -30,10 +17,13 @@
         // CBA_fnc_players does not include curators
         private _allPlayers = call CBA_fnc_players;
         private _vehicles = [];
+        private _vehicle = objNull;
 
         {
-            if (!isNull objectParent _x) then {
-                _vehicles pushBackUnique (objectParent _x);
+            _vehicle = objectParent _x;
+
+            if (!isNull _vehicle) then {
+                _vehicles pushBackUnique _vehicle;
             };
         } forEach _allPlayers;
 
@@ -52,16 +42,17 @@
 
                 // Remove all ammo from all vics
                 {
-                    [_x, 0] remoteExecCall ["zen_common_fnc_setVehicleAmmo", _x];
+                    [_x, 0] call zen_common_fnc_setVehicleAmmo;
                 } forEach _vehicles;
             };
             case 2: {
                 // Stops the player from spinning if player was in the middle of turning
                 {
-                     [_x, false] remoteExecCall ["enableSimulation", _x];
+                    ["zen_common_execute", [{
+                        _this enableSimulationGlobal false;
+                        true call ace_common_fnc_disableUserInput;
+                    }, _x], _x] call CBA_fnc_targetEvent;
                 } forEach _allPlayers;
-
-                true remoteExecCall ["disableUserInput", _allPlayers, true];
             };
             case 3: {
                 {

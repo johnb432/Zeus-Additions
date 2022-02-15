@@ -50,7 +50,7 @@ SETUVAR(QGVAR(magazinesHashmap),_keys createHashMapFromArray _values);
 _keys sort true;
 SETUVAR(QGVAR(sortedKeys),_keys);
 
-
+// CBA Settings
 #include "initSettings.sqf"
 
 ADDON = true;

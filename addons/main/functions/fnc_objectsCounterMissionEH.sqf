@@ -16,9 +16,9 @@
  * Public: No
  */
 
-if (isNull (getAssignedCuratorLogic player)) exitWith {};
-
 private _curator = getAssignedCuratorLogic player;
+
+if (isNull _curator) exitWith {};
 
 // If stats haven't been initialised; make unique identifier for multiple people using the mod at the same time
 if (isNil FORMAT_1(QGVAR(curatorObjects_%1),str _curator)) then {

@@ -6,7 +6,7 @@
  *
  * Arguments:
  * 0: Objects <ARRAY>
- * 1: Type of filtering <INTEGER>
+ * 1: Type of filtering <NUMBER>
  *
  * Return Value:
  * None
@@ -18,6 +18,8 @@
  */
 
 params ["_objects", "_filterMode"];
+
+_objects = _objects select {alive _x};
 
 private _units = _objects select {_x isKindOf "CAManBase"};
 private _vehicles = _objects select {_x isKindOf "LandVehicle" || {_x isKindOf "Ship"}};
@@ -37,11 +39,9 @@ if (_filterMode isEqualTo PARADROP_VEHICLES) exitWith {
     ["Selected %1 vehicles", count _vehicles] call zen_common_fnc_showMessage;
 };
 
-_misc = count _misc;
-
 // If misc only, exit
 if (_filterMode isEqualTo PARADROP_MISC) exitWith {
-    ["Selected %1 misc objects", _misc] call zen_common_fnc_showMessage;
+    ["Selected %1 misc objects", count _misc] call zen_common_fnc_showMessage;
 };
 
 ["Paradrop Context Menu Selection", [
@@ -74,11 +74,11 @@ if (_filterMode isEqualTo PARADROP_MISC) exitWith {
     };
 
     // Remove non-man entities and duplicates
-    _units = (_units arrayIntersect _units) select {_x isKindOf "CAManBase"};
+    _units = (_units arrayIntersect _units) select {alive _x && {_x isKindOf "CAManBase"}};
 
     GVAR(selectedParadropUnits) = _units;
 
-    ["Selected %1 units, %2 vehicles & %3 objects", count _units, count _vehicles, _misc] call zen_common_fnc_showMessage;
+    ["Selected %1 units, %2 vehicles & %3 objects", count _units, count _vehicles, count _misc] call zen_common_fnc_showMessage;
 }, {
     ["Aborted"] call zen_common_fnc_showMessage;
     playSound "FD_Start_F";

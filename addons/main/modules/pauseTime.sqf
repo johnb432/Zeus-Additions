@@ -1,19 +1,6 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Creates modules that can change time acceleration.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_pauseTime
- *
- * Public: No
  */
 
 ["Zeus Additions - Utility", "Pause Time", {
@@ -35,29 +22,29 @@
                         timeMultiplier isNotEqualTo _this;
                     }, {
 
-                        private _handleID = [{
-                            params ["_startSeconds", "_handleID"];
+                        private _pfhID = [{
+                            params ["_startSeconds", "_pfhID"];
 
                             // If time acceleration has been changed, stop
                             if (timeMultiplier > 0.11) exitWith {
-                                _handleID call CBA_fnc_removePerFrameHandler;
+                                _pfhID call CBA_fnc_removePerFrameHandler;
 
                                 SETMVAR(QGVAR(setTimeAcc),nil,true);
 
-                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed!"] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
                             };
 
                             // Looking just at the seconds is enough
-                            private _deltaSec = (parseNumber ((([daytime] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
+                            private _deltaSec = (parseNumber ((([] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
 
                             if (_deltaSec < 0) then {
                                 _deltaSec = _deltaSec + 60;
                             };
 
                             (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
-                        }, 100, (([daytime] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler;
+                        }, 100, (([] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler;
 
-                        SETMVAR(QGVAR(setTimeAcc),_handleID,true);
+                        SETMVAR(QGVAR(setTimeAcc),_pfhID,true);
                     }, _this, 10] call CBA_fnc_waitUntilAndExecute;
                 }, _timeMult]] call CBA_fnc_serverEvent;
 
@@ -67,11 +54,10 @@
                 "Time already paused!";
             };
         } else {
-            private _handleID = GETMVAR(QGVAR(setTimeAcc),nil);
+            private _pfhID = GETMVAR(QGVAR(setTimeAcc),nil);
 
-            if (!isNil "_handleID") then {
-                _handleID call CBA_fnc_removePerFrameHandler;
-
+            if (!isNil "_pfhID") then {
+                _pfhID remoteExecCall ["CBA_fnc_removePerFrameHandler", 2];
                 1 remoteExecCall ["setTimeMultiplier", 2];
 
                 SETMVAR(QGVAR(setTimeAcc),nil,true);

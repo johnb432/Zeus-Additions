@@ -7,14 +7,11 @@
     str GVAR(NAME),\
     0,\
     {\
-        private _list = GVAR(DOUBLES(NAME,mags));\
-        _list = if (!isNil "_list") then {\
-            if (_list isEqualType "") then {\
-                parseSimpleArray _list;\
+        private _list = if (!isNil "_this") then {\
+            if (_this isEqualType "") then {\
+                parseSimpleArray _this;\
             } else {\
-                if (_list isEqualType []) then {\
-                    _list;\
-                };\
+                [[], _this] select (_this isEqualType []);\
             };\
         };\
         GVAR(magsTotal) set [INDEX, _list];\
@@ -98,7 +95,7 @@
     0,
     {
         // If setting is off, already added or no curator object, don't do anything
-        if (isNull (getAssignedCuratorLogic player) || {!GVAR(enableJIP)}) exitWith {};
+        if !(_this && {!isNull (getAssignedCuratorLogic player)}) exitWith {};
 
         call FUNC(handleJIP);
     }
@@ -116,7 +113,7 @@
         if (isNull (getAssignedCuratorLogic player)) exitWith {};
 
         // If setting is off and there is stuff still there, remove it
-        if (!GVAR(enableMissionCounter) && {!isNil QGVAR(curatorHandleIDs)}) exitWith {
+        if (!_this && {!isNil QGVAR(curatorHandleIDs)}) exitWith {
             GVAR(curatorHandleIDs) params ["_handleID1", "_handleID2", "_handleID3", "_handleID4"];
 
             (getAssignedCuratorLogic player) removeEventHandler ["CuratorObjectDeleted", _handleID1];
@@ -139,7 +136,7 @@
     false,
     0,
     {
-        if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+        if (_this && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
             GVAR(blacklist) = [];
 
             {
@@ -161,7 +158,7 @@
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
 
-        GVAR(blacklist) = parseSimpleArray GVAR(blacklistSettings);
+        GVAR(blacklist) = parseSimpleArray _this;
     }
 ] call CBA_fnc_addSetting;
 

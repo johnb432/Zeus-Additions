@@ -1,41 +1,27 @@
-#include "script_component.hpp"
-
 /*
  * Author: johnb43
  * Spawns a module that allows Zeus to unload ACE cargo items from vehicles.
- *
- * Arguments:
- * None
- *
- * Return Value:
- * None
- *
- * Example:
- * call zeus_additions_main_fnc_unloadACECargo;
- *
- * Public: No
  */
-
-if (!isClass (configFile >> "CfgPatches" >> "ace_cargo")) exitWith {};
 
 ["Zeus Additions - Utility", "Unload ACE Cargo", {
     params ["", "_object"];
-
-    if (!(_object isKindOf "AllVehicles")) exitWith {
-         ["Select an object!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
-    };
 
     if (!ace_cargo_enable) exitWith {
          ["ACE Cargo isn't enabled!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };
 
-    if (!(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") isEqualTo 1])) exitWith {
+    if !(alive _object && {_object isKindOf "AllVehicles"}) exitWith {
+         ["Select an undestroyed object!"] call zen_common_fnc_showMessage;
+         playSound "FD_Start_F";
+    };
+
+    if !(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") isEqualTo 1]) exitWith {
          ["This vehicle doesn't have ACE Cargo!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };
 
+    // Save value so it can be applied again later
     private _loadTimeCoeff = ace_cargo_loadTimeCoefficient;
     ace_cargo_loadTimeCoefficient = 0;
 

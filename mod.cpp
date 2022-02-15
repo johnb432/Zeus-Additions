@@ -1,5 +1,6 @@
 name = "Zeus Additions";
 author = "johnb43";
+tooltip = "Zeus Additions";
 tooltipOwned = "Zeus Additions";
 hideName = 0;
 hidePicture = 0;
@@ -9,4 +10,6 @@ description = "A small mod that adds Zeus modules, made by johnb43.";
 overview = "A small mod that adds Zeus modules, made by johnb43.";
 picture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
 logo = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
+logoOver = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
+logoSmall = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
 overviewPicture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";

@@ -16,36 +16,26 @@
  * Public: No
  */
 
-// If PFH is already added or setting is disabled, exit
-if (!GVAR(enableJIP) || {GETMVAR(QGVAR(handleServerJIP),false)}) exitWith {};
+// If EH is already added or setting is disabled, exit
+if (!isMultiplayer || {!GVAR(enableJIP)} || {GETMVAR(QGVAR(handleServerJIP),false)}) exitWith {};
 
 // Make sure only 1 EH is added to the server
 SETMVAR(QGVAR(handleServerJIP),true,true);
 
-// remoteExecCall can account for side (and probably group JIP), but not for individual player JIP. That's why this function exists
+// remoteExecCall can account for side (and group JIP), but not for individual player JIP. That's why this function exists
 ["zen_common_execute", [{
     addMissionEventHandler ["PlayerConnected", {
-        params ["", "_uid", "_name", "_jip"];
+        params ["", "_uid", "_name", "_jip", "", "_idstr"];
 
         if (!_jip) exitWith {};
 
         [{
-            // Wait for player to exist
-            !isNull ((_this select 0) call BIS_fnc_getUnitByUID) || {(_this select 1) in (allPlayers apply {name _x})};
+            // Wait for player to exist; If player is Virtual Curator, BIS_fnc_getUnitByUID does not work; use getUserInfo instead
+            !isNull ((getUserInfo (_this select 1)) select 10);
         }, {
-            params ["_uid", "_name"];
+            params ["_uid", "_idstr"];
 
-            private _player = _uid call BIS_fnc_getUnitByUID;
-
-            // If player is Virtual Curator, UID will not work for some reason; Find the player through his name
-            if (isNull _player) then {
-                _player = (allPlayers select {name _x isEqualTo _name}) param [0, objNull];
-            };
-
-            // If player can't be found, exit
-            if (isNull _player) exitWith {
-                ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _name, _uid] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
-            };
+            private _player = getUserInfo _idstr select 10;
 
             // For chat channels
             if (!isNil QGVAR(channelSettingsJIP)) then {
@@ -91,8 +81,8 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
                     remoteExecCall [QFUNC(snowScriptPFH), _player];
                 };
             };
-        }, [_uid, _name], 60, {
-            ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _this select 1, _this select 0] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+        }, [_uid, _idstr, _name], 60, {
+            ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _this select 2, _this select 0] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
         }] call CBA_fnc_waitUntilAndExecute;
     }];
 }, []]] call CBA_fnc_serverEvent;
