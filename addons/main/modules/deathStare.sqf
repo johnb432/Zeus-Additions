@@ -6,7 +6,7 @@
 ["Zeus Additions - Utility", "Give Death Stare Ability", {
     params ["", "_unit"];
 
-    if !(_unit isKindOf "CAManBase") exitWith {
+    if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
          ["Select a unit!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };

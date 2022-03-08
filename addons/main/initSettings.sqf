@@ -2,7 +2,7 @@
 [\
     QGVAR(DOUBLES(NAME,mags)),\
     "EDITBOX",\
-    [format ["%1 Ammunition", QUOTE(NAME)], RESUPPY_DESC],\
+    [format ["%1 Ammunition", QUOTE(NAME)], "Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings."],\
     [COMPONENT_NAME, MAGAZINES_DESC],\
     str GVAR(NAME),\
     0,\
@@ -18,6 +18,15 @@
     }\
 ] call CBA_fnc_addSetting
 
+#define HINT_SETTINGS(NAME,TEXT)\
+[\
+    QGVAR(NAME),\
+    "CHECKBOX",\
+    [TEXT, "Allows to toggle the hint on or off."],\
+    [COMPONENT_NAME, "Modules"],\
+    true\
+] call CBA_fnc_addSetting
+
 [
     QGVAR(enableExitUnconsciousUnit),
     "CHECKBOX",
@@ -28,62 +37,6 @@
     {
         call FUNC(exitUnconsciousUnit);
     }
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableNoCuratorHint),
-    "CHECKBOX",
-    ["Enable no curator found hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableACECargoHint),
-    "CHECKBOX",
-    ["Enable ACE Cargo missing addon hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableACEDragHint),
-    "CHECKBOX",
-    ["Enable ACE Dragging missing addon hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableACEMedicalHint),
-    "CHECKBOX",
-    ["Enable ACE Medical missing addon hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableSnowScriptHint),
-    "CHECKBOX",
-    ["Enable Snow Script missing addon hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableTFARHint),
-    "CHECKBOX",
-    ["Enable Radio Range Script addon missing hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableRHSHint),
-    "CHECKBOX",
-    ["Enable RHS APS Script addon missing hint", "Allows to toggle the hint on or off."],
-    [COMPONENT_NAME, "Modules"],
-    true
 ] call CBA_fnc_addSetting;
 
 [
@@ -143,7 +96,11 @@
                 GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
             } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);
         } else {
-            GVAR(blacklist) = parseSimpleArray GVAR(blacklistSettings);
+            GVAR(blacklist) = if (GVAR(blacklistSettings) isEqualType "") then {
+                parseSimpleArray GVAR(blacklistSettings);
+            } else {
+                [[], GVAR(blacklistSettings)] select (GVAR(blacklistSettings) isEqualType []);
+            };
         };
     }
 ] call CBA_fnc_addSetting;
@@ -158,7 +115,11 @@
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
 
-        GVAR(blacklist) = parseSimpleArray _this;
+        GVAR(blacklist) = if (_this isEqualType "") then {
+            parseSimpleArray _this;
+        } else {
+            [[], _this] select (_this isEqualType []);
+        };
     }
 ] call CBA_fnc_addSetting;
 
@@ -170,3 +131,11 @@ MAGAZINES_SETTINGS(HATBLU,4);
 MAGAZINES_SETTINGS(HATRED,5);
 MAGAZINES_SETTINGS(AABLU,6);
 MAGAZINES_SETTINGS(AARED,7);
+
+HINT_SETTINGS(enableNoCuratorHint,"Enable no curator found hint");
+HINT_SETTINGS(enableACECargoHint,"Enable ACE Cargo missing addon hint");
+HINT_SETTINGS(enableACEDragHint,"Enable ACE Dragging missing addon hint");
+HINT_SETTINGS(enableACEMedicalHint,"Enable ACE Medical missing addon hint");
+HINT_SETTINGS(enableSnowScriptHint,"Enable Snow Script missing addon hint");
+HINT_SETTINGS(enableTFARHint,"Enable Radio Range Script missing addon hint");
+HINT_SETTINGS(enableRHSHint,"Enable RHS APS Script addon missing hint");

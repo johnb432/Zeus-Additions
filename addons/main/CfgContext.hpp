@@ -1,18 +1,18 @@
 class zen_context_menu_actions {
     class GVAR(disablePathingContextMenu) {
-        condition = QUOTE(_objects findIf {alive _x && {!isPlayer _x} && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}} isNotEqualTo -1);
+        condition = QUOTE([ARR_2(_objects,'disableAI')] call FUNC(pathingCondition));
         displayName = "Disable AI Pathing";
         icon = ICON_PERSON;
         priority = 50;
-        statement = QUOTE({[ARR_2(_x,'PATH')] remoteExecCall [ARR_2('disableAI',_x)]} forEach (_objects select {alive _x && {!isPlayer _x} && {_x isKindOf 'CAManBase'} && {_x checkAIFeature 'PATH'}}));
+        statement = QUOTE([ARR_2(_objects,'disableAI')] call FUNC(pathingStatement));
     };
 
     class GVAR(enablePathingContextMenu) {
-        condition = QUOTE(_objects findIf {alive _x && {!isPlayer _x} && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}} isNotEqualTo -1);
+        condition = QUOTE([ARR_2(_objects,'enableAI')] call FUNC(pathingCondition));
         displayName = "Enable AI Pathing";
         icon = ICON_PERSON;
         priority = 50;
-        statement = QUOTE({[ARR_2(_x,'PATH')] remoteExecCall [ARR_2('enableAI',_x)]} forEach (_objects select {alive _x && {!isPlayer _x} && {_x isKindOf 'CAManBase'} && {!(_x checkAIFeature 'PATH')}}));
+        statement = QUOTE([ARR_2(_objects,'enableAI')] call FUNC(pathingStatement));
     };
 
     class GVAR(openMedicalMenuContextMenu) {

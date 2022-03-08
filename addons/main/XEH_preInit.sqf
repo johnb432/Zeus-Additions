@@ -6,7 +6,7 @@ PREP_RECOMPILE_START;
 #include "XEH_PREP.hpp"
 PREP_RECOMPILE_END;
 
-// Arrays for ammunition choice
+// Default arrays for ammunition choice
 GVAR(LATBLU) = ["UK3CB_BAF_AT4_CS_AP_Launcher","UK3CB_BAF_AT4_CS_AT_Launcher","rhs_weap_M136","rhs_weap_M136_hedp","rhs_weap_M136_hp","rhs_weap_m72a7"];
 GVAR(LATRED) = ["rhs_weap_rpg18","rhs_weap_rpg26","rhs_weap_rshg2","rhs_weap_m80","rhs_weap_rpg75"];
 
@@ -18,6 +18,8 @@ GVAR(HATRED) = ["Vorona_HE","Vorona_HEAT"];
 
 GVAR(AABLU) = ["rhs_fim92_mag","Titan_AA"];
 GVAR(AARED) = ["rhs_mag_9k38_rocket","Titan_AA"];
+
+GVAR(magsTotal) = [];
 
 // Get magazines for resupply module
 private _keys = [];

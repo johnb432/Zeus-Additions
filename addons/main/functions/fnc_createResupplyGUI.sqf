@@ -54,89 +54,52 @@ if (_weapons isNotEqualTo []) then {
 // Categories list
 private _ctrlListCategories = _display displayCtrl IDC_LIST_CATEGORIES;
 _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
-    disableSerialization;
-
+    // Ticket: https://feedback.bistudio.com/T161512 -> Now fixed
     params ["_ctrlListCategories", "_selectedIndex"];
 
-    [_ctrlListCategories, _selectedIndex] spawn {
-        params ["_ctrlListCategories", "_selectedIndex"];
+    private _display = ctrlParent _ctrlListCategories;
+    private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;
+    private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
+    private _selectedMagazines = [];
 
-        private _display = ctrlParent _ctrlListCategories;
-        private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;
+    // Get current selection in selected magazines
+    private _size = lbSize _ctrlListSelected;
 
-        if (isNull _ctrlListCategories) exitWith {};
-
-        // Ticket: https://feedback.bistudio.com/T161512
-        // Set focus on the magazines tab; Needed so it doesn't crash
-        ctrlSetFocus _ctrlListMagazines;
-        waitUntil {(focusedCtrl _display) isEqualTo _ctrlListMagazines};
-
-        // Unselect everything; Needed so it doesn't crash
-        private _curSelection = lbSelection _ctrlListMagazines;
-
-        if (_curSelection isNotEqualTo []) then {
-            {
-                _ctrlListMagazines lbSetSelected [_x, false];
-            } forEach _curSelection;
+    if (_size isNotEqualTo 0) then {
+        for "_i" from 0 to (_size - 1) step 1 do {
+            _selectedMagazines pushBack (_ctrlListSelected lbTooltip _i);
         };
-
-        waitUntil {lbSelection _ctrlListMagazines isEqualTo []};
-
-        // Select the first element only; Needed so it doesn't crash
-        _ctrlListMagazines lbSetCurSel 0;
-
-        // Set focus on the categories tab; Needed so it doesn't crash
-        ctrlSetFocus _ctrlListCategories;
-        waitUntil {(focusedCtrl _display) isEqualTo _ctrlListCategories};
-
-        // Clear displayed magazines from previous category; lbClear causes crash if no precautions taken
-        lbClear _ctrlListMagazines;
-
-        // Wait until list is empty; Needed so it doesn't crash
-        waitUntil {(lbSize _ctrlListMagazines) isEqualTo 0};
-
-        private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
-        private _selectedMagazines = [];
-
-        if (!isNull _ctrlListSelected) then {
-            // Get current selection in selected magazines
-            private _size = lbSize _ctrlListSelected;
-
-            if (_size isNotEqualTo 0) then {
-                for "_i" from 0 to (_size - 1) step 1 do {
-                    _selectedMagazines pushBack (_ctrlListSelected lbTooltip _i);
-                };
-            };
-        };
-
-        private _cfgMagazines = configFile >> "CfgMagazines";
-        private _addedIndex = -1;
-
-        // Add magazines from currently selected category
-        {
-            // Don't add magazines that are in the selected list
-            if (_x in _selectedMagazines) then {
-                continue;
-            };
-
-            // Name is magazine display name, picture is magazine icon & tooltip is classname
-            _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
-            _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
-            _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
-            _ctrlListMagazines lbSetValue [_addedIndex, 0];
-        } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
-
-        // Sort alphabetically
-        lbSort _ctrlListMagazines;
-
-        _ctrlListMagazines lbSetCurSel 0;
     };
+
+    // Clear displayed magazines from previous category
+    lbClear _ctrlListMagazines;
+
+    private _cfgMagazines = configFile >> "CfgMagazines";
+    private _addedIndex = -1;
+
+    // Add magazines from currently selected category
+    {
+        // Don't add magazines that are in the selected list
+        if (_x in _selectedMagazines) then {
+            continue;
+        };
+
+        // Name is magazine display name, picture is magazine icon & tooltip is classname
+        _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
+        _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
+        _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
+        _ctrlListMagazines lbSetValue [_addedIndex, 0];
+    } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
+
+    // Sort alphabetically
+    lbSort _ctrlListMagazines;
 }];
 
 // Add items to list
 {
     _ctrlListCategories lbAdd _x;
 } forEach GETUVAR(QGVAR(sortedKeysMagazines),[]);
+
 _ctrlListCategories lbSetCurSel 0;
 
 // Magazines list for categories
@@ -393,10 +356,9 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _value = 0;
 
     {
-        // Get old value and decrement it; if below 0, set to 0
+        // Get old value and decrement it; if below 0, set to 0; Do not show "0x"
         _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
         _ctrlListSelected lbSetValue [_x, _value];
-        // Do not show "0x"
         _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value isNotEqualTo 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
     } forEach _selectedArray;
 }];

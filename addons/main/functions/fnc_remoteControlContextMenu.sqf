@@ -18,23 +18,20 @@
 
 params ["_unit"];
 
+// Prevention of controlling units that died when this was called
+if (!alive _unit) exitWith {
+    ["Unit is dead!"] call zen_common_fnc_showMessage;
+};
+
+if (unitIsUAV _unit) exitWith {
+    ["Cannot remote control UAV units!"] call zen_common_fnc_showMessage;
+};
+
 // Save old player object
 private _oldPlayer = player;
-private _isDamageAllowed = isDamageAllowed _oldPlayer;
+bis_fnc_moduleRemoteControl_unit = _unit;
 
-// Save old name so it can be applied again later
-private _name = name _oldPlayer;
-
-// If virtual curator, ignore
-if !(_oldPlayer isKindOf "VirtualCurator_F") then {
-    // Freeze the old unit; AI will take over and do dumb stuff
-    _oldPlayer disableAI "all";
-
-    // Disable damage until Zeus has control of unit again
-    if (_isDamageAllowed) then {
-        _oldPlayer allowDamage false;
-    };
-};
+GVAR(remoteControlArgs) = [_oldPlayer, _unit, isDamageAllowed _oldPlayer];
 
 // Sometimes the unit that is being switched to gets teleported into the air; These are measures to prevent that
 private _pos = getPosASL _unit;
@@ -42,8 +39,10 @@ private _pos = getPosASL _unit;
 // Start remote controlling
 selectPlayer _unit;
 
-// Set a name (to avoid TFAR bugs)
-GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", [_oldPlayer, _name]] call CBA_fnc_globalEventJIP];
+// Freeze the old unit & Disable damage until Zeus has control of unit again; AI will take over and do dumb stuff
+_oldPlayer disableAI "ALL";
+_oldPlayer enableAI "ANIM";
+_oldPlayer allowDamage false;
 
 [{
     // Wait until the Zeus interface is closed
@@ -53,13 +52,18 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
     [{
         params ["_pos", "_unit"];
 
+        // Prevents unit from respawning if killed
+        setPlayerRespawnTime 10e10;
+
         if (_pos distance (getPosASL _unit) > 1) then {
             _unit setPosASL _pos;
         };
     }, _this, 0.25] call CBA_fnc_waitAndExecute;
 
-    // To exit the unit, the player must get to the pause menu; Still works if unit is killed
-    GVAR(remoteControlHandleID) = [missionNamespace, "OnGameInterrupt", {
+    // To exit the unit, the player must get to the pause menu
+    GVAR(remoteControlUserActionEH) = [missionNamespace, "OnGameInterrupt", {
+        if (isNil QGVAR(remoteControlArgs)) exitWith {};
+
         [{
             // Wait until the pause menu has been opened
             !isNull _this;
@@ -67,30 +71,21 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
             // Close the pause menu
             _this closeDisplay IDC_CANCEL;
 
-            // Remove EH
-            [missionNamespace, "OnGameInterrupt", GVAR(remoteControlHandleID)] call BIS_fnc_removeScriptedEventHandler;
+            GVAR(remoteControlArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed"];
 
-            GVAR(remoteControlArgs) params ["_oldPlayer", "_isDamageAllowed", "_playerJIP"];
-
-            // If virtual curator, ignore
-            if !(_oldPlayer isKindOf "VirtualCurator_F") then {
-                // Unfreeze the old unit
-                [_oldPlayer, "all"] remoteExecCall ["enableAI", _oldPlayer];
-
-                // Enable damage again
-                if (_isDamageAllowed) then {
-                    [_oldPlayer, false] remoteExecCall ["allowDamage", _oldPlayer];
-                };
-            };
-
-            // Remove JIP events for names
-            _playerJIP call CBA_fnc_removeGlobalEventJIP;
+            [missionNamespace, "OnGameInterrupt", GVAR(remoteControlUserActionEH)] call BIS_fnc_removeScriptedEventHandler;
+            _unit removeEventHandler ["Killed", GVAR(remoteControlKilledEH)];
 
             // Switch back to old player
             selectPlayer _oldPlayer;
 
-            GVAR(remoteControlHandleID) = nil;
+            _oldPlayer enableAI "ALL";
+            _oldPlayer allowDamage _isDamageAllowed;
+
             GVAR(remoteControlArgs) = nil;
+            GVAR(remoteControlUserActionEH) = nil;
+            GVAR(remoteControlKilledEH) = nil;
+            bis_fnc_moduleRemoteControl_unit = nil;
 
             // Open curator interface
             {
@@ -98,4 +93,30 @@ GVAR(remoteControlArgs) = [_oldPlayer, _isDamageAllowed, ["zen_common_setName", 
             } call CBA_fnc_execNextFrame;
         }, _this select 0] call CBA_fnc_waitUntilAndExecute;
     }] call BIS_fnc_addScriptedEventHandler;
+
+    // Handle killed with EH
+    GVAR(remoteControlKilledEH) = (_this select 1) addEventHandler ["Killed", {
+        if (isNil QGVAR(remoteControlArgs)) exitWith {};
+
+        GVAR(remoteControlArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed"];
+
+        [missionNamespace, "OnGameInterrupt", GVAR(remoteControlUserActionEH)] call BIS_fnc_removeScriptedEventHandler;
+        _unit removeEventHandler ["Killed", GVAR(remoteControlKilledEH)];
+
+        // Switch back to old player
+        selectPlayer _oldPlayer;
+
+        _oldPlayer enableAI "ALL";
+        _oldPlayer allowDamage _isDamageAllowed;
+
+        GVAR(remoteControlArgs) = nil;
+        GVAR(remoteControlUserActionEH) = nil;
+        GVAR(remoteControlKilledEH) = nil;
+        bis_fnc_moduleRemoteControl_unit = nil;
+
+        // Open curator interface
+        {
+            openCuratorInterface;
+        } call CBA_fnc_execNextFrame;
+    }];
 }, [_pos, _unit]] call CBA_fnc_waitUntilAndExecute;

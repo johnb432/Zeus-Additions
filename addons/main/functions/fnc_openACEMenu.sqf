@@ -34,7 +34,11 @@ switch (_menuType) do {
     default {_helperUnit attachTo [_object, [0, -1, 0]]};
 };
 
-removeUniform _helperUnit;
+// Remove all items of the helper unit
+removeAllWeapons _helperUnit;
+removeAllAssignedItems _helperUnit;
+removeAllContainers _helperUnit;
+removeHeadgear _helperUnit;
 removeGoggles _helperUnit;
 _helperUnit setVariable ["ACE_medical_medicClass", 2, true];
 
