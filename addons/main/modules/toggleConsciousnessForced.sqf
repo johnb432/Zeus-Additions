@@ -3,7 +3,7 @@
  * Adds a module that forces a unit to wake up or go unconscious, regardless if they have stable vitals or not (for ACE).
  */
 
-["Zeus Additions - Medical", "Toggle Consciousness (forced)", {
+["Zeus Additions - Medical", "Toggle Consciousness (Forced)", {
     params ["", "_unit"];
 
     // If opening on a vehicle
@@ -23,6 +23,6 @@
 
     // Notify the player if affected unit is a player; for fairness reasons
     if (isPlayer _unit) then {
-        "Zeus has toggled your consciousness using a module." remoteExecCall ["hint", _unit];
+        "Zeus has toggled your consciousness." remoteExecCall ["hint", _unit];
     };
 }, [ICON_PERSON, ICON_UNCONSCIOUS] select (isClass (configFile >> "CfgPatches" >> "ace_zeus"))] call zen_custom_modules_fnc_register;

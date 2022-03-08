@@ -19,7 +19,7 @@
         };
 
         // Looks if a group or a side was selected. If both were selected, group has priority
-        private _isGroup = !isNil {_groups select 0};
+        private _isGroup = _groups isNotEqualTo [];//!isNil {_groups select 0};
 
         // Create unit based on which side we want to make a marker in; Important for group markers
         private _unitType = switch ([_sides select 0, side (_groups select 0)] select _isGroup) do {
@@ -35,15 +35,16 @@
         [_helperUnit] joinSilent _group;
 
         // Remove anything unnecessary; Add map and watch (for timestamp markers)
-        removeUniform _helperUnit;
+        removeAllWeapons _helperUnit;
+        removeAllAssignedItems _helperUnit;
+        removeAllContainers _helperUnit;
+        removeHeadgear _helperUnit;
         removeGoggles _helperUnit;
         _helperUnit linkItem "ItemMap";
         _helperUnit linkItem "ItemWatch";
 
-        // Do not allow the unit to move or interact with other objects
+        // Do not allow the unit to move or interact with other objects; Make invisible and invincible
         _helperUnit enableSimulationGlobal false;
-
-        // Make invisible and invincible
         _helperUnit allowDamage false;
         [_helperUnit, false] remoteExecCall ["hideObjectGlobal", 2];
 
@@ -51,22 +52,12 @@
         private _oldPlayer = player;
         private _isDamageAllowed = isDamageAllowed _oldPlayer;
 
-        // Get old name (to avoid TFAR bugs)
-        private _name = name _oldPlayer;
-
-        // If virtual curator, ignore
-        if !(_oldPlayer isKindOf "VirtualCurator_F") then {
-            // Freeze the old unit; AI will take over and do dumb stuff
-            _oldPlayer disableAI "all";
-
-            // Disable damage until Zeus has control of unit again
-            if (_isDamageAllowed) then {
-                _oldPlayer allowDamage false;
-            };
-        };
-
         // Start remote controlling
         selectPlayer _helperUnit;
+
+        _oldPlayer disableAI "ALL";
+        _oldPlayer enableAI "ANIM";
+        _oldPlayer allowDamage false;
 
         // Add default channels
         private _channelIDs = [0, 1, 2, 3, 4, 5];
@@ -90,7 +81,7 @@
             (_channelIDs select _forEachIndex) enableChannel [true, _x select 1];
         } forEach _channelSettings;
 
-        // Add helper to custom channels if he didn't have access to them before
+        // Add helper to custom channels if he didn't have access to them before; Null objects are automatically removed from list
         {
             if (!_x) then {
                 _forEachIndex radioChannelAdd [_helperUnit];
@@ -109,7 +100,7 @@
 
             // Does not get triggered by the command above
             addMissionEventHandler ["Map", {
-                _thisArgs params ["_helperUnit", "_oldPlayer", "_channelSettings", "_channelIDs", "_channelUnitList", "_helperJIP", "_playerJIP", "_isDamageAllowed"];
+                _thisArgs params ["_helperUnit", "_oldPlayer", "_isDamageAllowed", "_channelSettings", "_channelIDs"];
 
                 // Remove EH
                 removeMissionEventHandler ["Map", _thisEventHandler];
@@ -119,30 +110,11 @@
                     (_channelIDs select _forEachIndex) enableChannel _x;
                 } forEach _channelSettings;
 
-                // Remove helper from custom channels if he didn't have access to them before
-                {
-                    if (!_x) then {
-                        _forEachIndex radioChannelRemove [_helperUnit];
-                    };
-                } forEach _channelUnitList;
-
-                // If virtual curator, ignore
-                if !(_oldPlayer isKindOf "VirtualCurator_F") then {
-                    // Unfreeze the old unit
-                    [_oldPlayer, "all"] remoteExecCall ["enableAI", _oldPlayer];
-
-                    // Enable damage again
-                    if (_isDamageAllowed) then {
-                        [_oldPlayer, false] remoteExecCall ["allowDamage", _oldPlayer];
-                    };
-                };
-
-                // Remove JIP events for names
-                _helperJIP call CBA_fnc_removeGlobalEventJIP;
-                _playerJIP call CBA_fnc_removeGlobalEventJIP;
-
                 // Switch back to old player
                 selectPlayer _oldPlayer;
+
+                _oldPlayer enableAI "ALL";
+                _oldPlayer allowDamage _isDamageAllowed;
 
                 [{
                     // Open curator interface
@@ -154,7 +126,7 @@
                     }, _this] call CBA_fnc_execNextFrame;
                 }, _helperUnit] call CBA_fnc_execNextFrame;
             }, _this];
-        }, [_helperUnit, _oldPlayer, _channelSettings, _channelIDs, _channelUnitList, ["zen_common_setName", [_helperUnit, _name]] call CBA_fnc_globalEventJIP, ["zen_common_setName", [_oldPlayer, _name]] call CBA_fnc_globalEventJIP, _isDamageAllowed]] call CBA_fnc_waitUntilAndExecute;
+        }, [_helperUnit, _oldPlayer, _isDamageAllowed, _channelSettings, _channelIDs]] call CBA_fnc_waitUntilAndExecute;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

@@ -16,10 +16,13 @@
  * Public: No
  */
 
-if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWith {
+if (isNil QGVAR(exitUnconsciousID) && {GVAR(enableExitUnconsciousUnit)}) exitWith {
     // To exit the unit, the player must get to the pause menu
     GVAR(exitUnconsciousID) = [missionNamespace, "OnGameInterrupt", {
-        if (isNil "bis_fnc_moduleRemoteControl_unit" || {!(bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false])} || {(lifeState bis_fnc_moduleRemoteControl_unit) isNotEqualTo "INCAPACITATED"}) exitWith {};
+        // If Select Unit module is running, don't do anything
+        if (!isNil QGVAR(remoteControlArgs)) exitWith {};
+
+        if !(!isNil "bis_fnc_moduleRemoteControl_unit" && {(lifeState bis_fnc_moduleRemoteControl_unit) isEqualTo "INCAPACITATED" || {bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false]}}) exitWith {};
 
         [{
             // Wait until the pause menus has been opened
@@ -40,7 +43,7 @@ if (isNil {GVAR(exitUnconsciousID)} && {GVAR(enableExitUnconsciousUnit)}) exitWi
     }] call BIS_fnc_addScriptedEventHandler;
 };
 
-if (!isNil {GVAR(exitUnconsciousID)} && {!GVAR(enableExitUnconsciousUnit)}) exitWith {
-     [missionNamespace, "OnGameInterrupt", GVAR(exitUnconsciousID)] call BIS_fnc_removeScriptedEventHandler;
+if (!isNil QGVAR(exitUnconsciousID) && {!GVAR(enableExitUnconsciousUnit)}) exitWith {
+    [missionNamespace, "OnGameInterrupt", GVAR(exitUnconsciousID)] call BIS_fnc_removeScriptedEventHandler;
      GVAR(exitUnconsciousID) = nil;
 };

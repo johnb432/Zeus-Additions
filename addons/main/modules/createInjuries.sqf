@@ -92,7 +92,7 @@
     };
 
     ["Create Random ACE Injuries", [
-        ["SLIDER", ["Damage amount", "More damage will usually make more wounds. It can be lethal! Minor [0.25-0.5], Medium [0.5-0.75], Large [0.75+]"], [0, 30, 0, 2]],
+        ["SLIDER", ["Damage amount", "More damage will usually cause more wounds."], [0, 30, 0, 2]],
         ["TOOLBOX:YESNO", ["Set Fracture to Left Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Right Arm", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],
         ["TOOLBOX:YESNO", ["Set Fracture to Left Leg", "Forces a fracture to occur. However fractures also occur if the right sort of damage is given."], false],

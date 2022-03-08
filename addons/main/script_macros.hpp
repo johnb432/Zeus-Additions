@@ -12,7 +12,6 @@
 #define ARR_10(ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8,ARG9,ARG10) ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10
 
 #define RESUPPLY_TEXT "Spawns in x amount of predefined magazines (not x total!)."
-#define RESUPPLY_DESC "Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings."
 
 #define MAGAZINES_DESC "Magazines"
 
@@ -63,6 +62,7 @@
 #define IDC_LIST_SELECTED 311022
 
 #define IDD_MISSION 46
+#define IDD_INTERRUPT 49
 #define IDD_RSCDISPLAYCURATOR 312
 
 #define POS_CALC ((safezoneW / safezoneH) min 1.2)

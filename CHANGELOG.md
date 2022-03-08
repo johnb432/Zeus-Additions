@@ -1,3 +1,10 @@
+# Changelog for Zeus Additions 8.3.2022
+
+1.6.3.3
+- Added support for 2.08.
+- Added Disabling & Enabling of AI pathing on drivers.
+- Fixed multiple issues with the "Remote Control (Switch Unit)" module.
+
 # Changelog for Zeus Additions 15.2.2022
 
 1.6.3.2

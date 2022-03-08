@@ -2,30 +2,17 @@
 
 if (!hasInterface) exitWith {};
 
-// Take the FK blacklist if enabled and present
-if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
-    GVAR(blacklist) = [];
+// Optionals
+GVAR(ACEDraggingLoaded) = isClass (configFile >> "CfgPatches" >> "ace_dragging");
+GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
 
-    {
-        GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
-    } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);
-} else {
-    GVAR(blacklist) = parseSimpleArray GVAR(blacklistSettings);
+// If for some reason this postInit loads before the ZEN one, make sure there is something
+if (isNil "zen_common_aceMedical") then {
+    zen_common_aceMedical = isClass (configFile >> "CfgPatches" >> "ace_medical");
 };
 
-// Get ammunition list
-private _temp = [GVAR(LATBLU),GVAR(LATRED),GVAR(MATBLU),GVAR(MATRED),GVAR(HATBLU),GVAR(HATRED),GVAR(AABLU),GVAR(AARED)];
-
-GVAR(magsTotal) = [GVAR(LATBLU_mags),GVAR(LATRED_mags),GVAR(MATBLU_mags),GVAR(MATRED_mags),GVAR(HATBLU),GVAR(HATRED_mags),GVAR(AABLU_mags),GVAR(AARED_mags)] apply {
-    if (!isNil QUOTE(_x)) then {
-        if (_x isEqualType "") then {
-            parseSimpleArray _x;
-        } else {
-            [[], _x] select (_x isEqualType []);
-        };
-    } else {
-        _temp select _forEachIndex;
-    };
+if (isNil "zen_common_aceMedicalTreatment") then {
+    zen_common_aceMedicalTreatment = isClass (configFile >> "CfgPatches" >> "ace_medical_treatment");
 };
 
 // Add counter and JIP functions only if player is curator
@@ -33,13 +20,18 @@ GVAR(magsTotal) = [GVAR(LATBLU_mags),GVAR(LATRED_mags),GVAR(MATBLU_mags),GVAR(MA
     // Wait for curator object
     !isNull (getAssignedCuratorLogic player);
 }, {
-    // Add the JIP function
+    // Add the JIP functionality
     call FUNC(handleJIP);
 
-    if (!GVAR(enableMissionCounter)) exitWith {};
-
     // Add mission object counter
-    call FUNC(objectsCounterMissionEH);
+    if (GVAR(enableMissionCounter)) then {
+        call FUNC(objectsCounterMissionEH);
+    };
+
+    // Add Drag Bodies module
+    if (zen_common_aceMedical && {zen_common_aceMedicalTreatment} && {GVAR(ACEDraggingLoaded)}) then {
+        #include "modules\addACEDragBodies.sqf"
+    };
 }, [], 30, {
     // Hint only if setting is enabled
     if (!GVAR(enableNoCuratorHint)) exitWith {};
@@ -48,8 +40,6 @@ GVAR(magsTotal) = [GVAR(LATBLU_mags),GVAR(LATRED_mags),GVAR(MATBLU_mags),GVAR(MA
 }] call CBA_fnc_waitUntilAndExecute;
 
 // Add modules
-call FUNC(exitUnconsciousUnit);
-
 #include "modules\behaviourAIModules.sqf"
 #include "modules\changeChannelVisibility.sqf"
 #include "modules\changeGrassRender.sqf"
@@ -70,28 +60,14 @@ call FUNC(exitUnconsciousUnit);
 #include "modules\unitParadrop.sqf"
 #include "modules\unitParadropAction.sqf"
 
-// Optionals
-GVAR(ACEDraggingLoaded) = isClass (configFile >> "CfgPatches" >> "ace_dragging");
-GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
-
-// If for some reason this postInit loads before the ZEN one, make sure there is something
-if (isNil "zen_common_aceMedical") then {
-    zen_common_aceMedical = isClass (configFile >> "CfgPatches" >> "ace_medical");
-};
-
-if (isNil "zen_common_aceMedicalTreatment") then {
-    zen_common_aceMedicalTreatment = isClass (configFile >> "CfgPatches" >> "ace_medical_treatment");
-};
-
 private _notificationArray = ["[Zeus Additions]:"];
 
 // Check if ACE Dragging is loaded
 if (GVAR(ACEDraggingLoaded)) then {
     #include "modules\addACEDragAndCarry.sqf"
-    #include "modules\addACEDragBodies.sqf"
 } else {
     if (GVAR(enableACEDragHint)) then {
-        _notificationArray pushBack "The ACE drag and carry module isn't available because ACE dragging isn't loaded.";
+        _notificationArray pushBack "The ACE drag and carry modules aren't available because ACE dragging isn't loaded.";
     };
 };
 

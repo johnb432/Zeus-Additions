@@ -3,7 +3,7 @@
  * Adds a module that can delete an entity forcefully.
  */
 
-["Zeus Additions - Utility", "Delete Object (forced)", {
+["Zeus Additions - Utility", "Delete Object (Forced)", {
     params ["", "_object"];
 
     if (isNull _object) exitWith {
