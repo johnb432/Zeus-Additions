@@ -4,16 +4,13 @@
 [list]
 [*] Add ACE Drag and Carry Options
 [*] [WIP] Add ACE Drag Body Option
-[*] [WIP] Allow AI to Turn Out
-[*] Change AI Dismount Behaviour
-[*] [WIP] Change AI Mine Detecting Behaviour
+[*] Change AI Crew Behaviour
 [*] Change Channel Visibility
 [*] Change Grass Rendering
 [*] Change RHS APS
 [*] Change TFAR Radio Range
 [*] Configure Doors (Extended)
 [*] Create ACE Injuries
-[*] Create Random ACE Injuries
 [*] Delete Object (forced)
 [*] End Mission with Player Modifier
 [*] Give Death Stare Ability
@@ -30,7 +27,6 @@
 [*] Remove Grenades from AI
 [*] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
-[*] Spawn Ammo Resupply
 [*] Spawn Ammo Resupply for Units
 [*] Spawn Ammo Resupply for Units (Selection)
 [*] Toggle Consciousness (forced)
