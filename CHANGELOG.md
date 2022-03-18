@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 18.3.2022
+
+1.6.3.4
+- Combined some modules together.
+- Removed AI Minedetection module.
+
 # Changelog for Zeus Additions 8.3.2022
 
 1.6.3.3

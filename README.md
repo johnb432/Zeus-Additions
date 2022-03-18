@@ -4,16 +4,13 @@
 
 * **Add ACE Drag and Carry Options:** Allows the Zeus to set object to be ACE draggable and carriable. The module can also set whether weight limits should be respected when trying to drag or carry the selected object.
 * **Add ACE Drag Body Option:** Allows the Zeus to give players the option to drag corpses.
-* **Allow AI to Turn Out:** Allows the Zeus to change if AI can turn out or not.
-* **Change AI Dismount Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized.
-* **Change AI Mine Detecting Behaviour:** Theoretically should change their ability to detect mines. However in practice it doesn't seem to do anything, so feedback and more work is needed.
+* **Change AI Crew Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized. Allows the Zeus to change if AI can turn out or not.
 * **Change Channel Visibility:** Allows the Zeus to enable and disable specific channels including custom ones, both chat and VON.
 * **Change Grass Rendering:** Allows the Zeus to change grass rendering on players. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
 * **Change RHS APS:** Allow the Zeus to enable or disable the APS (Active Protection System) on the RHS T-14 and T-15 vehicles.
 * **Change TFAR Radio Range:** Allows the Zeus to change TFAR radio transmission distances.
 * **Configure Doors (Extended):** Allows the Zeus to set doors on a building to be open, locked, unlocked or locked and breachable. You can define your own explosives that are needed for breaching.
-* **Create ACE Injuries:** Allows the Zeus to create injuries on AI or players, either dead or alive. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
-* **Create Random ACE Injuries:** Creates random wounds, taking a damage value and type you are able to set. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
+* **Create ACE Injuries:** Allows the Zeus to create injuries on AI or players, either dead or alive. Also can create random wounds, taking a damage value and type you are able to set. Random damage can only be applied to a living unit. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Delete Object (forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 * **End Mission with Player Modifier:** Ends the mission with all players except Zeuses having the chosen modifier applied to them.
 * **Give Death Stare Ability:** If used this module grants the chosen unit to have a "death stare". The unit uses an ACE self-interaction whilst looking at the desired target. The result of the action will the inducing pain the target and doing some sort of harm, depending on the settings.
@@ -30,9 +27,8 @@
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
 * **Show Mission Object Counter:** This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
 * **Spawn ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
-* **Spawn Ammo Resupply:** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Spawn Ammo Resupply for Units:** Spawns a magazine resupply using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.
-* **Spawn Ammo Resupply for Units (Selection):** Allows the Zeus to pick magazines in a more precise fashion for resupplying given units.
+* **Spawn Ammo Resupply for Units (Selection):** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window which allows the Zeus to pick magazines in a more precise fashion for resupplying given units. If no units are specified, it will show all groups of magazines. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
 * **Toggle Snow Script:** Allows the Zeus to apply a snow script to players.
 * **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
@@ -54,6 +50,7 @@ Inputs are arrays of strings.
 <h2>How to - Spawn Ammo Resupply</h2>
 
 * Select initial option in the first window. If you cancel in the first window, it will not open up the second one.
+* If you select units, it will limit the magazine groups in the second window to the groups that are compatible with the units' weapons. If no units are selected, it will display all magazine groups.
 * In the second window, select a category (magazinewell) of magazines you want to look at. It will then list all of the magazines in that category.
     * Double click a magazine to add to the other column (works in both directions).
     * Select one or multiple (for multiple use shift) magazine and use the arrow button.
