@@ -25,8 +25,8 @@
             SETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']");
             SETPRVAR(QGVAR(stunsBreach),"['ACE_M84']");
 
-            SETMVAR(QGVAR(explosivesBreach),['DemoCharge_Remote_Mag']);
-            SETMVAR(QGVAR(stunsBreach),['ACE_M84']);
+            SETMVAR(QGVAR(explosivesBreach),['DemoCharge_Remote_Mag'],true);
+            SETMVAR(QGVAR(stunsBreach),['ACE_M84'],true);
 
             ["Reset lists to default"] call zen_common_fnc_showMessage;
         };
@@ -34,8 +34,8 @@
         SETPRVAR(QGVAR(explosivesBreach),_explosives);
         SETPRVAR(QGVAR(stunsBreach),_stuns);
 
-        SETMVAR(QGVAR(explosivesBreach),_explosives);
-        SETMVAR(QGVAR(stunsBreach),_stuns);
+        SETMVAR(QGVAR(explosivesBreach),_explosives,true);
+        SETMVAR(QGVAR(stunsBreach),_stuns,true);
 
         _building = nearestObject [_pos, "Building"];
 

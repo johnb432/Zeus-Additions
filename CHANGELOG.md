@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 19.3.2022
+
+1.6.3.5
+- Fixes bug in "Configure Doors (Extended)" module
+
 # Changelog for Zeus Additions 18.3.2022
 
 1.6.3.4
