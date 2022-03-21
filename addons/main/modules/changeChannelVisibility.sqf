@@ -4,7 +4,7 @@
  */
 
 ["Zeus Additions - Players", "Change Channel Visibility", {
-    params ["", "object"];
+    params ["", "_object"];
 
     // Make array of default dialog choices
     private _dialogChoices = [
