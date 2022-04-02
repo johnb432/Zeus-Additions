@@ -29,8 +29,8 @@ private _openWounds = _unit getVariable ["ace_medical_openWounds", []];
 
 // Get wound information (since only 1 type of wound can be applied at a time)
 private _damageType = ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","VelocityWound","PunctureWound"] select _woundClassIDToAdd;
-private _injuryBleedingRate = getNumber(configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "bleeding");
-private _injuryPain = getNumber(configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "pain");
+private _injuryBleedingRate = getNumber (configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "bleeding");
+private _injuryPain = getNumber (configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "pain");
 
 // Various things to update after having taken damage and fractures
 private _updateDamageEffects = false;

@@ -35,7 +35,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
         }, {
             params ["_uid", "_idstr"];
 
-            private _player = getUserInfo _idstr select 10;
+            private _player = (getUserInfo _idstr) select 10;
 
             // For chat channels
             if (!isNil QGVAR(channelSettingsJIP)) then {
@@ -70,12 +70,13 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
 
             // For snow script
             if (!isNil QGVAR(snowSettingsJIP)) then {
-                GVAR(snowSettingsJIP) params ["_intensitySnow", "_players", "_groups", "_sides"];
+                GVAR(snowSettingsJIP) params ["_stormIntensity", "_stormType", "_players", "_groups", "_sides"];
 
-                if (_intensitySnow isEqualTo 0) exitWith {};
+                if (_stormIntensity isEqualTo 0) exitWith {};
 
                 if (_uid in _players || {(group _player) in _groups} || {(side _player) in _sides}) then {
-                    _player setVariable [QGVAR(snow), _intensitySnow, true];
+                    _player setVariable [QGVAR(stormIntensity), _stormIntensity, true];
+                    _player setVariable [QGVAR(stormType), _stormType, true];
 
                     // Using events doesn't seem to work
                     remoteExecCall [QFUNC(snowScriptPFH), _player];

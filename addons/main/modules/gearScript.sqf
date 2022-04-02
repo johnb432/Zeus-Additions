@@ -146,14 +146,14 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
     ["Preset '%1' is selected", GVAR(gearPreset)] call zen_common_fnc_showMessage;
 
     ["Set Loadout (Uses ACE arsenal export format)", [
-        ["EDIT", ["Default", "Riflemen, Crew, etc. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearDefault_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["Leader", "Squad leaders, Team leaders. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearLeader_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["AT", "Anti-tank gunners, Anti-tank assistants. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearAT_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["AA", "Anti-air operators, Anti-air assistants. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearAA_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["AR", "Autoriflemen, Machine Gunners. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearAR_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["Medic", "Medics, Combat Life Savers. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearMedic_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["Engineer", "Engineers, Demo. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearEngineer_" + GVAR(gearPreset),"[]"), true],
-        ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], GETPRVAR("zeus_additions_main_gearSingle_" + GVAR(gearPreset),"[]"), true]
+        ["EDIT", ["Default", "Riflemen, Crew, etc. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearDefault_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["Leader", "Squad leaders, Team leaders. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearLeader_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["AT", "Anti-tank gunners, Anti-tank assistants. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAT_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["AA", "Anti-air operators, Anti-air assistants. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAA_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["AR", "Autoriflemen, Machine Gunners. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearAR_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["Medic", "Medics, Combat Life Savers. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearMedic_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["Engineer", "Engineers, Demo. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearEngineer_) + GVAR(gearPreset),"[]"), true],
+        ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearSingle_) + GVAR(gearPreset),"[]"), true]
     ],
     {
         params ["_results"];
@@ -186,7 +186,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         playSound "FD_Start_F";
     };
 
-    private _loadoutString = GETPRVAR("zeus_additions_main_gearSingle_" + GVAR(gearPreset),"[]");
+    private _loadoutString = GETPRVAR(QGVAR(gearSingle_) + GVAR(gearPreset),"[]");
 
     if (_loadoutString isEqualTo "[]") then {
         _loadoutString = GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),GVAR(loadoutTypes) select (_unit call FUNC(getRole)),GVAR(gearPreset)),"[]");

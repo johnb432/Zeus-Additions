@@ -30,7 +30,7 @@
 * **Spawn Ammo Resupply for Units:** Spawns a magazine resupply using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.
 * **Spawn Ammo Resupply for Units (Selection):** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window which allows the Zeus to pick magazines in a more precise fashion for resupplying given units. If no units are specified, it will show all groups of magazines. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
-* **Toggle Snow Script:** Allows the Zeus to apply a snow script to players.
+* **Toggle Storm Script:** Allows the Zeus to apply a snow or dust storm script to players.
 * **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 * **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.
 
@@ -46,6 +46,8 @@ Inputs are arrays of strings.
 * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
 * **Enable JIP features:** If enabled, it will add JIP functionality to the server, if the player is a curator.
 * **Enable Mission Object Counter:** This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.
+
+This mod also adds the ability to drag dead corpses as Zeus. In order to do so, you must be in the map screen.
 
 <h2>How to - Spawn Ammo Resupply</h2>
 

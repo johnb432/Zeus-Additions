@@ -30,7 +30,7 @@
 [*] Spawn Ammo Resupply for Units
 [*] Spawn Ammo Resupply for Units (Selection)
 [*] Toggle Consciousness (forced)
-[*] Toggle Snow Script
+[*] [WIP] Toggle Storm Script
 [*] Track Unit Death
 [*] Unload ACE Cargo
 [/list]

@@ -1,3 +1,11 @@
+# Changelog for Zeus Additions 2.4.2022
+
+1.6.3.7
+- Added the ability to drag dead bodies as a Zeus when in the map.
+- Added dust storm effect.
+- Removed 30s curator detection period - now curators will be detected when they enter the curator interface.
+- Fixed bug with remote controlling module.
+
 # Changelog for Zeus Additions 21.3.2022
 
 1.6.3.6
@@ -6,7 +14,7 @@
 # Changelog for Zeus Additions 19.3.2022
 
 1.6.3.5
-- Fixes bug in "Configure Doors (Extended)" module
+- Fixed bug in "Configure Doors (Extended)" module
 
 # Changelog for Zeus Additions 18.3.2022
 

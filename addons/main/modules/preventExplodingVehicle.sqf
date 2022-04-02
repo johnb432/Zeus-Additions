@@ -38,7 +38,7 @@
                                     params ["_object", "", "_damage", "", "", "", "", "_hitPoint"];
 
                                     // Convert to lower case string for string comparison
-                                    _hitPoint = toLower _hitPoint;
+                                    _hitPoint = toLowerANSI _hitPoint;
 
                                     // Incoming wheel/track damage will not be changed; Allow immobilisation
                                     if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {
@@ -70,7 +70,7 @@
                         params ["_object", "", "_damage", "", "", "", "", "_hitPoint"];
 
                         // Convert to lower case string for string comparison
-                        _hitPoint = toLower _hitPoint;
+                        _hitPoint = toLowerANSI _hitPoint;
 
                         // Incoming wheel/track damage will not be changed; Allow immobilisation
                         if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {

@@ -62,17 +62,19 @@
     false,
     0,
     {
+        private _curator = getAssignedCuratorLogic player;
+
         // If there is no curator object, don't do anything
-        if (isNull (getAssignedCuratorLogic player)) exitWith {};
+        if (isNull _curator) exitWith {};
 
         // If setting is off and there is stuff still there, remove it
         if (!_this && {!isNil QGVAR(curatorHandleIDs)}) exitWith {
             GVAR(curatorHandleIDs) params ["_handleID1", "_handleID2", "_handleID3", "_handleID4"];
 
-            (getAssignedCuratorLogic player) removeEventHandler ["CuratorObjectDeleted", _handleID1];
-            (getAssignedCuratorLogic player) removeEventHandler ["CuratorObjectPlaced", _handleID2];
-            (getAssignedCuratorLogic player) removeEventHandler ["CuratorGroupPlaced", _handleID3];
-            (getAssignedCuratorLogic player) removeEventHandler ["CuratorPinged", _handleID4];
+            _curator removeEventHandler ["CuratorObjectDeleted", _handleID1];
+            _curator removeEventHandler ["CuratorObjectPlaced", _handleID2];
+            _curator removeEventHandler ["CuratorGroupPlaced", _handleID3];
+            _curator removeEventHandler ["CuratorPinged", _handleID4];
 
             GVAR(curatorHandleIDs) = nil;
         };
@@ -132,7 +134,6 @@ MAGAZINES_SETTINGS(HATRED,5);
 MAGAZINES_SETTINGS(AABLU,6);
 MAGAZINES_SETTINGS(AARED,7);
 
-HINT_SETTINGS(enableNoCuratorHint,"Enable no curator found hint");
 HINT_SETTINGS(enableACECargoHint,"Enable ACE Cargo missing addon hint");
 HINT_SETTINGS(enableACEDragHint,"Enable ACE Dragging missing addon hint");
 HINT_SETTINGS(enableACEMedicalHint,"Enable ACE Medical missing addon hint");
