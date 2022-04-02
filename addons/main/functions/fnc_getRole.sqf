@@ -16,7 +16,7 @@
  * Public: No
  */
 
-private _type = switch (toLower getText (configOf _this >> "icon")) do {
+private _type = switch (toLowerANSI getText (configOf _this >> "icon")) do {
     case "iconmanengineer": {6};
     case "iconmanmedic": {5};
     case "iconmanmg": {4};
@@ -43,7 +43,7 @@ if (_weapon isEqualTo "") exitWith {
     0;
 };
 
-switch (toLower getText (configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {
+switch (toLowerANSI getText (configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {
     case "\a3\weapons_f\data\ui\icon_mg_ca.paa": {4};
     case "\a3\weapons_f\data\ui\icon_aa_ca.paa": {3};
     case "\a3\weapons_f\data\ui\icon_at_ca.paa": {2};

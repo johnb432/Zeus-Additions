@@ -19,7 +19,7 @@
         };
 
         // Looks if a group or a side was selected. If both were selected, group has priority
-        private _isGroup = _groups isNotEqualTo [];//!isNil {_groups select 0};
+        private _isGroup = _groups isNotEqualTo [];
 
         // Create unit based on which side we want to make a marker in; Important for group markers
         private _unitType = switch ([_sides select 0, side (_groups select 0)] select _isGroup) do {

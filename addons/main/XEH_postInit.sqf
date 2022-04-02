@@ -16,10 +16,10 @@ if (isNil "zen_common_aceMedicalTreatment") then {
 };
 
 // Add counter and JIP functions only if player is curator
-[{
-    // Wait for curator object
-    !isNull (getAssignedCuratorLogic player);
-}, {
+GVAR(registeredID) = ["zen_curatorDisplayLoaded", {
+    ["zen_curatorDisplayLoaded", GVAR(registeredID)] call CBA_fnc_removeEventHandler;
+    GVAR(registeredID) = nil;
+
     // Add the JIP functionality
     call FUNC(handleJIP);
 
@@ -31,13 +31,9 @@ if (isNil "zen_common_aceMedicalTreatment") then {
     // Add Drag Bodies module
     if (zen_common_aceMedical && {zen_common_aceMedicalTreatment} && {GVAR(ACEDraggingLoaded)}) then {
         #include "modules\addACEDragBodies.sqf"
+        #include "modules\dragBodies.sqf"
     };
-}, [], 30, {
-    // Hint only if setting is enabled
-    if (!GVAR(enableNoCuratorHint)) exitWith {};
-
-    hint "[Zeus Additions]: No Curator Object was found.";
-}] call CBA_fnc_waitUntilAndExecute;
+}] call CBA_fnc_addEventHandler;
 
 // Add modules
 #include "modules\behaviourAIModules.sqf"
@@ -111,10 +107,10 @@ if (zen_common_aceMedical) then {
 
 // Check if CUP is loaded
 if (isClass (configFile >> "CfgPatches" >> "CUP_Worlds")) then {
-    #include "modules\snowScript.sqf"
+    #include "modules\stormScript.sqf"
 } else {
     if (GVAR(enableSnowScriptHint)) then {
-        _notificationArray pushBack "The snow script module isn't available because CUP Core isn't loaded.";
+        _notificationArray pushBack "The storm script module isn't available because CUP Core isn't loaded.";
     };
 };
 

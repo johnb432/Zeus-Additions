@@ -68,14 +68,15 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
             _body switchMove "AinjPpneMrunSnonWnonDb_grab";
 
+            // Set old medical state
             if (zen_common_aceMedical) then {
-                // Set old medical state
                 [_body, _bodyBag getVariable [QGVAR(bodyState), []]] call ace_medical_fnc_deserializeState;
                 _body call ace_medical_status_fnc_setDead;
             } else {
                 _body setHitPointDamage ["HitHead", 1, true];
             };
 
+            // Add dragging to new body if it was possible for old body
             if (!isNil QGVAR(enableDragging) || _bodyBag getVariable [QGVAR(canDragBody), false]) then {
                 _body setVariable [QGVAR(canDragBody), true, true];
             };
@@ -89,9 +90,52 @@ if (isNil QGVAR(draggingKilledEH)) then {
                 // Rename new body to old name
                 _body setVariable ["ACE_Name", _names select 0, true];
                 _body setVariable ["ACE_NameRaw", _names select 1, true];
-            }, [_bodyBag, _body, _bodyBag getVariable [QGVAR(bodyName), ["UnknownTest", "UnknownRawTest"]]]] call CBA_fnc_execNextFrame;
+            }, [_bodyBag, _body, _bodyBag getVariable [QGVAR(bodyName), ["Unknown", "UnknownRaw"]]]] call CBA_fnc_execNextFrame;
         }] call CBA_fnc_addEventHandler;
     }, []]] call CBA_fnc_globalEventJIP;
+
+    // zen_common_fnc_serializeObjects does not work with dead objects
+    private _functionString = str zen_common_fnc_serializeObjects;
+    _functionString = (_functionString call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
+    _functionString = _functionString select [1, count _functionString - 2];
+
+    private _index = -1;
+
+    // Go through string and remove headers
+    while {true} do {
+        // remove #line blabla
+        if ((_functionString select [0, 5]) isEqualTo "#line") then {
+            _index = _functionString find ["#", 1];
+
+            if (_index isNotEqualTo -1) then {
+                _functionString = _functionString select [_index];
+            } else {
+                // Arrived at last #line
+                _index = _functionString find """";
+
+                if (_index isNotEqualTo -1) then {
+                    _index = _functionString find ["""", _index + 1];
+
+                    if (_index isNotEqualTo -1) then {
+                        // Remove all whitespaces on right and left
+                        _functionString = ((_functionString select [_index + 1]) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
+                    };
+                };
+            };
+        } else {
+            break;
+        };
+    };
+
+    // Remove condition for dead units from function
+    _functionString = [_functionString, "alive _x && {vehicle _x == _x}", "isNull objectParent _x"] call CBA_fnc_replace;
+
+    // zeus_additions_main_fnc_serializeObjects; Used by this module and zeus corpse dragging
+    DFUNC(serializeObjects) = if (_functionString isNotEqualTo "") then {
+        compileFinal _functionString;
+    } else {
+        zen_common_fnc_serializeObjects;
+    };
 };
 
 ["Zeus Additions - Utility", "[WIP] Add ACE Drag Body Option", {
@@ -123,50 +167,6 @@ if (isNil QGVAR(draggingKilledEH)) then {
         if (isNil QGVAR(dragBodyActions) && {_dragging || _allFuture isNotEqualTo 0}) then {
             GVAR(dragBodyActions) = true;
             publicVariable QGVAR(dragBodyActions);
-
-            // zen_common_fnc_serializeObjects does not work with dead objects
-            private _functionString = str zen_common_fnc_serializeObjects;
-            _functionString = (_functionString call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
-            _functionString = _functionString select [1, count _functionString - 2];
-
-            private _index = -1;
-
-            // Go through string and remove headers
-            while {true} do {
-                // remove #line blabla
-                if ((_functionString select [0, 5]) isEqualTo "#line") then {
-                    _index = _functionString find ["#", 1];
-
-                    if (_index isNotEqualTo -1) then {
-                        _functionString = _functionString select [_index];
-                    } else {
-                        // Arrived at last #line
-                        _index = _functionString find """";
-
-                        if (_index isNotEqualTo -1) then {
-                            _index = _functionString find ["""", _index + 1];
-
-                            if (_index isNotEqualTo -1) then {
-                                // Remove all whitespaces on right and left
-                                _functionString = ((_functionString select [_index + 1]) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
-                            };
-                        };
-                    };
-                } else {
-                    break;
-                };
-            };
-
-            // Remove condition for dead units from function
-            _functionString = [_functionString, "alive _x && {vehicle _x == _x}", "isNull objectParent _x"] call CBA_fnc_replace;
-
-            // zeus_additions_main_fnc_serializeObjects
-            DFUNC(serializeObjects) = if (_functionString isNotEqualTo "") then {
-                compileFinal _functionString;
-            } else {
-                zen_common_fnc_serializeObjects;
-            };
-
             publicVariable QFUNC(serializeObjects);
 
             private _dragBodyAction =

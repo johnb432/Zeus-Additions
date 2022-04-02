@@ -21,7 +21,7 @@ params [["_objects", []], ["_type", "", [""]]];
 
 private _condition = {_x checkAIFeature "PATH"};
 
-if ((toLower _type) isEqualTo "enableai") then {
+if ((toLowerANSI _type) isEqualTo "enableai") then {
     _condition = {!(_x checkAIFeature "PATH")};
 };
 

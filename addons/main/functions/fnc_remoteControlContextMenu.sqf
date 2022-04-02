@@ -55,7 +55,7 @@ _oldPlayer allowDamage false;
         // Prevents unit from respawning if killed
         setPlayerRespawnTime 10e10;
 
-        if (_pos distance (getPosASL _unit) > 1) then {
+        if (isNull objectParent _unit && {_pos distance (getPosASL _unit) > 1}) then {
             _unit setPosASL _pos;
         };
     }, _this, 0.25] call CBA_fnc_waitAndExecute;

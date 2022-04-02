@@ -47,7 +47,7 @@
             // Dragging & Carrying
             [_object, _results select 0, [_config, "ace_dragging_dragPosition", _offset] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", [0, 90] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 2] call ace_dragging_fnc_setDraggable;
             [_object, _results select 1, [_config, "ace_dragging_carryPosition", _offset] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", [90, 0] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 3] call ace_dragging_fnc_setCarryable;
-        }, [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], [_object, "zeus_additions_main_dragging_"] call BIS_fnc_objectVar] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+        }, [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], [_object, QGVAR(dragging_)] call BIS_fnc_objectVar] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
 
         ["Changed ACE Drag and Carry abilities"] call zen_common_fnc_showMessage;
     }, {
