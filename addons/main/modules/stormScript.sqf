@@ -4,7 +4,7 @@
  * https://forums.bohemia.net/forums/topic/215391-light-snowfall-script/?tab=comments#comment-3276526
  */
 
-["Zeus Additions - Players", "[WIP] Toggle Storm Script", {
+["Zeus Additions - Players", "Toggle Storm Script", {
     params ["", "_unit"];
 
     ["Toggle Snow Script", [
@@ -19,7 +19,7 @@
         _results params ["_selected", "_stormType", "_stormIntensity", "_changeWeather", "_doJIP"];
         _selected params ["_sides", "_groups", "_players"];
 
-        private _enabledStormScript = _stormIntensity isNotEqualTo 0;
+        private _enabledStormScript = _stormIntensity != 0;
 
         // Only send function to all clients if script is enabled
         if (_enabledStormScript && {isNil QFUNC(snowScriptPFH)}) then {
@@ -40,12 +40,12 @@
                         private _player = player;
 
                         // If game is not in focus or if player is dead, don't spawn in particles until game is focussed and player is alive again
-                        if (isGamePaused || {!isGameFocused} || {!alive _player}) exitWith {};
+                        if (isGamePaused || {!isGameFocused || {!alive _player}}) exitWith {};
 
                         private _stormIntensity = _player getVariable [QGVAR(stormIntensity), 0];
 
                         // Stop PFH if intensity is set to nil
-                        if (_stormIntensity isEqualTo 0) exitWith {
+                        if (_stormIntensity == 0) exitWith {
                             _handleID call CBA_fnc_removePerFrameHandler;
                         };
 
@@ -60,7 +60,7 @@
                         private _pos = getPosATL _vehicle;
                         (velocity _vehicle) params ["_xVel", "_yVel"];
 
-                        if ((_player getVariable [QGVAR(stormType), 0]) isEqualTo 0) then {
+                        if ((_player getVariable [QGVAR(stormType), 0]) == 0) then {
                             while {_inc < _stormIntensity} do {
                                 for "_i" from 2 to 30 step 2 do {
                                     drop [
@@ -92,7 +92,7 @@
                         } else {
                             while {_inc < _stormIntensity} do {
                                 drop [
-                                ["\A3\data_f\cl_basic", 1, 0, 1], // shapeName
+                                    ["\A3\data_f\cl_basic", 1, 0, 1], // shapeName
                                     "", // animationName
                                     "Billboard", // type
                                     1, // timerPeriod
@@ -128,7 +128,7 @@
         private _string = "Nothing was changed!";
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
             // If specific unit is player, apply setting
             _string = if (isPlayer _unit) then {
                 _unit setVariable [QGVAR(stormIntensity), _stormIntensity, true];

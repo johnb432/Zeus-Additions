@@ -86,7 +86,7 @@
         [(["Building doors locked (not breachable)", "Building doors locked (breachable)", "Building doors unlocked", "Building doors opened"] select _mode)] call zen_common_fnc_showMessage;
 
         // 0 unbreachable, 1 breachable, 2 closed, 3 open
-        if (_mode isNotEqualTo 1) exitwith {};
+        if (_mode != 1) exitwith {};
 
         {
             _jipID = ["zen_common_execute", [{
@@ -101,7 +101,7 @@
                         _args params ["_door", "_doorID"];
 
                         // In case door has been unlocked by other means
-                        if (([_target, _doorID] call zen_doors_fnc_getState) isNotEqualTo 1) exitWith {
+                        if ([_target, _doorID] call zen_doors_fnc_getState != 1) exitWith {
                             hint "You find the door to be unlocked.";
 
                             // Remove the action globally; actionIDs are not the same on all clients!!!
@@ -225,7 +225,7 @@
                             _helperObject setPosASL _intersectPosASL;
 
                             // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly
-                            if ((_surfaceNormal select 0) isEqualTo 0 && {(_surfaceNormal select 2) isEqualTo 0}) then {
+                            if ((_surfaceNormal select 0) == 0 && {(_surfaceNormal select 2) == 0}) then {
                                 _helperObject setVectorDirAndUp [[0, 0, 1], _surfaceNormal];
                             } else {
                                 _helperObject setVectorUp _surfaceNormal;

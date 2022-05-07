@@ -19,7 +19,7 @@
                 ["zen_common_execute", [{
                     [{
                         // Wait for new time multiplier to be active
-                        timeMultiplier isNotEqualTo _this;
+                        timeMultiplier != _this;
                     }, {
 
                         private _pfhID = [{

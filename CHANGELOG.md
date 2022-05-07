@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 7.5.2022
+
+1.6.3.8
+- Cleanup.
+- Removed ability to toggle players' consciousness if they are in cardiac arrest (only if ACE medical is loaded). It causes too many issues.
+
 # Changelog for Zeus Additions 2.4.2022
 
 1.6.3.7

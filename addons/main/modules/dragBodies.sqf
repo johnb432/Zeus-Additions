@@ -4,7 +4,7 @@
  */
 
 (getAssignedCuratorLogic player) addEventHandler ["CuratorObjectEdited", {
-	params ["", "_entity"];
+    params ["", "_entity"];
 
     if (alive _entity || {!(_entity isKindOf "CAManBase")}) exitWith {};
 

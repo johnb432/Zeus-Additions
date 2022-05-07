@@ -60,7 +60,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
             // If preset already exists, ask if overwrite or not
             private _presetIndex = (_presets apply {toLower _x}) find (toLower _preset);
 
-            if (_presetIndex isNotEqualTo -1) then {
+            if (_presetIndex != -1) then {
                 [_preset, _presetIndex, _importData] spawn {
                     params ["_preset", "_presetIndex", "_importData"];
 
@@ -124,7 +124,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
 
             private _index = _presets find _selectedPreset;
 
-            if (_index isEqualTo -1) exitWith {};
+            if (_index == -1) exitWith {};
 
             _presets deleteAt _index;
             SETPRVAR(QGVAR(gearPresetNames),_presets);

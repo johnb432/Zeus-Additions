@@ -35,12 +35,12 @@ if (_filterMode in [PARADROP_MISC, PARADROP_ALL]) then {
 };
 
 // If vehicles only, exit
-if (_filterMode isEqualTo PARADROP_VEHICLES) exitWith {
+if (_filterMode == PARADROP_VEHICLES) exitWith {
     ["Selected %1 vehicles", count _vehicles] call zen_common_fnc_showMessage;
 };
 
 // If misc only, exit
-if (_filterMode isEqualTo PARADROP_MISC) exitWith {
+if (_filterMode == PARADROP_MISC) exitWith {
     ["Selected %1 misc objects", count _misc] call zen_common_fnc_showMessage;
 };
 
@@ -62,7 +62,7 @@ if (_filterMode isEqualTo PARADROP_MISC) exitWith {
         } forEach (_units + ([[], _vehicles] select _includeInside));
 
         {
-            _units append ((units _x) select {isNull objectParent _x || _includeInside});
+            _units append ((units _x) select {isNull objectParent _x || {_includeInside}});
         } forEach _groups;
     } else {
         if (!_includeInside) exitWith {};

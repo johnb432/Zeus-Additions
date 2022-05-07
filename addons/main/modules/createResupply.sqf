@@ -25,7 +25,7 @@
         _players pushBackUnique ([objNull, _object] select (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"}));
 
         // If no player is selected in the dialog and the module isn't placed on a player, exit
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo [objNull]}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo [objNull]}}) exitWith {
             ["Place module on a player or select units from the list!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
@@ -33,13 +33,13 @@
         private _config = configOf _object;
 
         // If insert into inventory, but no inventory found or enabled
-        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") isEqualTo 0} || {getNumber (_config >> "disableInventory") isEqualTo 1}}) exitWith {
+        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") == 0 || {getNumber (_config >> "disableInventory") == 1}}}) exitWith {
             ["Object has no inventory!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
 
         // If "spawn ammo box", make a new object
-        if (_emptyInventory isEqualTo 0) then {
+        if (_emptyInventory == 0) then {
             _object = "Box_NATO_Ammo_F" createVehicle _pos;
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
@@ -59,12 +59,12 @@
             }, [_object, _config]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
-        if (_numPrim isEqualTo 0 && {_numHand isEqualTo 0} && {_numSec isEqualTo 0}) exitWith {
+        if (_numPrim == 0 && {_numHand == 0 && {_numSec == 0}}) exitWith {
             ["Empty ammo crate created"] call zen_common_fnc_showMessage;
         };
 
         // Clear all content of other types of inventories
-        if (_emptyInventory isEqualTo 2) then {
+        if (_emptyInventory == 2) then {
             clearItemCargoGlobal _object;
             clearMagazineCargoGlobal _object;
             clearWeaponCargoGlobal _object;
@@ -93,7 +93,7 @@
                     _object addItemCargoGlobal [_x, _numSec];
                 } forEach (([secondaryWeapon _x, _allowUGL] call CBA_fnc_compatibleMagazines) - _blackList);
             };
-        } forEach ((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups} || {_x in _players}});
+        } forEach ((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups || {_x in _players}}});
 
         ["Ammo resupply created"] call zen_common_fnc_showMessage;
     }, {
@@ -120,23 +120,22 @@
     {
         params ["_results", "_args"];
 
-        _results params ["_selected"];
         _args params ["_pos", "_object"];
-        _selected params ["_sides", "_groups", "_players"];
+        (_results deleteAt 0) params ["_sides", "_groups", "_players"];
 
-        _players pushBackUnique ([objNull, _object] select (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"}));
+        _players pushBackUnique ([objNull, _object] select (alive _object && {isPlayer _object && {_object isKindOf "CAManBase"}}));
 
         private _config = configOf _object;
-        private _emptyInventory = _results select (count _results - 1);
+        private _emptyInventory = _results deleteAt (count _results - 1);
 
         // If insert into inventory, but no inventory found or enabled
-        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") isEqualTo 0} || {getNumber (_config >> "disableInventory") isEqualTo 1}}) exitWith {
+        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") == 0 || {getNumber (_config >> "disableInventory") == 1}}}) exitWith {
             ["Object has no inventory!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
 
         // If "spawn ammo box", make a new object
-        if (_emptyInventory isEqualTo 0) then {
+        if (_emptyInventory == 0) then {
             _object = "Box_NATO_Ammo_F" createVehicle _pos;
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
@@ -157,15 +156,12 @@
         };
 
         // Clear all content of other types of inventories
-        if (_emptyInventory isEqualTo 2) then {
+        if (_emptyInventory == 2) then {
             clearItemCargoGlobal _object;
             clearMagazineCargoGlobal _object;
             clearWeaponCargoGlobal _object;
             clearBackpackCargoGlobal _object;
         };
-
-        _results deleteAt 0;
-        _results deleteAt (count _results - 1);
 
         private _num = 0;
 
@@ -184,7 +180,7 @@
         SETUVAR(QGVAR(magazineInventory),_object);
 
         // Get all weapons from all players
-        private _weapons = flatten (((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups} || {_x in _players}}) apply {weapons _x});
+        private _weapons = flatten (((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups || {_x in _players}}}) apply {weapons _x});
 
         // Spawn ammo GUI
         [_weapons arrayIntersect _weapons] spawn FUNC(createResupplyGUI);

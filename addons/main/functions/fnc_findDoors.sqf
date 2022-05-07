@@ -11,7 +11,7 @@
  * Selection names of doors <ARRAY>
  *
  * Example:
- * call zeus_additions_main_fnc_findDoors;
+ * cursorObject call zeus_additions_main_fnc_findDoors;
  *
  * Public: No
  */
@@ -22,7 +22,7 @@ private _selectionNames = [];
 
 // Find doors
 {
-    if (((_x find "door") isNotEqualTo -1) && {(_x find "handle") isEqualTo -1} && {(_x find "doorlocks") isEqualTo -1}) then {
+    if (((_x find "door") != -1) && {(_x find "handle") == -1 && {(_x find "doorlocks") == -1}}) then {
         _selectionNames pushBack _x;
     };
 } forEach ((selectionNames _building) apply {toLowerANSI _x});

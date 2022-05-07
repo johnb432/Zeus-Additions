@@ -21,7 +21,7 @@ params [["_objects", []], ["_type", "", [""]]];
 
 private _condition = {_x checkAIFeature "PATH"};
 
-if ((toLowerANSI _type) isEqualTo "enableai") then {
+if (_type == "enableAI") then {
     _condition = {!(_x checkAIFeature "PATH")};
 };
 
@@ -32,4 +32,4 @@ _objects findIf {(_x isKindOf "CAManBase" || {
     } else {
         false
     }
-}) && {alive _x} && {!isPlayer _x} && _condition} isNotEqualTo -1
+}) && {alive _x && {!isPlayer _x && _condition}}} != -1

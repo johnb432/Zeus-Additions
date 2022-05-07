@@ -41,7 +41,7 @@
 
         // Make sound for lightning bolt
         if (_spawnBolt) then {
-            (createvehicle ["LightningBolt", _pos, [], 0, "CAN_COLLIDE"]) setDamage 1;
+            (createVehicle ["LightningBolt", _pos, [], 0, "CAN_COLLIDE"]) setDamage 1;
         };
 
         [{
@@ -119,7 +119,7 @@
                 };
 
                 // Set various animations for various speeds
-                if (speed _helperUnit isEqualTo 0) then {
+                if (speed _helperUnit == 0) then {
                     _dog playMoveNow "Dog_Sit";
                 } else {
                     if (speed _helperUnit > 14) exitWith {
@@ -133,7 +133,7 @@
                     _dog playMoveNow "Dog_Walk";
                 };
 
-                private _dogNearestEnemy = _helperUnit getVariable QGVAR(dogNearestEnemy);
+                private _dogNearestEnemy = _helperUnit getVariable [QGVAR(dogNearestEnemy), objNull];
                 private _time = time;
                 private _group = group _helperUnit;
                 private _currentWaypoint = [_group, currentWaypoint _group];
@@ -141,7 +141,15 @@
 
                 // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
-                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {(lifeState _x) isNotEqualTo "INCAPACITATED"} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {
+                        (side _x in _attackSides) &&
+                        {_x isNotEqualTo _helperUnit &&
+                        {alive _x &&
+                        {!(_x getVariable ["ACE_isUnconscious", false]) &&
+                        {(lifeState _x) != "INCAPACITATED" &&
+                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                    }) param [0, objNull];
+
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     _helperUnit setVariable [QGVAR(currentPosWP), _posWaypoint];
                 };
@@ -151,9 +159,17 @@
                     _helperUnit setVariable [QGVAR(timeDog), _time];
 
                     // If no valid target, find one
-                    if (isNil "_dogNearestEnemy" || {!alive _dogNearestEnemy} || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false]} || {(lifeState _dogNearestEnemy) isEqualTo "INCAPACITATED"}) then {
+                    if (!alive _dogNearestEnemy || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false] || {(lifeState _dogNearestEnemy) == "INCAPACITATED"}}) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
-                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {(side _x in _attackSides) && {_x isNotEqualTo _helperUnit} && {alive _x} && {!(_x getVariable ["ACE_isUnconscious", false])} && {(lifeState _x) isNotEqualTo "INCAPACITATED"} && {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}) select 0;
+                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {
+                            (side _x in _attackSides) &&
+                            {_x isNotEqualTo _helperUnit &&
+                            {alive _x &&
+                            {!(_x getVariable ["ACE_isUnconscious", false]) &&
+                            {(lifeState _x) != "INCAPACITATED" &&
+                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                        }) param [0, objNull];
+
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     };
 

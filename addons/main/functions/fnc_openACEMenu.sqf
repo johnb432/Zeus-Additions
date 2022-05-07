@@ -84,7 +84,7 @@ private _display = switch (_menuType) do {
     detach _helperUnit;
     deleteVehicle _helperUnit;
 
-    if (_display isEqualTo "ace_cargo_menuDisplay") then {
+    if (_display == "ace_cargo_menuDisplay") then {
         ace_cargo_loadTimeCoefficient = _previousCoeffValue;
     };
 }, [_display, _helperUnit, _previousCoeffValue]] call CBA_fnc_waitUntilAndExecute;

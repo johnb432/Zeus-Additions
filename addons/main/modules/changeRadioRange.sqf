@@ -23,7 +23,7 @@
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
                 _unit setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
@@ -44,7 +44,7 @@
         // Set multiplier on all selected units
         {
             _x setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
-        } forEach ((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups} || {_x in _players}});
+        } forEach ((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups || {_x in _players}}});
 
         // Handle JIP
         if (_doJIP) then {

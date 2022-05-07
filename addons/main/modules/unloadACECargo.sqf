@@ -16,7 +16,7 @@
          playSound "FD_Start_F";
     };
 
-    if !(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") isEqualTo 1]) exitWith {
+    if !(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") == 1]) exitWith {
          ["This vehicle doesn't have ACE Cargo!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };

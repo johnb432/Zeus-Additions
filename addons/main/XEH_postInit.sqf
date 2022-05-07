@@ -125,7 +125,7 @@ if (isClass (configFile >> "CfgPatches" >> "ace_cargo")) then {
 // Optionals finished
 
 // Hint what is missing if wanted
-if ((count _notificationArray) isEqualTo 1) exitWith {};
+if ((count _notificationArray) == 1) exitWith {};
 
 {
     systemChat _x;

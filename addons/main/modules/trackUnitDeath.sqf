@@ -68,7 +68,7 @@ addMissionEventHandler ["EntityKilled", {
         };
 
         // If no method of notification was selected, exit
-        if (!_hint && {!_systemChat} && {!_zeusBanner} && {!_log}) exitWith {
+        if (!_hint && {!_systemChat && {!_zeusBanner && {!_log}}}) exitWith {
             ["Select a way of notification!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
@@ -76,7 +76,7 @@ addMissionEventHandler ["EntityKilled", {
         _unit setVariable [QGVAR(displayDeath), [_hint, _systemChat, _zeusBanner, _log]];
 
         // Add unit to tracking
-        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) isEqualTo -1)] call zen_common_fnc_showMessage
+        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) != -1)] call zen_common_fnc_showMessage
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
