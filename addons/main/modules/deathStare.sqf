@@ -27,7 +27,7 @@
         };
 
         // If remove
-        if (_giveAbility isEqualTo 1) exitWith {
+        if (_giveAbility == 1) exitWith {
             _unit setVariable [QGVAR(hasDeathStare), nil, true];
             ["Removed death stare ability from unit"] call zen_common_fnc_showMessage;
         };
@@ -51,7 +51,7 @@
                     if !(alive _cursorTarget && {_cursorTarget isKindOf "CAManBase"}) exitWith {};
 
                     // If "lightning" type
-                    if (_incapType isEqualTo 0) exitWith {
+                    if (_incapType == 0) exitWith {
                         (getPosATL _cursorTarget) params ["_posX", "_posY"];
                         private _lightning = createVehicle [selectRandom ["Lightning1_F", "Lightning2_F"], [_posX, _posY, 0], [], 0, "CAN_COLLIDE"];
 

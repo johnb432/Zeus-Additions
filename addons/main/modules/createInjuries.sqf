@@ -53,7 +53,7 @@
 
         for "_i" from 0 to 16 step 1 do {
             // Add "false" to fractures to head and torso; Easier for usage
-            if (_i isEqualTo 2 || {_i isEqualTo 4}) then {
+            if (_i == 2 || {_i == 4}) then {
                 _formattedResults pushBack false;
             };
 

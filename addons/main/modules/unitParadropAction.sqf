@@ -22,7 +22,7 @@
         };
 
         // Add action
-        private _string = if ((_results select 0) isEqualTo 0) then {
+        private _string = if ((_results select 0) == 0) then {
             if (!isNil {_object getVariable QGVAR(paradropActionJIP)}) exitWith {
                 "Object already has paradrop action!";
             };
@@ -167,7 +167,7 @@
                                                     (getPos _this) select 2 < 100 || {!alive _this};
                                                 }, {
                                                     // If parachute is already open or unit is unconscious or dead, don't do action
-                                                    if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {(lifeState _this) isEqualTo "INCAPACITATED"} || {!alive _this}) exitWith {};
+                                                    if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {_this getVariable ["ACE_isUnconscious", false] || {(lifeState _this) == "INCAPACITATED" || {!alive _this}}}) exitWith {};
 
                                                     _this action ["OpenParachute", _this];
                                                 }, _unit] call CBA_fnc_waitUntilAndExecute;

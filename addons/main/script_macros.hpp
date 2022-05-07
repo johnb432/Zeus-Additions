@@ -12,6 +12,7 @@
 #define ARR_10(ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8,ARG9,ARG10) ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10
 
 #define RESUPPLY_TEXT "Spawns in x amount of predefined magazines (not x total!)."
+#define OPTION_ARRAY [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]
 
 #define MAGAZINES_DESC "Magazines"
 

@@ -23,7 +23,7 @@
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
                 _setting remoteExecCall ["setTerrainGrid", _unit];

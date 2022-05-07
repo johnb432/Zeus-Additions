@@ -28,7 +28,7 @@
         } forEach _allPlayers;
 
         // If 2nd modifier isn't death, apply invincibility
-        if (_invincible && {_setting isNotEqualTo 3}) then {
+        if (_invincible && {_setting != 3}) then {
             {
                 [_x, false] remoteExecCall ["allowDamage", _x];
             } forEach (_allPlayers + _vehicles);

@@ -33,7 +33,7 @@ private _cfgMagazines = configFile >> "CfgMagazines";
     {
         // Remove non-existent magazines; Then get case-senstive names of magazines to avoid problems
         _magazinesList append (((getArray _x) select {isClass (_cfgMagazines >> _x)}) apply {configName (_cfgMagazines >> _x)});
-    } foreach configProperties [_x, "isArray _x", true];
+    } forEach configProperties [_x, "isArray _x", true];
 
     // Remove duplicates
     _magazinesList = _magazinesList arrayIntersect _magazinesList;
@@ -43,7 +43,7 @@ private _cfgMagazines = configFile >> "CfgMagazines";
         _keys pushBack configName _x;
         _values pushBack _magazinesList;
     };
-} foreach configProperties [configFile >> "CfgMagazineWells", "isClass _x", true];
+} forEach configProperties [configFile >> "CfgMagazineWells", "isClass _x", true];
 
 // Store hashmap with all info necessary
 SETUVAR(QGVAR(magazinesHashmap),_keys createHashMapFromArray _values);

@@ -17,7 +17,7 @@
         private _apsVehicles = (GETMVAR("rhs_aps_vehicles",[])) select {alive _x};
 
         // All vehicles
-        if (_all isEqualTo 1) exitWith {
+        if (_all == 1) exitWith {
             private _string = if (_enabled) then {
                 private _vehicles = entities [["rhs_t14_base", "rhs_t15_base"], [], false, true];
 
@@ -32,7 +32,7 @@
                 _apsVehicles = _apsVehicles arrayIntersect _apsVehicles;
 
                 // See if any vehicles were added
-                if ((count _apsVehicles) isEqualTo _count) then {
+                if ((count _apsVehicles) == _count) then {
                     playSound "FD_Start_F";
                     "All Vehicles already had RHS APS enabled!";
                 } else {
@@ -52,14 +52,14 @@
         };
 
         // If not valid vehicle
-        if !(alive _object && {(_object isKindOf "rhs_t14_base" || {_object isKindOf "rhs_t15_base"})}) exitWith {
+        if !(alive _object && {_object isKindOf "rhs_t14_base" || {_object isKindOf "rhs_t15_base"}}) exitWith {
              ["Place on an undestroyed vehicle with RHS APS!"] call zen_common_fnc_showMessage;
              playSound "FD_Start_F";
         };
 
         private _string = if (_enabled) then {
             // Add if necessary
-            if ((_apsVehicles pushBackUnique _object) isEqualTo -1) exitWith {
+            if ((_apsVehicles pushBackUnique _object) == -1) exitWith {
                 "Vehicle aleady had RHS APS enabled!";
             };
 
@@ -70,7 +70,7 @@
             // Remove if necessary
             private _index = _apsVehicles find _object;
 
-            if (_index isEqualTo -1) exitWith {
+            if (_index == -1) exitWith {
                 "Vehicle aleady had RHS APS disabled!";
             };
 

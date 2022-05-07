@@ -10,12 +10,12 @@
     private _dialogChoices = [
         ["OWNERS", ["Players selected", "Select sides/groups/players. Module can also be placed on a player."], [[], [], [], 0], true],
         ["TOOLBOX:YESNO", ["Change yourself", "You can use this whilst as a curator to change your channel visibility."], false, true],
-        ["TOOLBOX:WIDE", ["Global channel", "Allows to change the global chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
-        ["TOOLBOX:WIDE", ["Side channel", "Allows to change the side chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
-        ["TOOLBOX:WIDE", ["Command channel", "Allows to change the command chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
-        ["TOOLBOX:WIDE", ["Group channel", "Allows to change the group chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
-        ["TOOLBOX:WIDE", ["Vehicle channel", "Allows to change the vehicle chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]],
-        ["TOOLBOX:WIDE", ["Direct channel", "Allows to change the direct chat & VON."], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]]
+        ["TOOLBOX:WIDE", ["Global channel", "Allows to change the global chat & VON."], OPTION_ARRAY],
+        ["TOOLBOX:WIDE", ["Side channel", "Allows to change the side chat & VON."], OPTION_ARRAY],
+        ["TOOLBOX:WIDE", ["Command channel", "Allows to change the command chat & VON."], OPTION_ARRAY],
+        ["TOOLBOX:WIDE", ["Group channel", "Allows to change the group chat & VON."], OPTION_ARRAY],
+        ["TOOLBOX:WIDE", ["Vehicle channel", "Allows to change the vehicle chat & VON."], OPTION_ARRAY],
+        ["TOOLBOX:WIDE", ["Direct channel", "Allows to change the direct chat & VON."], OPTION_ARRAY]
     ];
 
     // Add default channels
@@ -26,7 +26,7 @@
         (radioChannelInfo _i) params ["", "_name", "", "", "", "_exists"];
 
         if (_exists) then {
-            _dialogChoices pushBack (["TOOLBOX:WIDE", [format ["'%1' channel", _name], format ["Allows to change the '%1' chat & VON.", _name]], [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]], false]);
+            _dialogChoices pushBack (["TOOLBOX:WIDE", [format ["'%1' channel", _name], format ["Allows to change the '%1' chat & VON.", _name]], OPTION_ARRAY, false]);
             _channelIDs pushBack (_i + 5);
         };
     };
@@ -39,7 +39,7 @@
         params ["_results", "_args"];
         _args params ["_object", "_channelIDs"];
 
-        // Save results so that they can be deleted; to get all channel settings in one array
+        // Save results so that they can be deleted; Get all channel settings in one array
         private _doJIP = _results deleteAt (count _results - 1);
         private _self = _results deleteAt 1;
         (_results deleteAt 0) params ["_sides", "_groups", "_players"];
@@ -69,7 +69,7 @@
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _object) then {
                 {

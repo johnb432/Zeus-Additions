@@ -98,10 +98,10 @@
         // Iterate through each spot in the rectangle
         for "_i" from 0 to (_width - 1) * _density step _density do {
             for "_j" from 0 to (_height - 1) * _density step _density do {
-                if (_allCount isEqualTo (_indexUnits + _indexVics)) exitWith {};
+                if (_allCount == (_indexUnits + _indexVics)) exitWith {};
 
                 // Spawn infantry
-                if (_indexUnits isNotEqualTo _unitCount) then {
+                if (_indexUnits != _unitCount) then {
                     _unit = _unitList select _indexUnits;
 
                     // If unit is already paradropping, don't TP
@@ -174,7 +174,7 @@
                     _indexUnits = _indexUnits + 1;
                 } else {
                     // Spawn vehicles
-                    if (_indexVics isNotEqualTo _vicObjCount) then {
+                    if (_indexVics != _vicObjCount) then {
                         _vehicle = _vehicleList select _indexVics;
                         _vehicle setPosATL (_topLeft vectorAdd [_i, _j, 0]);
 

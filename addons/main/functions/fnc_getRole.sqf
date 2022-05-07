@@ -11,7 +11,7 @@
  * Role number <NUMBER>
  *
  * Example:
- * [player] call zeus_additions_main_fnc_getRole;
+ * player call zeus_additions_main_fnc_getRole;
  *
  * Public: No
  */
@@ -24,18 +24,18 @@ private _type = switch (toLowerANSI getText (configOf _this >> "icon")) do {
     default {0};
 };
 
-if (_type isNotEqualTo 0) exitWith {
+if (_type != 0) exitWith {
     _type;
 };
 
 private _weapon = "";
 
-if (primaryWeapon _this isNotEqualTo "") then {
+if ((primaryWeapon _this) isNotEqualTo "") then {
     _weapon = primaryWeapon _this;
 };
 
 // Tertiary weapon overwrites primary weapons
-if (secondaryWeapon _this isNotEqualTo "") then {
+if ((secondaryWeapon _this) isNotEqualTo "") then {
     _weapon = secondaryWeapon _this;
 };
 

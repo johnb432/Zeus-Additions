@@ -3,7 +3,7 @@
 [h2]Modules[/h2]
 [list]
 [*] Add ACE Drag and Carry Options
-[*] [WIP] Add ACE Drag Body Option
+[*] Add ACE Drag Body Option
 [*] Change AI Crew Behaviour
 [*] Change Channel Visibility
 [*] Change Grass Rendering
@@ -30,7 +30,7 @@
 [*] Spawn Ammo Resupply for Units
 [*] Spawn Ammo Resupply for Units (Selection)
 [*] Toggle Consciousness (forced)
-[*] [WIP] Toggle Storm Script
+[*] Toggle Storm Script
 [*] Track Unit Death
 [*] Unload ACE Cargo
 [/list]

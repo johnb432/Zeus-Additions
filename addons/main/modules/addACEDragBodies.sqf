@@ -103,20 +103,20 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
     // Go through string and remove headers
     while {true} do {
-        // remove #line blabla
+        // Remove #line blabla
         if ((_functionString select [0, 5]) isEqualTo "#line") then {
             _index = _functionString find ["#", 1];
 
-            if (_index isNotEqualTo -1) then {
+            if (_index != -1) then {
                 _functionString = _functionString select [_index];
             } else {
                 // Arrived at last #line
                 _index = _functionString find """";
 
-                if (_index isNotEqualTo -1) then {
+                if (_index != -1) then {
                     _index = _functionString find ["""", _index + 1];
 
-                    if (_index isNotEqualTo -1) then {
+                    if (_index != -1) then {
                         // Remove all whitespaces on right and left
                         _functionString = ((_functionString select [_index + 1]) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
                     };
@@ -138,7 +138,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
     };
 };
 
-["Zeus Additions - Utility", "[WIP] Add ACE Drag Body Option", {
+["Zeus Additions - Utility", "Add ACE Drag Body Option", {
     params ["", "_object"];
 
     ["Add ACE Drag Body Option", [
@@ -158,13 +158,13 @@ if (isNil QGVAR(draggingKilledEH)) then {
             _bodies = _bodies select {!isPlayer _x};
         };
 
-        if (_bodies isEqualTo [] && {_allFuture isEqualTo 0}) exitWith {
+        if (_bodies isEqualTo [] && {_allFuture == 0}) exitWith {
              ["No dead bodies were found!"] call zen_common_fnc_showMessage;
              playSound "FD_Start_F";
         };
 
         // Compile action only if it's going to be used
-        if (isNil QGVAR(dragBodyActions) && {_dragging || _allFuture isNotEqualTo 0}) then {
+        if (isNil QGVAR(dragBodyActions) && {_dragging || {_allFuture != 0}}) then {
             GVAR(dragBodyActions) = true;
             publicVariable QGVAR(dragBodyActions);
             publicVariable QFUNC(serializeObjects);
@@ -240,7 +240,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
                     	}, [_target, _bodyBag]] call CBA_fnc_execNextFrame;
                     }, [_player, _target, _bodyBag]] call CBA_fnc_execNextFrame;
                 }, {
-                    !alive _target && {isNull objectParent _target} && {[_player, _target, []] call ace_common_fnc_canInteractWith} && {_target getVariable [QGVAR(canDragBody), false]};
+                    !alive _target && {isNull objectParent _target && {[_player, _target, []] call ace_common_fnc_canInteractWith && {_target getVariable [QGVAR(canDragBody), false]}}};
                 }] call ace_interact_menu_fnc_createAction;
 
             // Add globally and JIP; Run only once
@@ -263,7 +263,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
                 _x setVariable [QGVAR(canDragBody), true, true];
             } forEach _bodies;
 
-            format ["Added ACE Drag Body to %1", ["body", "all bodies"] select (count _bodies isNotEqualTo 1)];
+            format ["Added ACE Drag Body to %1", ["body", "all bodies"] select (count _bodies != 1)];
         } else {
             // Remove action
             _bodies = _bodies select {_x getVariable [QGVAR(canDragBody), false]};
@@ -276,11 +276,11 @@ if (isNil QGVAR(draggingKilledEH)) then {
                 _x setVariable [QGVAR(canDragBody), false, true];
             } forEach _bodies;
 
-            format ["Removed ACE Drag Body from %1", ["body", "all bodies"] select (count _bodies isNotEqualTo 1)];
+            format ["Removed ACE Drag Body from %1", ["body", "all bodies"] select (count _bodies != 1)];
         };
 
         // Add missionEH
-        if (_allFuture isEqualTo 1) then {
+        if (_allFuture == 1) then {
             if (!isNil QGVAR(enableDragging)) exitWith {
                 playSound "FD_Start_F";
                 _string = "ACE Drag Body was already added to all future bodies!";
@@ -293,7 +293,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
         };
 
         // Remove missionEH
-        if (_allFuture isEqualTo 2) then {
+        if (_allFuture == 2) then {
             if (isNil QGVAR(enableDragging)) exitWith {
                 playSound "FD_Start_F";
                 _string = "ACE Drag Body was already removed from all future bodies!";
@@ -310,4 +310,4 @@ if (isNil QGVAR(draggingKilledEH)) then {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
     }, _object] call zen_dialog_fnc_create;
-}, ICON_OBJECT] call zen_custom_modules_fnc_register;
+}, ICON_PERSON] call zen_custom_modules_fnc_register;

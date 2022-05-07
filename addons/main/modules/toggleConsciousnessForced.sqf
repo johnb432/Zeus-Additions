@@ -16,9 +16,14 @@
 
     // Toggle consciousness
     if (zen_common_aceMedical) then {
-        [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] remoteExecCall ["ace_medical_status_fnc_setUnconsciousState", _unit];
+        // Do not allow player to be force toggled if they are in cardiac arrest, as it causes numerous issues
+        ["zen_common_execute", [{
+            if ([_this, ace_medical_STATE_MACHINE] call CBA_statemachine_fnc_getCurrentState != "CardiacArrest" || {!isPlayer _this}) then {
+                [_this, !(_this getVariable ["ACE_isUnconscious", false])] call ace_medical_status_fnc_setUnconsciousState
+            };
+        }, _unit], _unit] call CBA_fnc_targetEvent;
     } else {
-        [_unit, (lifeState _unit) isNotEqualTo "INCAPACITATED"] remoteExecCall ["setUnconscious", _unit];
+        [_unit, lifeState _unit != "INCAPACITATED"] remoteExecCall ["setUnconscious", _unit];
     };
 
     // Notify the player if affected unit is a player; for fairness reasons

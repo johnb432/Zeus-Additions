@@ -41,7 +41,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             if (!isNil QGVAR(channelSettingsJIP)) then {
                 GVAR(channelSettingsJIP) params ["_enableArray", "_players", "_groups", "_sides"];
 
-                if (_uid in _players || {(group _player) in _groups} || {(side _player) in _sides}) then {
+                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
                     {
                         _x remoteExecCall ["enableChannel", _player];
                     } forEach _enableArray;
@@ -54,7 +54,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             if (!isNil QGVAR(grassSettingsJIP)) then {
                 GVAR(grassSettingsJIP) params ["_setting", "_players", "_groups", "_sides"];
 
-                if (_uid in _players || {(group _player) in _groups} || {(side _player) in _sides}) then {
+                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
                     _setting remoteExecCall ["setTerrainGrid", _player];
                 };
             };
@@ -63,7 +63,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             if (!isNil QGVAR(radioSettingsJIP)) then {
                 GVAR(radioSettingsJIP) params ["_multiplier", "_players", "_groups", "_sides"];
 
-                if (_uid in _players || {(group _player) in _groups} || {(side _player) in _sides}) then {
+                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
                     _player setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
                 };
             };
@@ -72,9 +72,9 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             if (!isNil QGVAR(snowSettingsJIP)) then {
                 GVAR(snowSettingsJIP) params ["_stormIntensity", "_stormType", "_players", "_groups", "_sides"];
 
-                if (_stormIntensity isEqualTo 0) exitWith {};
+                if (_stormIntensity == 0) exitWith {};
 
-                if (_uid in _players || {(group _player) in _groups} || {(side _player) in _sides}) then {
+                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
                     _player setVariable [QGVAR(stormIntensity), _stormIntensity, true];
                     _player setVariable [QGVAR(stormType), _stormType, true];
 

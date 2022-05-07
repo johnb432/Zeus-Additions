@@ -65,8 +65,8 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
     // Get current selection in selected magazines
     private _size = lbSize _ctrlListSelected;
 
-    if (_size isNotEqualTo 0) then {
-        for "_i" from 0 to (_size - 1) step 1 do {
+    if (_size != 0) then {
+        for "_i" from 0 to _size - 1 step 1 do {
             _selectedMagazines pushBack (_ctrlListSelected lbTooltip _i);
         };
     };
@@ -126,7 +126,7 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if !(_key isEqualTo DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
+    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
@@ -162,7 +162,7 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if !(_key isEqualTo DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
+    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");
@@ -182,7 +182,7 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
         ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
     } else {
         // Spawn in magazines
-        for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
+        for "_i" from 0 to lbSize _ctrlListSelected - 1 step 1 do {
             _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
         };
 
@@ -286,7 +286,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _selectedIndex = lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES);
 
     // Exit if no category was selected
-    if (_selectedIndex isEqualTo -1) exitWith {};
+    if (_selectedIndex == -1) exitWith {};
 
     // Clear selected magazines
     lbClear (_display displayCtrl IDC_LIST_SELECTED);
@@ -314,7 +314,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     params ["_ctrlButtonInc", "_button", "", "", "_shift", "_control"];
 
     // If button is not left click, exit
-    if (_button isNotEqualTo 0) exitWith {};
+    if (_button != 0) exitWith {};
 
     private _ctrlListSelected = (ctrlParent _ctrlButtonInc) displayCtrl IDC_LIST_SELECTED;
     private _selectedArray = lbSelection _ctrlListSelected;
@@ -341,7 +341,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     params ["_ctrlButtonDec", "_button", "", "", "_shift", "_control"];
 
     // If button is not left click, exit
-    if (_button isNotEqualTo 0) exitWith {};
+    if (_button != 0) exitWith {};
 
     private _ctrlListSelected = (ctrlParent _ctrlButtonDec) displayCtrl IDC_LIST_SELECTED;
     private _selectedArray = lbSelection _ctrlListSelected;
@@ -359,7 +359,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
         // Get old value and decrement it; if below 0, set to 0; Do not show "0x"
         _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
         _ctrlListSelected lbSetValue [_x, _value];
-        _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value isNotEqualTo 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
+        _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value != 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
     } forEach _selectedArray;
 }];
 
@@ -374,10 +374,10 @@ _display displayAddEventHandler ["KeyDown", {
     params ["_display", "_keyCode"];
 
     // Cancel
-    if (_keyCode isEqualTo DIK_ESCAPE) exitWith {};
+    if (_keyCode == DIK_ESCAPE) exitWith {};
 
     // Ok
-    if (_keyCode isEqualTo DIK_RETURN) exitWith {
+    if (_keyCode == DIK_RETURN) exitWith {
         private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
         private _object = GETUVAR(QGVAR(magazineInventory),objNull);
 
@@ -385,7 +385,7 @@ _display displayAddEventHandler ["KeyDown", {
             ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
         } else {
             // Spawn in magazines
-            for "_i" from 0 to (lbSize _ctrlListSelected - 1) step 1 do {
+            for "_i" from 0 to lbSize _ctrlListSelected - 1 step 1 do {
                 _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
             };
 

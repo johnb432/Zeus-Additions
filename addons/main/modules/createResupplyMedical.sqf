@@ -67,13 +67,13 @@
         private _config = configOf _object;
 
         // If insert into inventory, but no inventory found or enabled
-        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") isEqualTo 0} || {getNumber (_config >> "disableInventory") isEqualTo 1}}) exitWith {
+        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") == 0 || {getNumber (_config >> "disableInventory") == 1}}}) exitWith {
             ["Object has no inventory!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
 
         // If "spawn medical crate", make a new object
-        if (_emptyInventory isEqualTo 0) then {
+        if (_emptyInventory == 0) then {
             // Spawn medical crate
             _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
@@ -95,7 +95,7 @@
         };
 
         // Clear all content of other types of inventories
-        if (_emptyInventory isEqualTo 2) then {
+        if (_emptyInventory == 2) then {
             clearItemCargoGlobal _object;
             clearMagazineCargoGlobal _object;
             clearWeaponCargoGlobal _object;
