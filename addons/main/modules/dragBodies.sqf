@@ -23,7 +23,7 @@
     private _direction = ((_entity modelToWorldVisual (_entity selectionPosition "head")) vectorFromTo (_entity modelToWorldVisual (_entity selectionPosition "Spine3"))) call CBA_fnc_vectDir;
     private _names = [_entity call ace_common_fnc_getName, [_entity, false, true] call ace_common_fnc_getName];
     private _medicalState = if (zen_common_aceMedical) then {
-         _entity call ace_medical_fnc_serializeState;
+        _entity call ace_medical_fnc_serializeState;
     } else {
         nil;
     };
@@ -81,21 +81,19 @@
             _body setVariable [QGVAR(canDragBody), true, true];
         };
 
+        // Make sure EH have been assigned
         [{
-            params ["_body", "_names"];
+            params ["_body", "_names", "_entity"];
 
             // Rename new body to old name
             _body setVariable ["ACE_Name", _names select 0, true];
             _body setVariable ["ACE_NameRaw", _names select 1, true];
-        }, [_body, _names]] call CBA_fnc_execNextFrame;
 
-        // Make sure EH have been assigned
-        [{
-            if (isPlayer _this) then {
-                _this call ace_medical_treatment_fnc_removeBody;
+            if (isPlayer _entity) then {
+                _entity call ace_medical_treatment_fnc_removeBody;
             } else {
-                deleteVehicle _this;
+                deleteVehicle _entity;
             };
-        }, _entity] call CBA_fnc_execNextFrame;
+        }, [_body, _names, _entity]] call CBA_fnc_execNextFrame;
     }, [_entity, _data, _medicalState, _names, _position, _direction]] call CBA_fnc_execNextFrame;
 }];

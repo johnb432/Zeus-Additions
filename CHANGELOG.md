@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 22.7.2022
+
+1.6.3.9
+- Added captive module.
+- Change force toggle consciousness behaviour to open prompt for toggling players in cardiac arrest. 
+
 # Changelog for Zeus Additions 7.5.2022
 
 1.6.3.8

@@ -51,6 +51,7 @@ GVAR(registeredID) = ["zen_curatorDisplayLoaded", {
 #include "modules\preventExplodingVehicle.sqf"
 #include "modules\remoteControl.sqf"
 #include "modules\removeGrenades.sqf"
+#include "modules\setCaptive.sqf"
 #include "modules\toggleConsciousnessForced.sqf"
 #include "modules\trackUnitDeath.sqf"
 #include "modules\unitParadrop.sqf"

@@ -14,6 +14,11 @@
          params ["_results", "_unit"];
          _results params ["_sides", "_doGroup"];
 
+         // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
+         if (alive _unit) then {
+             _unit = effectiveCommander _unit;
+         };
+
          // If no units are selected at all
          if (isNull _unit && {_sides isEqualTo []}) exitWith {
              ["Select a side or place on unit!"] call zen_common_fnc_showMessage;
@@ -27,25 +32,27 @@
          };
 
          private _units = [];
+         private _string = "Removed grenades from units";
 
-         private _string = if (isNull _unit) then {
-             {
-                 _units append units _x;
-             } forEach _sides;
-
-             "Removed grenades from units";
-         } else {
+         if (!isNull _unit) then {
              if (_doGroup) exitWith {
                  _units = units _unit;
 
-                 "Removed grenades from units in group";
+                 _string = "Removed grenades from units in group";
              };
 
              _units pushBack _unit;
 
-             "Removed grenades from unit";
+             _string = "Removed grenades from unit";
          };
 
+         if (_sides isNotEqualTo []) then {
+             {
+                 _units append units _x;
+             } forEach _sides;
+         };
+
+         _units = _units arrayIntersect _units;
          _units = _units select {!isPlayer _x};
 
          if (_units isEqualTo []) exitWith {

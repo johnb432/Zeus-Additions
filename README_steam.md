@@ -5,6 +5,7 @@
 [*] Add ACE Drag and Carry Options
 [*] Add ACE Drag Body Option
 [*] Change AI Crew Behaviour
+[*] Change Captivity status
 [*] Change Channel Visibility
 [*] Change Grass Rendering
 [*] Change RHS APS

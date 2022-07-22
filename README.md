@@ -5,6 +5,7 @@
 * **Add ACE Drag and Carry Options:** Allows the Zeus to set object to be ACE draggable and carriable. The module can also set whether weight limits should be respected when trying to drag or carry the selected object.
 * **Add ACE Drag Body Option:** Allows the Zeus to give players the option to drag corpses.
 * **Change AI Crew Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized. Allows the Zeus to change if AI can turn out or not.
+* **Change Captivity status:** Makes an AI unit drop their inventory and weapons at their feet and stops them from moving.
 * **Change Channel Visibility:** Allows the Zeus to enable and disable specific channels including custom ones, both chat and VON.
 * **Change Grass Rendering:** Allows the Zeus to change grass rendering on players. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
 * **Change RHS APS:** Allow the Zeus to enable or disable the APS (Active Protection System) on the RHS T-14 and T-15 vehicles.
@@ -29,7 +30,7 @@
 * **Spawn ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Spawn Ammo Resupply for Units:** Spawns a magazine resupply using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.
 * **Spawn Ammo Resupply for Units (Selection):** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window which allows the Zeus to pick magazines in a more precise fashion for resupplying given units. If no units are specified, it will show all groups of magazines. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
-* **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
+* **Toggle Consciousness (forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals, except if the unit is a player and they are in cardiac arrest. When applied to a player, it will notify them that their consciousness has been toggled. This is to avoid abuse.
 * **Toggle Storm Script:** Allows the Zeus to apply a snow or dust storm script to players.
 * **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 * **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.

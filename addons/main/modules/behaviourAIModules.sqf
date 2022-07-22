@@ -35,7 +35,7 @@
 
         _stayCrew = !_stayCrew;
 
-        // ACE forces AI crew to dismount if critical hit; can't be fixed until ACE adds something
+        // ACE forces AI crew to dismount if critical hit; Can't be fixed until ACE adds something
         {
             // Execute where AI is local
             ["zen_common_execute", [{

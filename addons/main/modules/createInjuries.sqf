@@ -77,7 +77,7 @@
             [_unit, _randomDamage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], ["grenade", "explosive", "shell", "vehiclecrash", "collision", "backblast"] select (_results select 18)] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _unit];
         };
 
-        // Notify the player if affected unit is a player; For fairness reasons
+        // Notify unit if affected unit is a player; For fairness reasons
         if (isPlayer _unit) then {
             "Zeus has injured you using a module." remoteExecCall ["hint", _unit];
         };
