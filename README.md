@@ -43,7 +43,6 @@ Inputs are arrays of strings.
 * **Enable automatic blacklist detection for FK servers:** FK is a gaming community.
 * **Enable leave unconscious unit:** Allows the user to leave an unconscious remote controlled unit when pressing the ESCAPE key. Handy for people who have their Zeus key bound to a double tap.
 * **Enable no curator found hint:** If enabled, it will hint if no curator was found for JIP and object counter features.
-* **Enable Snow Script missing addon hint:** If enabled, it will hint if CUP Core is missing.
 * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
 * **Enable JIP features:** If enabled, it will add JIP functionality to the server, if the player is a curator.
 * **Enable Mission Object Counter:** This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.

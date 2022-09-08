@@ -95,8 +95,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
     }, []]] call CBA_fnc_globalEventJIP;
 
     // zen_common_fnc_serializeObjects does not work with dead objects
-    private _functionString = str zen_common_fnc_serializeObjects;
-    _functionString = (_functionString call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
+    private _functionString = ((str zen_common_fnc_serializeObjects) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
     _functionString = _functionString select [1, count _functionString - 2];
 
     private _index = -1;

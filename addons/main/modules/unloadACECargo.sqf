@@ -6,7 +6,7 @@
 ["Zeus Additions - Utility", "Unload ACE Cargo", {
     params ["", "_object"];
 
-    if (!ace_cargo_enable) exitWith {
+    if (!isNil "ace_cargo_enable" && {!ace_cargo_enable}) exitWith {
          ["ACE Cargo isn't enabled!"] call zen_common_fnc_showMessage;
          playSound "FD_Start_F";
     };

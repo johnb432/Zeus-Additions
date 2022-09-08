@@ -5,13 +5,14 @@
  * Adds a parachute to the unit (if necessary), then deletes it once the unit is on the ground.
  *
  * Arguments:
- * 0: Weapons <>
+ * 0: Unit <OBJECT>
+ * 1: Give unit parachute <BOOLEAN>
  *
  * Return Value:
  * None
  *
  * Example:
- * [] call zeus_additions_main_fnc_addParachute;
+ * [player, true] call zeus_additions_main_fnc_addParachute;
  *
  * Public: No
  */

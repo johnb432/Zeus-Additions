@@ -84,9 +84,9 @@ private _id = if (!local _unit) then {
         [_unit, clientOwner] remoteExecCall ["setOwner", 2];
     };
 
-    [-1, _id] select (!isNil "_id" && {_id isEqualType 0});
+    [-1, _id] select (!isNil "_id" && {_id isEqualType 0})
 } else {
-    -1;
+    -1
 };
 
 // Wait until unit is local

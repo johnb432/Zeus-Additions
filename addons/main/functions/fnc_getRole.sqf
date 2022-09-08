@@ -25,9 +25,10 @@ private _type = switch (toLowerANSI getText (configOf _this >> "icon")) do {
 };
 
 if (_type != 0) exitWith {
-    _type;
+    _type
 };
 
+/*
 private _weapon = "";
 
 if ((primaryWeapon _this) isNotEqualTo "") then {
@@ -38,9 +39,20 @@ if ((primaryWeapon _this) isNotEqualTo "") then {
 if ((secondaryWeapon _this) isNotEqualTo "") then {
     _weapon = secondaryWeapon _this;
 };
+*/
+
+private _weapon = switch (true) do {
+    case ((secondaryWeapon _this) isNotEqualTo ""): {
+        secondaryWeapon _this
+    };
+    case ((primaryWeapon _this) isNotEqualTo ""): {
+        primaryWeapon _this
+    };
+    default {""};
+};
 
 if (_weapon isEqualTo "") exitWith {
-    0;
+    0
 };
 
 switch (toLowerANSI getText (configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {
