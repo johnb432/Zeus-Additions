@@ -7,7 +7,7 @@
     ["End Scenario with Player Modifier", [
         ["LIST", ["Mission ending", "Sets the type of ending."], [["EveryoneWon", "EveryoneLost", "SideScore", "GroupScore", "PlayerScore", "SideTickets"], ["Mission completed", "Mission failed", "Side with best score wins", "Group with best score wins", "Player with best score wins", "Side with most tickets wins"], 0, 6]],
         ["TOOLBOX:YESNO", ["Add Invincibility", "Invincibility will be applied with the modifier below."], false],
-        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player input", "Disables player movement and user input."], ["Death", "All players die."]], 0]],
+        ["COMBO", ["Mission end modifier", "Sets what type of action is applied to all players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player input", "Disables player movement and user input."], ["Death", "All players die."]], 0]],
         ["EDIT:MULTI", ["Debrief text", "Text that will show up in the debriefing screen."], ["", {}, 5]]
     ],
     {
@@ -45,6 +45,7 @@
                     [_x, 0] call zen_common_fnc_setVehicleAmmo;
                 } forEach _vehicles;
             };
+
             case 2: {
                 // Stops the player from spinning if player was in the middle of turning
                 {
@@ -54,11 +55,13 @@
                     }, _x], _x] call CBA_fnc_targetEvent;
                 } forEach _allPlayers;
             };
+
             case 3: {
                 {
                     _x setDamage 1;
                 } forEach _allPlayers;
             };
+
             default {};
         };
 

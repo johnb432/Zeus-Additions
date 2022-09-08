@@ -64,10 +64,8 @@
 
         private _emptyInventory = _results select (count _results - 2);
 
-        private _config = configOf _object;
-
         // If insert into inventory, but no inventory found or enabled
-        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") == 0 || {getNumber (_config >> "disableInventory") == 1}}}) exitWith {
+        if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
             ["Object has no inventory!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
@@ -79,8 +77,6 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearItemCargoGlobal _object;
 
-            _config = configOf _object;
-
             if (!GVAR(ACEDraggingLoaded)) exitWith {};
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
@@ -91,7 +87,7 @@
                 // Dragging & Carrying
                 [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                 [_object, true, [_config, "ace_dragging_carryPosition", [0, 0.8, 0.8]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-            }, [_object, _config]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            }, [_object, configOf _object]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         // Clear all content of other types of inventories

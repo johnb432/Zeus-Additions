@@ -21,15 +21,20 @@ params [["_objects", []], ["_type", "", [""]]];
 
 private _condition = {_x checkAIFeature "PATH"};
 
-if (_type == "enableAI") then {
+if ((toLowerANSI _type) isEqualTo "enableai") then {
     _condition = {!(_x checkAIFeature "PATH")};
 };
 
-_objects findIf {(_x isKindOf "CAManBase" || {
-    if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
-        _x = driver _x;
-        true
-    } else {
-        false
-    }
-}) && {alive _x && {!isPlayer _x && _condition}}} != -1
+_objects findIf {
+    alive _x &&
+    {!isPlayer _x} &&
+    _condition &&
+    {_x isKindOf "CAManBase" || {
+        if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
+            _x = driver _x;
+            true
+        } else {
+            false
+        }
+    }}
+} != -1;

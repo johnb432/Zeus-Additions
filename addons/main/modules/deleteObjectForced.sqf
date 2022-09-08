@@ -16,20 +16,11 @@
         playSound "FD_Start_F";
     };
 
-    // Check if there is crew
-    if ((crew _object) isNotEqualTo []) then {
-        // Delete units where vehicle is local
-        _object remoteExecCall ["deleteVehicleCrew", _object];
-
-        [{
-            (crew _this) isEqualTo [];
-        }, {
-            deleteVehicle _this;
-        }, _object] call CBA_fnc_waitUntilAndExecute;
-    } else {
-        // No crew
-        deleteVehicle _object;
-    };
+    // Delete crew & object
+    ["zen_common_execute", [{
+        deleteVehicleCrew _this;
+        deleteVehicle _this;
+    }, _object], _object] call CBA_fnc_targetEvent;
 
     ["Deleted %1", getText (configOf _object >> "displayName")] call zen_common_fnc_showMessage;
 }, ICON_DELETE] call zen_custom_modules_fnc_register;

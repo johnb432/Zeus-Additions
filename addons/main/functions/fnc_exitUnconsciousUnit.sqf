@@ -32,6 +32,8 @@ if (isNil QGVAR(exitUnconsciousID) && {GVAR(enableExitUnconsciousUnit)}) exitWit
             _this closeDisplay IDC_CANCEL;
 
             // Stop remote controlling unit
+            bis_fnc_moduleRemoteControl_unit setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
+
             objNull remoteControl bis_fnc_moduleRemoteControl_unit;
             bis_fnc_moduleRemoteControl_unit = nil;
 

@@ -3,7 +3,7 @@
  * Adds two modules that can create ACE medical injuries on units.
  */
 
-["Zeus Additions - Medical", "Create ACE Injuries", {
+["Zeus Additions - Medical", "Create ACE Medical Injuries", {
     params ["", "_unit"];
 
     // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
@@ -17,7 +17,7 @@
         playSound "FD_Start_F";
     };
 
-    ["Create ACE Injuries (Random Damage does not work on dead units!)", [
+    ["Create ACE Injuries (Random Damage doesn't work on dead units!)", [
         ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Head", [0, 20, 0, 0]],
 
@@ -60,11 +60,7 @@
             _temp = _results select _i;
 
             // If it's a number, round it; For number of wounds
-            if (_temp isEqualType 0) then {
-                _temp = round _temp;
-            };
-
-            _formattedResults pushBack _temp;
+            _formattedResults pushBack (if (_temp isEqualType 0) then {round _temp} else {_temp});
         };
 
         // Apply wounds using function

@@ -15,23 +15,36 @@
     private _index = 0;
     private _types = ["Men", "Cars", "Tanks", "Static Weapons", "Helicopters", "Planes", "Misc.", "Pings", "Deletions", "Groups"];
 
+    // Add two empty lines
+    diag_log text "";
+    diag_log text "";
+
     diag_log text "[Zeus Additions]: Your curator stats:";
 
     // List all objects in hashmaps
     {
+        // Don't print to log if category is empty
+        if (_x isEqualTo createHashMap) then {
+            continue;
+        };
+
         _index = _forEachIndex;
 
-        diag_log text format ["    %1:", _types select _index];
+        diag_log text format ["%1:", _types select _index];
 
         {
             switch (_index) do {
-                case 7: {diag_log text format ["        %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
-                case 8: {diag_log text format ["        %1 entities deleted", _y]};
-                case 9: {diag_log text format ["        %1 groups placed", _y]};
-                default {diag_log text format ["        %1x '%2' placed", _y, _x]};
+                case 7: {diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
+                case 8: {diag_log text format ["    %1 entities deleted", _y]};
+                case 9: {diag_log text format ["    %1 groups placed", _y]};
+                default {diag_log text format ["    %1x '%2' placed", _y, _x]};
             };
         } forEach _x;
     } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),nil);
+
+    // Add two empty lines
+    diag_log text "";
+    diag_log text "";
 
     ["Added curator stats to RPT log"] call zen_common_fnc_showMessage;
 }, ICON_OBJECT] call zen_custom_modules_fnc_register;
@@ -43,21 +56,34 @@ addMissionEventHandler ["Ended", {
     private _index = 0;
     private _types = ["Men", "Cars", "Tanks", "Static Weapons", "Helicopters", "Planes", "Misc.", "Pings", "Deletions", "Groups"];
 
+    // Add two empty lines
+    diag_log text "";
+    diag_log text "";
+
     diag_log text "[Zeus Additions]: Your curator stats at mission end:";
 
     // List all objects in hashmaps
     {
+        // Don't print to log if category is empty
+        if (_x isEqualTo createHashMap) then {
+            continue;
+        };
+
         _index = _forEachIndex;
 
-        diag_log text format ["    %1:", _types select _index];
+        diag_log text format ["%1:", _types select _index];
 
         {
             switch (_index) do {
-                case 7: {diag_log text format ["        %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
-                case 8: {diag_log text format ["        %1 entities deleted", _y]};
-                case 9: {diag_log text format ["        %1 groups placed", _y]};
-                default {diag_log text format ["        %1x '%2' placed", _y, _x]};
+                case 7: {diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
+                case 8: {diag_log text format ["    %1 entities deleted", _y]};
+                case 9: {diag_log text format ["    %1 groups placed", _y]};
+                default {diag_log text format ["    %1x '%2' placed", _y, _x]};
             };
         } forEach _x;
     } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),nil);
+
+    // Add two empty lines
+    diag_log text "";
+    diag_log text "";
 }];

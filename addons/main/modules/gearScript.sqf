@@ -35,13 +35,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
                 ["No preset was chosen!"] call zen_common_fnc_showMessage;
             };
 
-            private _loadouts = [];
-
-            {
-                _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),"[]"));
-            } forEach GVAR(loadoutTypes);
-
-            "ace_clipboard" callExtension ((str _loadouts) + ";");
+            "ace_clipboard" callExtension ((str (GVAR(loadoutTypes) apply {parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),"[]"))})) + ";");
             "ace_clipboard" callExtension "--COMPLETE--";
 
             ["Preset '%1' has been exported to your clipboard", _selectedPreset] call zen_common_fnc_showMessage;
@@ -211,19 +205,16 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         playSound "FD_Start_F";
     };
 
-    private _loadouts = [];
-
-    {
-        _loadouts pushBack parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]"));
-    } forEach GVAR(loadoutTypes);
-
     private _loadout = [];
+    private _loadouts = GVAR(loadoutTypes) apply {
+        parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,GVAR(gearPreset)),"[]"));
+    };
 
     // If loadout is not defined, use default loadout instead
     {
         _loadout = _loadouts select (_x call FUNC(getRole));
         _x setUnitLoadout ([_loadouts select 0, _loadout] select (_loadout isNotEqualTo []));
-    } forEach units _unit;
+    } forEach (units _unit);
 
     ["Preset '%1' applied", GVAR(gearPreset)] call zen_common_fnc_showMessage;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;

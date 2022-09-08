@@ -27,6 +27,15 @@
             playSound "FD_Start_F";
         };
 
+        // Only send function to all clients if script is enabled
+        if (isNil QFUNC(addParachute)) then {
+            // Define a function on the client
+            DFUNC(addParachute) = compileScript [format ["\%1\%2\%3\%4\functions\fnc_addParachute.sqf", QUOTE(MAINPREFIX), QUOTE(PREFIX), QUOTE(SUBPREFIX), QUOTE(COMPONENT)], true];
+
+            // Broadcast function to everyone, so it can be executed for all players
+            publicVariable QFUNC(addParachute);
+        };
+
         // Set height on position
         _pos set [2, _height];
 
@@ -50,7 +59,7 @@
             if (_vehicle isKindOf "LandVehicle" || {_vehicle isKindOf "Ship"}) then {
                 _vehicleList pushBackUnique _vehicle;
             };
-        } forEach ((call CBA_fnc_players) select {side _x in _sides || {group _x in _groups} || {_x in _players}});
+        } forEach ((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups} || {_x in _players}});
 
         // Add context menu selection of entities
         if (_includeContextMenu) then {
@@ -106,7 +115,7 @@
 
                     // If unit is already paradropping, don't TP
                     if (_unit getVariable [QGVAR(isParadropping), false]) then {
-                       continue;
+                        continue;
                     };
 
                     _unit setVariable [QGVAR(isParadropping), true, true];
@@ -129,45 +138,7 @@
                                 cutText ["", "BLACK IN", 2, true];
                             };
 
-                            // If automatic parachute distribution is disabled, don't continue
-                            if (!_giveUnitParachute) exitWith {};
-
-                            [{
-                                // If the unit is on the ground or in water
-                                isTouchingGround (_this select 0) || {(eyePos (_this select 0)) select 2 < 1};
-                            }, {
-                                params ["_unit", "_backpack", "_backpackContent"];
-
-                                // Unit is no longer paradropping
-                                _unit setVariable [QGVAR(isParadropping), false, true];
-
-                                // Remove parachute and give old backpack back
-                                removeBackpack _unit;
-
-                                if (_backpack isEqualTo "") exitWith {};
-
-                                _unit addBackpack _backpack;
-
-                                if (_backpackContent isEqualTo []) exitWith {};
-
-                                {
-                                    _unit addItemToBackpack _x;
-                                } forEach _backpackContent;
-                            }, [_unit, backpack _unit, backpackItems _unit]] call CBA_fnc_waitUntilAndExecute;
-
-                            [{
-                                // If the unit is <100m AGL, deploy parachute to prevent them splatting on the ground
-                                (getPos _this) select 2 < 100 || {!alive _this};
-                            }, {
-                                // If parachute is already open or unit is unconscious or dead, don't do action
-                                if ((((objectParent _this) call BIS_fnc_objectType) select 1) isEqualTo "Parachute" || {_this getVariable ["ACE_isUnconscious", false]} || {(lifeState _this) isEqualTo "INCAPACITATED"} || {!alive _this}) exitWith {};
-
-                                _this action ["OpenParachute", _this];
-                            }, _unit] call CBA_fnc_waitUntilAndExecute;
-
-                            // Add parachute last so that other commands have time to update
-                            removeBackpack _unit;
-                            _unit addBackpack "B_Parachute";
+                            [_unit, _giveUnitParachute] call FUNC(addParachute);
                         }, _this, 3] call CBA_fnc_waitAndExecute;
                     }, [_unit, _topLeft vectorAdd [_i, _j, 0], _giveUnitParachute]], _unit] call CBA_fnc_targetEvent;
 

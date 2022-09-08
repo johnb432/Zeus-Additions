@@ -54,8 +54,7 @@
             } forEach _sides;
         };
 
-        _units = _units arrayIntersect _units;
-        _units = _units select {!isPlayer _x && {alive _x}};
+        _units = (_units arrayIntersect _units) select {!isPlayer _x && {alive _x}};
 
         if (_units isEqualTo []) exitWith {
             ["No alive AI units were found!"] call zen_common_fnc_showMessage;

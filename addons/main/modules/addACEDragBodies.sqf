@@ -77,7 +77,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
             };
 
             // Add dragging to new body if it was possible for old body
-            if (!isNil QGVAR(enableDragging) || _bodyBag getVariable [QGVAR(canDragBody), false]) then {
+            if (!isNil QGVAR(enableDragging) || {_bodyBag getVariable [QGVAR(canDragBody), false]}) then {
                 _body setVariable [QGVAR(canDragBody), true, true];
             };
 
@@ -240,7 +240,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
                     	}, [_target, _bodyBag]] call CBA_fnc_execNextFrame;
                     }, [_player, _target, _bodyBag]] call CBA_fnc_execNextFrame;
                 }, {
-                    !alive _target && {isNull objectParent _target && {[_player, _target, []] call ace_common_fnc_canInteractWith && {_target getVariable [QGVAR(canDragBody), false]}}};
+                    !alive _target && {isNull objectParent _target} && {[_player, _target, []] call ace_common_fnc_canInteractWith} && {_target getVariable [QGVAR(canDragBody), false]};
                 }] call ace_interact_menu_fnc_createAction;
 
             // Add globally and JIP; Run only once

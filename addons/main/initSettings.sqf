@@ -137,6 +137,5 @@ MAGAZINES_SETTINGS(AARED,7);
 HINT_SETTINGS(enableACECargoHint,"Enable ACE Cargo missing addon hint");
 HINT_SETTINGS(enableACEDragHint,"Enable ACE Dragging missing addon hint");
 HINT_SETTINGS(enableACEMedicalHint,"Enable ACE Medical missing addon hint");
-HINT_SETTINGS(enableSnowScriptHint,"Enable Snow Script missing addon hint");
 HINT_SETTINGS(enableTFARHint,"Enable Radio Range Script missing addon hint");
 HINT_SETTINGS(enableRHSHint,"Enable RHS APS Script addon missing hint");

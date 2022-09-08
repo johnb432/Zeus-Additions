@@ -142,12 +142,12 @@
                 // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
                     _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {
-                        (side _x in _attackSides) &&
-                        {_x isNotEqualTo _helperUnit &&
-                        {alive _x &&
-                        {!(_x getVariable ["ACE_isUnconscious", false]) &&
-                        {(lifeState _x) != "INCAPACITATED" &&
-                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                        ((side _x) in _attackSides) &&
+                        {_x isNotEqualTo _helperUnit} &&
+                        {alive _x} &&
+                        {!(_x getVariable ["ACE_isUnconscious", false])} &&
+                        {(lifeState _x) != "INCAPACITATED"} &&
+                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
                     }) param [0, objNull];
 
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -162,12 +162,12 @@
                     if (!alive _dogNearestEnemy || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false] || {(lifeState _dogNearestEnemy) == "INCAPACITATED"}}) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
                         _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {
-                            (side _x in _attackSides) &&
-                            {_x isNotEqualTo _helperUnit &&
-                            {alive _x &&
-                            {!(_x getVariable ["ACE_isUnconscious", false]) &&
-                            {(lifeState _x) != "INCAPACITATED" &&
-                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                            ((side _x) in _attackSides) &&
+                            {_x isNotEqualTo _helperUnit} &&
+                            {alive _x} &&
+                            {!(_x getVariable ["ACE_isUnconscious", false])} &&
+                            {(lifeState _x) != "INCAPACITATED"} &&
+                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
                         }) param [0, objNull];
 
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];

@@ -42,7 +42,7 @@ if (_weapons isNotEqualTo []) then {
             if (_x in GETUVAR(QGVAR(sortedKeys),[])) then {
                 _keys pushBackUnique _x;
             };
-        } foreach getArray (_cfgWeapons >> _x >> "magazineWell");
+        } forEach getArray (_cfgWeapons >> _x >> "magazineWell");
     } forEach _weapons;
 
     SETUVAR(QGVAR(sortedKeysMagazines),_keys);
@@ -126,7 +126,7 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
+    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
@@ -162,7 +162,7 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
+    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");

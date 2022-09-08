@@ -5,35 +5,6 @@
 
 GVAR(trackUnits) = [];
 
-addMissionEventHandler ["EntityKilled", {
-    params ["_unit", "_killer"];
-
-    if !(GVAR(trackUnits) isNotEqualTo [] && {_unit in GVAR(trackUnits)}) exitWith {};
-
-    private _nameUnit = name _unit;
-    _killer = name _killer;
-
-    private _notification = _unit getVariable [QGVAR(displayDeath), [false, false, false, false]];
-
-    if (_notification select 0) then {
-        hint format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
-    };
-
-    if (_notification select 1) then {
-        systemChat format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
-    };
-
-    if (_notification select 2) then {
-        ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer] call zen_common_fnc_showMessage;
-    };
-
-    if (_notification select 3) then {
-        diag_log text format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
-    };
-
-    GVAR(trackUnit) = GVAR(trackUnit) - [_unit];
-}];
-
 ["Zeus Additions - Utility", "Track Unit Death", {
     params ["", "_unit"];
 
@@ -51,9 +22,7 @@ addMissionEventHandler ["EntityKilled", {
         _selected params ["", "", "_players"];
 
         // If no unit was selected in the dialog, check if module was placed on a unit
-        if (_players isNotEqualTo []) then {
-            _unit = _players select 0;
-        };
+        _unit = _players param [0, _unit];
 
         // If object is not unit, exit
         if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
@@ -63,20 +32,63 @@ addMissionEventHandler ["EntityKilled", {
 
         // If remove EH
         if (!_add) exitWith {
-            GVAR(trackUnit) = GVAR(trackUnit) - [_unit];
+            GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);
+
             ["Unit is no longer being tracked"] call zen_common_fnc_showMessage;
         };
 
         // If no method of notification was selected, exit
-        if (!_hint && {!_systemChat && {!_zeusBanner && {!_log}}}) exitWith {
+        if (!_hint && {!_systemChat} && {!_zeusBanner} && {!_log}) exitWith {
             ["Select a way of notification!"] call zen_common_fnc_showMessage;
             playSound "FD_Start_F";
         };
 
         _unit setVariable [QGVAR(displayDeath), [_hint, _systemChat, _zeusBanner, _log]];
 
+        if (isNil QGVAR(trackUnitDeathEH)) then {
+            GVAR(trackUnitDeathEH) = addMissionEventHandler ["EntityKilled", {
+                params ["_unit", "_killer", "_instigator"];
+
+                if !(GVAR(trackUnits) isNotEqualTo [] && {_unit in GVAR(trackUnits)}) exitWith {};
+
+                private _nameUnit = name _unit;
+
+                if (!isNull _instigator) then {
+                    _killer = _instigator;
+                };
+
+                _killer = name _killer;
+
+                private _notification = _unit getVariable [QGVAR(displayDeath), [false, false, false, false]];
+
+                if (_notification select 0) then {
+                    hint format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
+                };
+
+                if (_notification select 1) then {
+                    systemChat format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
+                };
+
+                if (_notification select 2) then {
+                    ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer] call zen_common_fnc_showMessage;
+                };
+
+                if (_notification select 3) then {
+                    diag_log text format ["[Zeus Additions]: %1 was killed by %2", _nameUnit, _killer];
+                };
+
+                GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);
+
+                // Remove EH if unit tracking is empty
+                if (GVAR(trackUnits) isEqualTo []) then {
+                    removeMissionEventHandler [_thisEvent, _thisEventHandler];
+                    GVAR(trackUnitDeathEH) = nil;
+                };
+            }];
+        };
+
         // Add unit to tracking
-        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) != -1)] call zen_common_fnc_showMessage
+        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) == -1)] call zen_common_fnc_showMessage;
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";

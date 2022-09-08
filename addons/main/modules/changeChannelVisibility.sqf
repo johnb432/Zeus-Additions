@@ -4,7 +4,7 @@
  */
 
 ["Zeus Additions - Players", "Change Channel Visibility", {
-    params ["", "_object"];
+    params ["", "_unit"];
 
     // Make array of default dialog choices
     private _dialogChoices = [
@@ -37,7 +37,7 @@
     ["Change Channel Visibility", _dialogChoices,
     {
         params ["_results", "_args"];
-        _args params ["_object", "_channelIDs"];
+        _args params ["_unit", "_channelIDs"];
 
         // Save results so that they can be deleted; Get all channel settings in one array
         private _doJIP = _results deleteAt (count _results - 1);
@@ -64,19 +64,19 @@
         };
 
         // If alive, commander, in case it's a vehicle
-        if (alive _object) then {
-            _object = effectiveCommander _object;
+        if (alive _unit) then {
+            _unit = effectiveCommander _unit;
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
-            private _string = if (isPlayer _object) then {
+            private _string = if (isPlayer _unit) then {
                 {
-                    _x remoteExecCall ["enableChannel", _object];
+                    _x remoteExecCall ["enableChannel", _unit];
                 } forEach _enableArray;
 
-                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _object];
+                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _unit];
 
                 "Changed channel visibility on player";
             } else {
@@ -95,7 +95,7 @@
         // Handle JIP
         if (_doJIP) then {
             if (GETMVAR(QGVAR(handleServerJIP),false)) then {
-                GVAR(channelSettingsJIP) = [_enableArray, _players apply {getPlayerUID _x}, _groups, _sides];
+                GVAR(channelSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _enableArray];
                 publicVariableServer QGVAR(channelSettingsJIP);
             } else {
                 hint "JIP disabled. Turn on in CBA Settings to enable it.";
@@ -116,5 +116,5 @@
     }, {
         ["Aborted"] call zen_common_fnc_showMessage;
         playSound "FD_Start_F";
-    }, [_object, _channelIDs]] call zen_dialog_fnc_create;
+    }, [_unit, _channelIDs]] call zen_dialog_fnc_create;
 }, ICON_CHANNEL] call zen_custom_modules_fnc_register;

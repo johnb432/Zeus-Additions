@@ -77,7 +77,7 @@
         };
 
         // Add dragging to new body if it was possible for old body
-        if (!isNil QGVAR(enableDragging) || _entity getVariable [QGVAR(canDragBody), false]) then {
+        if (!isNil QGVAR(enableDragging) || {_entity getVariable [QGVAR(canDragBody), false]}) then {
             _body setVariable [QGVAR(canDragBody), true, true];
         };
 
@@ -90,7 +90,11 @@
             _body setVariable ["ACE_NameRaw", _names select 1, true];
 
             if (isPlayer _entity) then {
-                _entity call ace_medical_treatment_fnc_removeBody;
+                if (zen_common_aceMedical) then {
+                    _entity call ace_medical_treatment_fnc_removeBody;
+                } else {
+                    hideBody _entity;
+                };
             } else {
                 deleteVehicle _entity;
             };

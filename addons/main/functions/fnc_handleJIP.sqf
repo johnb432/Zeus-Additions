@@ -36,12 +36,14 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             params ["_uid", "_idstr"];
 
             private _player = (getUserInfo _idstr) select 10;
+            private _group = group _player;
+            private _side = side _player;
 
             // For chat channels
             if (!isNil QGVAR(channelSettingsJIP)) then {
-                GVAR(channelSettingsJIP) params ["_enableArray", "_players", "_groups", "_sides"];
+                GVAR(channelSettingsJIP) params ["_players", "_groups", "_sides", "_enableArray"];
 
-                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
+                if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
                     {
                         _x remoteExecCall ["enableChannel", _player];
                     } forEach _enableArray;
@@ -52,31 +54,35 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
 
             // For grass rendering
             if (!isNil QGVAR(grassSettingsJIP)) then {
-                GVAR(grassSettingsJIP) params ["_setting", "_players", "_groups", "_sides"];
+                GVAR(grassSettingsJIP) params ["_players", "_groups", "_sides", "_setting"];
 
-                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
+                if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
                     _setting remoteExecCall ["setTerrainGrid", _player];
                 };
             };
 
             // For TFAR radio range
             if (!isNil QGVAR(radioSettingsJIP)) then {
-                GVAR(radioSettingsJIP) params ["_multiplier", "_players", "_groups", "_sides"];
+                GVAR(radioSettingsJIP) params ["_players", "_groups", "_sides", "_txMultiplier", "_rxMultiplier"];
 
-                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
-                    _player setVariable ["tf_sendingDistanceMultiplicator", _multiplier, true];
+                if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
+                    ["zen_common_execute", [{
+                        params ["_unit", "_txMultiplier", "_rxMultiplier"];
+
+                        _unit setVariable ["tf_sendingDistanceMultiplicator", _txMultiplier];
+                        _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
+                    }, [_player, _txMultiplier, _rxMultiplier]], _unit] call CBA_fnc_targetEvent;
                 };
             };
 
             // For snow script
             if (!isNil QGVAR(snowSettingsJIP)) then {
-                GVAR(snowSettingsJIP) params ["_stormIntensity", "_stormType", "_players", "_groups", "_sides"];
+                GVAR(snowSettingsJIP) params ["_players", "_groups", "_sides", "_stormIntensity"];
 
                 if (_stormIntensity == 0) exitWith {};
 
-                if (_uid in _players || {(group _player) in _groups || {(side _player) in _sides}}) then {
+                if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
                     _player setVariable [QGVAR(stormIntensity), _stormIntensity, true];
-                    _player setVariable [QGVAR(stormType), _stormType, true];
 
                     // Using events doesn't seem to work
                     remoteExecCall [QFUNC(snowScriptPFH), _player];

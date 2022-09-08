@@ -5,6 +5,7 @@ template = "cba"
 mainprefix = "x"
 files = [
     "CHANGELOG.md",
+    "meta.cpp",
     "mod.cpp",
     "LICENSE",
     "README.md"

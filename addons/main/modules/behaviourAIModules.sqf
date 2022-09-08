@@ -1,6 +1,6 @@
 /*
  * Author: johnb43
- * Creates modules that can change dismount, turn out and mine detecting behaviour on AI.
+ * Creates modules that can change dismount and turn out behaviour on AI.
  */
 
 ["Zeus Additions - AI", "Change AI Crew Behaviour", {

@@ -1,7 +1,6 @@
 PREP(createInjuriesHandler);
 PREP(createResupplyGUI);
 PREP(exitUnconsciousUnit);
-PREP(findDoors);
 PREP(getRole);
 PREP(handleJIP);
 PREP(objectsCounterMissionEH);

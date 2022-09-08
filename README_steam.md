@@ -11,7 +11,7 @@
 [*] Change RHS APS
 [*] Change TFAR Radio Range
 [*] Configure Doors (Extended)
-[*] Create ACE Injuries
+[*] Create ACE Medical Injuries
 [*] Delete Object (forced)
 [*] End Mission with Player Modifier
 [*] Give Death Stare Ability
@@ -31,11 +31,16 @@
 [*] Spawn Ammo Resupply for Units
 [*] Spawn Ammo Resupply for Units (Selection)
 [*] Toggle Consciousness (forced)
-[*] Toggle Storm Script
+[*] Toggle Dust Storm Script
 [*] Track Unit Death
 [*] Unload ACE Cargo
 [/list]
 For more detailed information on the modules and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
+
+This mod also adds:
+[list]
+[*] the ability to drag dead corpses as Zeus. In order to do so, you must be in the map screen.
+[/list]
 
 [b]Numerous CBA settings to customize modules:[/b] To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
@@ -44,9 +49,10 @@ For more detailed information on the modules and what they do, click [url=https:
 Mod by johnb43
 [url=https://github.com/johnb432/Zeus-Additions]GitHub[/url]
 
-Gear script originally made by cineafx, revamped by johnb43.
+Gear script originally made by cineafx, reworked by johnb43.
 Snow script made by JW & AZCoder, reworked by johnb43.
 Dog attack module made by Fred, reworked by johnb43.
+Parachute drop script by Kex & cobra4v320, reworked by johnb43.
 
 Thanks to [url=https://gitlab.com/sh4rdknight]sh4rdknight[/url] for enduring testing sessions.
 

@@ -16,9 +16,8 @@ if (isNil "zen_common_aceMedicalTreatment") then {
 };
 
 // Add counter and JIP functions only if player is curator
-GVAR(registeredID) = ["zen_curatorDisplayLoaded", {
-    ["zen_curatorDisplayLoaded", GVAR(registeredID)] call CBA_fnc_removeEventHandler;
-    GVAR(registeredID) = nil;
+["zen_curatorDisplayLoaded", {
+    [_thisType, _thisId] call CBA_fnc_removeEventHandler;
 
     // Add the JIP functionality
     call FUNC(handleJIP);
@@ -33,7 +32,7 @@ GVAR(registeredID) = ["zen_curatorDisplayLoaded", {
         #include "modules\addACEDragBodies.sqf"
         #include "modules\dragBodies.sqf"
     };
-}] call CBA_fnc_addEventHandler;
+}] call CBA_fnc_addEventHandlerArgs;
 
 // Add modules
 #include "modules\behaviourAIModules.sqf"
@@ -52,11 +51,13 @@ GVAR(registeredID) = ["zen_curatorDisplayLoaded", {
 #include "modules\remoteControl.sqf"
 #include "modules\removeGrenades.sqf"
 #include "modules\setCaptive.sqf"
+#include "modules\stormScript.sqf"
 #include "modules\toggleConsciousnessForced.sqf"
 #include "modules\trackUnitDeath.sqf"
 #include "modules\unitParadrop.sqf"
 #include "modules\unitParadropAction.sqf"
 
+// Optionals
 private _notificationArray = ["[Zeus Additions]:"];
 
 // Check if ACE Dragging is loaded
@@ -91,11 +92,6 @@ if (zen_common_aceMedical) then {
     #include "modules\createInjuries.sqf"
     #include "modules\openMedicalMenu.sqf"
 
-    // Check if ACE Interaction is loaded
-    if (isClass (configFile >> "CfgPatches" >> "ace_interact_menu")) then {
-        #include "modules\deathStare.sqf"
-    };
-
     // Check if ACE Medical Treatment is loaded
     if (zen_common_aceMedicalTreatment) then {
         #include "modules\createResupplyMedical.sqf"
@@ -103,15 +99,6 @@ if (zen_common_aceMedical) then {
 } else {
     if (GVAR(enableACEMedicalHint)) then {
         _notificationArray pushBack "Multiple ACE medical related functions aren't available because ACE medical isn't loaded.";
-    };
-};
-
-// Check if CUP is loaded
-if (isClass (configFile >> "CfgPatches" >> "CUP_Worlds")) then {
-    #include "modules\stormScript.sqf"
-} else {
-    if (GVAR(enableSnowScriptHint)) then {
-        _notificationArray pushBack "The storm script module isn't available because CUP Core isn't loaded.";
     };
 };
 
