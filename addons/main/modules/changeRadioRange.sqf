@@ -35,14 +35,13 @@
                     _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
                 }, [_unit, _txMultiplier, _rxMultiplier]], _unit] call CBA_fnc_targetEvent;
 
-                "Multipliers set on player";
+                "Multipliers set on player"
             } else {
                 // If unit is AI, null or otherwise invalid, display error if not something done to self
                 if (_self) then {
-                    "Multipliers set on yourself";
+                    "Multipliers set on yourself"
                 } else {
-                    playSound "FD_Start_F";
-                    "Select a side/group/player or even yourself (must be a player)!";
+                    "Select a side/group/player or even yourself (must be a player)"
                 };
             };
 
@@ -70,8 +69,5 @@
         };
 
         ["Multipliers set on selected players"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
+    }, {}, _unit] call zen_dialog_fnc_create;
 }, ICON_RADIO] call zen_custom_modules_fnc_register;

@@ -22,34 +22,28 @@ _unit = effectiveCommander _unit;
 
 if (isNull _unit) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorNull"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 if (!alive _unit) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorDestroyed"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 if (isPlayer _unit) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorPlayer"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 if !(side group _unit in [west, east, independent, civilian]) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorEmpty"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 private _owner = _unit getVariable ["bis_fnc_moduleRemoteControl_owner", objNull];
 
 if ((!isNull _owner && {_owner in allPlayers}) || {isUAVConnected vehicle _unit}) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorControl"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 if (unitIsUAV _unit) exitWith {
     ["Cannot remote control UAV units!"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
 };
 
 // Save old player object
@@ -91,7 +85,7 @@ private _id = if (!local _unit) then {
 
 // Wait until unit is local
 [{
-    local (_this select 0);
+    local (_this select 0)
 }, {
     params ["_unit", "_oldPlayer", "_oldGroup", "_id"];
 
@@ -107,7 +101,7 @@ private _id = if (!local _unit) then {
     _oldPlayer allowDamage false;
 
     // If new group had to be created to change locality, add to old group
-    if ((group _unit) isNotEqualTo _oldGroup) then {
+    if ((group _unit) != _oldGroup) then {
         if (_id != -1) then {
             _unit joinAsSilent [_oldGroup, _id];
         } else {
@@ -117,7 +111,7 @@ private _id = if (!local _unit) then {
 
     [{
         // Wait until the Zeus interface is closed
-        isNull (findDisplay IDD_RSCDISPLAYCURATOR);
+        isNull (findDisplay IDD_RSCDISPLAYCURATOR)
     }, {
         // Check after we have taken over new unit whether it has been teleported; Randomly does that sometimes (could be locality issue)
         [{
@@ -137,7 +131,7 @@ private _id = if (!local _unit) then {
 
             [{
                 // Wait until the pause menu has been opened
-                !isNull _this;
+                !isNull _this
             }, {
                 // Close the pause menu
                 _this closeDisplay IDC_CANCEL;

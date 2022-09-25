@@ -24,10 +24,12 @@ GVAR(trackUnits) = [];
         // If no unit was selected in the dialog, check if module was placed on a unit
         _unit = _players param [0, _unit];
 
-        // If object is not unit, exit
-        if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
-            ["Select a living unit!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+        if (!alive _unit) exitWith {
+            ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+        };
+
+        if !(_unit isKindOf "CAManBase") exitWith {
+            ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
         };
 
         // If remove EH
@@ -39,8 +41,7 @@ GVAR(trackUnits) = [];
 
         // If no method of notification was selected, exit
         if (!_hint && {!_systemChat} && {!_zeusBanner} && {!_log}) exitWith {
-            ["Select a way of notification!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Select a way of notification"] call zen_common_fnc_showMessage;
         };
 
         _unit setVariable [QGVAR(displayDeath), [_hint, _systemChat, _zeusBanner, _log]];
@@ -88,9 +89,6 @@ GVAR(trackUnits) = [];
         };
 
         // Add unit to tracking
-        [["Unit is being tracked", "Unit is already being tracked!"] select ((GVAR(trackUnits) pushBackUnique _unit) == -1)] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
+        [["Unit is being tracked", "Unit is already being tracked"] select ((GVAR(trackUnits) pushBackUnique _unit) == -1)] call zen_common_fnc_showMessage;
+    }, {}, _unit] call zen_dialog_fnc_create;
 }, ICON_RADIO] call zen_custom_modules_fnc_register;

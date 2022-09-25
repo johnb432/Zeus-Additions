@@ -14,8 +14,7 @@
 
         // If no side or group is selected, exit
         if (_sides isEqualTo [] && {_groups isEqualTo []}) exitWith {
-            ["Select a side or group!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Select a side or group"] call zen_common_fnc_showMessage;
         };
 
         // Looks if a group or a side was selected. If both were selected, group has priority
@@ -127,8 +126,5 @@
                 }, _helperUnit] call CBA_fnc_execNextFrame;
             }, _this];
         }, [_helperUnit, _oldPlayer, _isDamageAllowed, _channelSettings, _channelIDs]] call CBA_fnc_waitUntilAndExecute;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }] call zen_dialog_fnc_create;
+    }, {}] call zen_dialog_fnc_create;
 }, ICON_DOCUMENTS] call zen_custom_modules_fnc_register;

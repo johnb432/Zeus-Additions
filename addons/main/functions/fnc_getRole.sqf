@@ -28,30 +28,14 @@ if (_type != 0) exitWith {
     _type
 };
 
-/*
-private _weapon = "";
+// Tertiary weapon overwrites primary weapons
+private _weapon = secondaryWeapon _this;
 
-if ((primaryWeapon _this) isNotEqualTo "") then {
+if (_weapon == "") then {
     _weapon = primaryWeapon _this;
 };
 
-// Tertiary weapon overwrites primary weapons
-if ((secondaryWeapon _this) isNotEqualTo "") then {
-    _weapon = secondaryWeapon _this;
-};
-*/
-
-private _weapon = switch (true) do {
-    case ((secondaryWeapon _this) isNotEqualTo ""): {
-        secondaryWeapon _this
-    };
-    case ((primaryWeapon _this) isNotEqualTo ""): {
-        primaryWeapon _this
-    };
-    default {""};
-};
-
-if (_weapon isEqualTo "") exitWith {
+if (_weapon == "") exitWith {
     0
 };
 

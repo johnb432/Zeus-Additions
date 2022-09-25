@@ -12,14 +12,14 @@
  * None
  *
  * Example:
- *  call zeus_additions_main_fnc_stormScriptPFH;
+ * call zeus_additions_main_fnc_stormScriptPFH;
  *
  * Public: No
  */
 
 [{
     // Wait until the player is fully loaded
-    !isNull (findDisplay IDD_MISSION);
+    !isNull (findDisplay IDD_MISSION)
 }, {
     [{
         params ["_inc", "_handleID"];

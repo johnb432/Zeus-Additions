@@ -9,7 +9,7 @@
  * 1: Type <STRING>
  *
  * Return Value:
- * None
+ * If there is an object that can have its pathing enabled/disabled <BOOLEAN>
  *
  * Example:
  * [[cursorObject], "disableAI"] call zeus_additions_main_fnc_pathingCondition;
@@ -21,20 +21,20 @@ params [["_objects", []], ["_type", "", [""]]];
 
 private _condition = {_x checkAIFeature "PATH"};
 
-if ((toLowerANSI _type) isEqualTo "enableai") then {
+if (_type == "enableAI") then {
     _condition = {!(_x checkAIFeature "PATH")};
 };
 
 _objects findIf {
-    alive _x &&
-    {!isPlayer _x} &&
-    _condition &&
-    {_x isKindOf "CAManBase" || {
+    (_x isKindOf "CAManBase" || {
         if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
             _x = driver _x;
             true
         } else {
             false
         }
-    }}
-} != -1;
+    }) &&
+    {alive _x} &&
+    {!isPlayer _x} &&
+    _condition
+} != -1

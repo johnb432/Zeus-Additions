@@ -23,9 +23,9 @@
     private _direction = ((_entity modelToWorldVisual (_entity selectionPosition "head")) vectorFromTo (_entity modelToWorldVisual (_entity selectionPosition "Spine3"))) call CBA_fnc_vectDir;
     private _names = [_entity call ace_common_fnc_getName, [_entity, false, true] call ace_common_fnc_getName];
     private _medicalState = if (zen_common_aceMedical) then {
-        _entity call ace_medical_fnc_serializeState;
+        _entity call ace_medical_fnc_serializeState
     } else {
-        nil;
+        nil
     };
 
     [{

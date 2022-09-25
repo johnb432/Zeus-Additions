@@ -28,8 +28,8 @@
 [*] Remove Grenades from AI
 [*] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
-[*] Spawn Ammo Resupply for Units
-[*] Spawn Ammo Resupply for Units (Selection)
+[*] Spawn Ammo Resupply for Players
+[*] Spawn Ammo Resupply for Players (Selection)
 [*] Toggle Consciousness (forced)
 [*] Toggle Dust Storm Script
 [*] Track Unit Death

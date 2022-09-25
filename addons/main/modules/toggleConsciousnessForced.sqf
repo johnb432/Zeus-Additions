@@ -6,12 +6,19 @@
 ["Zeus Additions - Medical", "Toggle Consciousness (Forced)", {
     params ["", "_unit"];
 
+    if (isNull _unit) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
+
     // If opening on a vehicle
     _unit = effectiveCommander _unit;
 
-    if !(alive _unit && {_unit isKindOf "CAManBase"}) exitWith {
-        ["Select a living unit!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+    if (!alive _unit) exitWith {
+        ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+    };
+
+    if !(_unit isKindOf "CAManBase") exitWith {
+        ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
     };
 
     // Toggle consciousness

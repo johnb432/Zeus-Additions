@@ -2,17 +2,19 @@
 
 if (!hasInterface) exitWith {};
 
+private _cfgPatches = configFile >> "CfgPatches";
+
 // Optionals
-GVAR(ACEDraggingLoaded) = isClass (configFile >> "CfgPatches" >> "ace_dragging");
+GVAR(ACEDraggingLoaded) = isClass (_cfgPatches >> "ace_dragging");
 GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
 
 // If for some reason this postInit loads before the ZEN one, make sure there is something
 if (isNil "zen_common_aceMedical") then {
-    zen_common_aceMedical = isClass (configFile >> "CfgPatches" >> "ace_medical");
+    zen_common_aceMedical = isClass (_cfgPatches >> "ace_medical");
 };
 
 if (isNil "zen_common_aceMedicalTreatment") then {
-    zen_common_aceMedicalTreatment = isClass (configFile >> "CfgPatches" >> "ace_medical_treatment");
+    zen_common_aceMedicalTreatment = isClass (_cfgPatches >> "ace_medical_treatment");
 };
 
 // Add counter and JIP functions only if player is curator
@@ -70,7 +72,7 @@ if (GVAR(ACEDraggingLoaded)) then {
 };
 
 // Check if TFAR is loaded
-if (isClass (configFile >> "CfgPatches" >> "tfar_core") || {isClass (configFile >> "CfgPatches" >> "task_force_radio")}) then {
+if (isClass (_cfgPatches >> "tfar_core") || {isClass (_cfgPatches >> "task_force_radio")}) then {
     #include "modules\changeRadioRange.sqf"
 } else {
     if (GVAR(enableTFARHint)) then {
@@ -79,7 +81,7 @@ if (isClass (configFile >> "CfgPatches" >> "tfar_core") || {isClass (configFile 
 };
 
 // Check if RHS AFRF is loaded
-if (isClass (configFile >> "CfgPatches" >> "rhs_main_loadorder")) then {
+if (isClass (_cfgPatches >> "rhs_main_loadorder")) then {
     #include "modules\changeRHSAPS.sqf"
 } else {
     if (GVAR(enableRHSHint)) then {
@@ -103,7 +105,7 @@ if (zen_common_aceMedical) then {
 };
 
 // Check if ACE Cargo is loaded
-if (isClass (configFile >> "CfgPatches" >> "ace_cargo")) then {
+if (isClass (_cfgPatches >> "ace_cargo")) then {
     #include "modules\unloadACECargo.sqf"
 } else {
     if (GVAR(enableACECargoHint)) then {

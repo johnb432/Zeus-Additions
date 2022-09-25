@@ -7,18 +7,23 @@
     params ["", "_object"];
 
     if (!isNil "ace_cargo_enable" && {!ace_cargo_enable}) exitWith {
-         ["ACE Cargo isn't enabled!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["ACE Cargo isn't enabled!"] call zen_common_fnc_showMessage;
     };
 
-    if !(alive _object && {_object isKindOf "AllVehicles"}) exitWith {
-         ["Select an undestroyed object!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+    if (isNull _object) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
+
+    if !(alive _object) exitWith {
+        ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+    };
+
+    if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
+        ["STR_ZEN_Modules_OnlyVehicles"] call zen_common_fnc_showMessage;
     };
 
     if !(_object getVariable ["ace_cargo_hasCargo", getNumber (configOf _object >> "ace_cargo_hasCargo") == 1]) exitWith {
-         ["This vehicle doesn't have ACE Cargo!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["This vehicle doesn't have ACE Cargo!"] call zen_common_fnc_showMessage;
     };
 
     // Save value so it can be applied again later

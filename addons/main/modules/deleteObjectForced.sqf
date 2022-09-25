@@ -7,13 +7,11 @@
     params ["", "_object"];
 
     if (isNull _object) exitWith {
-         ["Select an object!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
     };
 
     if (isPlayer _object) exitWith {
         ["You can't delete players!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
     };
 
     // Delete crew & object

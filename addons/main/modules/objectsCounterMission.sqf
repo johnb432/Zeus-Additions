@@ -5,11 +5,11 @@
 
 ["Zeus Additions - Utility", "Show Mission Object Counter", {
     if (!GVAR(enableMissionCounter)) exitWith {
-        ["Module is turned off in CBA settings!"] call zen_common_fnc_showMessage;
+        ["Module is turned off in CBA settings"] call zen_common_fnc_showMessage;
     };
 
     if (isNil FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player))) exitWith {
-        ["Nothing to print to log!"] call zen_common_fnc_showMessage;
+        ["Nothing to print to log"] call zen_common_fnc_showMessage;
     };
 
     private _index = 0;

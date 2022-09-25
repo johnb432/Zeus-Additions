@@ -21,14 +21,12 @@
 
          // If no units are selected at all
          if (isNull _unit && {_sides isEqualTo []}) exitWith {
-             ["Select a side or place on unit!"] call zen_common_fnc_showMessage;
-             playSound "FD_Start_F";
+             ["Select a side or place on unit"] call zen_common_fnc_showMessage;
          };
 
          // If module was placed on a player
          if (!_doGroup && {isPlayer _unit}) exitWith {
-             ["Select AI units!"] call zen_common_fnc_showMessage;
-             playSound "FD_Start_F";
+             ["Select AI units"] call zen_common_fnc_showMessage;
          };
 
          private _units = [];
@@ -55,7 +53,7 @@
          _units = (_units arrayIntersect _units) select {!isPlayer _x};
 
          if (_units isEqualTo []) exitWith {
-             ["No AI units were found!"] call zen_common_fnc_showMessage;
+             ["No AI units were found"] call zen_common_fnc_showMessage;
          };
 
          private _magazines = [];
@@ -73,8 +71,5 @@
          } forEach _units;
 
          [_string] call zen_common_fnc_showMessage;
-     }, {
-         ["Aborted"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
-     }, _unit] call zen_dialog_fnc_create;
+     }, {}, _unit] call zen_dialog_fnc_create;
  }, ICON_GRENADE] call zen_custom_modules_fnc_register;

@@ -6,6 +6,10 @@
 ["Zeus Additions - Medical", "Create ACE Medical Injuries", {
     params ["", "_unit"];
 
+    if (isNull _object) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
+
     // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
     if (alive _unit) then {
         _unit = effectiveCommander _unit;
@@ -13,8 +17,7 @@
 
     // Can be applied to dead units too!
     if !(_unit isKindOf "CAManBase") exitWith {
-        ["Select a unit!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+        ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
     };
 
     ["Create ACE Injuries (Random Damage doesn't work on dead units!)", [
@@ -48,6 +51,11 @@
     {
         params ["_results", "_unit"];
 
+        // Check again, in case something has changed since dialog's opening
+        if (isNull _unit) exitWith {
+            ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+        };
+
         private _formattedResults = [];
         private _temp = 0;
 
@@ -79,8 +87,5 @@
         };
 
         ["Injuries created"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
+    }, {}, _unit] call zen_dialog_fnc_create;
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;

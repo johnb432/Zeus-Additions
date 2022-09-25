@@ -21,7 +21,7 @@ params ["_unit", "_giveUnitParachute"];
 
 // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
 [{
-    (getPos _this) select 2 < 100 || {!alive _this};
+    (getPos _this) select 2 < 100 || {!alive _this}
 }, {
     // If parachute is already open or unit is unconscious or dead, don't do action
     if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {_this getVariable ["ACE_isUnconscious", false] || {(lifeState _this) == "INCAPACITATED" || {!alive _this}}}) exitWith {};
@@ -37,7 +37,7 @@ private _backpackClass = backpack _unit;
 if (getText (configFile >> "CfgVehicles" >> _backpackClass >> "backpackSimulation") == "ParachuteSteerable") exitWith {};
 
 // If the unit doesn't have a chute, give one to unit
-if (_backpackClass isNotEqualTo "") then {
+if (_backpackClass != "") then {
     // This script does not account for backpacks within backpacks
     private _container = backpackContainer _unit;
     private _packHolder = createVehicle ["groundWeaponHolder", [0, 0, 0], [], 0, "CAN_COLLIDE"];
@@ -48,7 +48,7 @@ if (_backpackClass isNotEqualTo "") then {
         params ["_unit"];
         (getUnitFreefallInfo _unit) params ["_isFalling", "_isInFreeFallPose"];
 
-        !alive _unit || {_isFalling && {_isInFreeFallPose}};
+        !alive _unit || {_isFalling && {_isInFreeFallPose}}
     }, {
         params ["_unit", "_packHolder"];
 
@@ -60,7 +60,7 @@ if (_backpackClass isNotEqualTo "") then {
             params ["_unit"];
             (getUnitFreefallInfo _unit) params ["_isFalling", "_isInFreeFallPose"];
 
-            !alive _unit || {_isFalling && {!_isInFreeFallPose}} || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1};
+            !alive _unit || {_isFalling && {!_isInFreeFallPose}} || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
         }, {
             params ["_unit", "_packHolder"];
 
@@ -71,7 +71,7 @@ if (_backpackClass isNotEqualTo "") then {
             [{
                 params ["_unit"];
 
-                !alive _unit || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1};
+                !alive _unit || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
             }, {
                 params ["_unit", "_packHolder", "_backpackClass", "_weaponItemsCargo", "_magazinesAmmoCargo", "_itemCargo"];
                 _itemCargo params ["_items", "_itemsCount"];

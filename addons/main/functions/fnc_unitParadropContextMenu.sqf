@@ -79,7 +79,4 @@ if (_filterMode == PARADROP_MISC) exitWith {
     GVAR(selectedParadropUnits) = _units;
 
     ["Selected %1 units, %2 vehicles & %3 objects", count _units, count _vehicles, count _misc] call zen_common_fnc_showMessage;
-}, {
-    ["Aborted"] call zen_common_fnc_showMessage;
-    playSound "FD_Start_F";
-}, [_units, _vehicles, _misc]] call zen_dialog_fnc_create;
+}, {}, [_units, _vehicles, _misc]] call zen_dialog_fnc_create;

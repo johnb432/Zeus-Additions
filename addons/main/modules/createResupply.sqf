@@ -4,8 +4,6 @@
  */
 
 ["Zeus Additions - Resupply", "Spawn Ammo Resupply for Players", {
-    params ["_pos", "_object"];
-
     ["Spawn Ammo Resupply for Players", [
         ["OWNERS", ["Players selected", "Select sides/groups/players to determine which ammunition to spawn. Module can also be placed on a player."], [[], [], [], 2], true],
         ["SLIDER", ["Primary Magazines", "Spawns in x amount of each primary weapon compatible magazines for each unit (not x total!)."], [0, 200, 20, 0]],
@@ -27,14 +25,12 @@
 
         // If no player is selected in the dialog and the module isn't placed on a player, exit
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
-            ["Place module on a player or select units from the list!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Place module on a player or select units from the list"] call zen_common_fnc_showMessage;
         };
 
         // If insert into inventory, but no inventory found or enabled
         if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
-            ["Object has no inventory!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Object has no inventory"] call zen_common_fnc_showMessage;
         };
 
         // If "spawn ammo box", make a new object
@@ -73,19 +69,19 @@
 
         // Spawn ammo
         {
-            if (_numPrim > 0 && {(primaryWeapon _x) isNotEqualTo ""}) then {
+            if (_numPrim > 0 && {(primaryWeapon _x) != ""}) then {
                 {
                     _object addItemCargoGlobal [_x, _numPrim];
                 } forEach (compatibleMagazines (primaryWeapon _x) - _blackList);
             };
 
-            if (_numHand > 0 && {(handgunWeapon _unit) isNotEqualTo ""}) then {
+            if (_numHand > 0 && {(handgunWeapon _unit) != ""}) then {
                 {
                     _object addItemCargoGlobal [_x, _numHand];
                 } forEach (compatibleMagazines (handgunWeapon _x) - _blackList);
             };
 
-            if (_numSec > 0 && {(secondaryWeapon _unit) isNotEqualTo ""}) then {
+            if (_numSec > 0 && {(secondaryWeapon _unit) != ""}) then {
                 {
                     _object addItemCargoGlobal [_x, _numSec];
                 } forEach (compatibleMagazines (secondaryWeapon _x) - _blackList);
@@ -93,15 +89,10 @@
         } forEach ((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups || {_x in _players}}});
 
         ["Ammo resupply created"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_INVENTORY] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Resupply", "Spawn Ammo Resupply for Players (Selection)", {
-    params ["_pos", "_object"];
-
     ["Spawn Ammo Resupply (Magazine selection comes after this dialog)", [
         ["OWNERS", ["Players selected", "Select sides/groups/players to determine which ammunition to spawn. Module can also be placed on a player."], [[], [], [], 2], true],
         ["SLIDER", ["LAT BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
@@ -128,8 +119,7 @@
 
         // If insert into inventory, but no inventory found or enabled
         if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
-            ["Object has no inventory!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Object has no inventory"] call zen_common_fnc_showMessage;
         };
 
         // If "spawn ammo box", make a new object
@@ -180,8 +170,5 @@
 
         // Spawn ammo GUI
         [_weapons arrayIntersect _weapons] spawn FUNC(createResupplyGUI);
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_INVENTORY] call zen_custom_modules_fnc_register;

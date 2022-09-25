@@ -23,8 +23,7 @@
 
         // Check for selected units
         if (!_includeContextMenu && {_sides isEqualTo []} && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
-            ["Select a side/group/unit!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Select a side/group/unit"] call zen_common_fnc_showMessage;
         };
 
         // Only send function to all clients if script is enabled
@@ -161,8 +160,5 @@
         };
 
         ["Paradropped %1 units, %2 vehicles & %3 objects", _unitCount, _vicCount, _objectCount] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _pos] call zen_dialog_fnc_create;
+    }, {}, _pos] call zen_dialog_fnc_create;
 }, ICON_PARADROP] call zen_custom_modules_fnc_register;

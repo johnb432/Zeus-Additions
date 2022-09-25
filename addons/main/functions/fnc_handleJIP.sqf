@@ -31,7 +31,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
 
         [{
             // Wait for player to exist; If player is Virtual Curator, BIS_fnc_getUnitByUID does not work; use getUserInfo instead
-            !isNull ((getUserInfo (_this select 1)) select 10);
+            !isNull ((getUserInfo (_this select 1)) select 10)
         }, {
             params ["_uid", "_idstr"];
 

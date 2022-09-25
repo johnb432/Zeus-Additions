@@ -6,19 +6,15 @@
  */
 
 ["Zeus Additions - Utility", "Configure Doors (Extended)", {
-    params ["_pos"];
-
-    // Position has to be AGL/ATL, ZEN gives ASL
-    _pos set [2, 0.5];
-
     ["Configure Building Doors", [
         ["TOOLBOX", "Lock state", [0, 1, 4, ["Unbreachable", "Breachable", "Closed", "Open"]], false],
-        ["EDIT", ["Explosives", "An array that contains all allowed explosives used for breaching.\nEach time this dialog is opened and not aborted, the array used for checking explosives compatibility will be updated."], GETPRVAR(QGVAR(explosivesBreach), str ['DemoCharge_Remote_Mag']), true],
+        ["EDIT", ["Explosives/Items", "An array that contains all allowed explosives/items used for breaching.\nEach time this dialog is opened and not aborted, the array used for checking explosives/items compatibility will be updated."], GETPRVAR(QGVAR(explosivesBreach), str ['DemoCharge_Remote_Mag']), true],
         ["CHECKBOX", ["Reset to default lists", "Resets the explosives list above to the default."], false, true]
     ],
     {
-        params ["_results", "_pos"];
+        params ["_results", "_args"];
         _results params ["_mode", "_explosives", "_reset"];
+        _args params ["_pos", "_object"];
 
         if (_reset) exitWith {
             SETPRVAR(QGVAR(explosivesBreach),str ['DemoCharge_Remote_Mag']);
@@ -27,17 +23,22 @@
             ["Reset lists to default"] call zen_common_fnc_showMessage;
         };
 
-        // Convert to config case
-        _explosives = (parseSimpleArray _explosives) apply {configName (_x call CBA_fnc_getItemConfig)};
+        // Convert to config case and remove non-existent items
+        _explosives = ((parseSimpleArray _explosives) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
 
         SETPRVAR(QGVAR(explosivesBreach),str _explosives);
         SETMVAR(QGVAR(explosivesBreach),_explosives,true);
 
-        private _building = nearestObject [_pos, "Building"];
+        // Use passed object if valid
+        private _building = if (isNull _object || {!(_object isKindOf "Building")}) then {
+            // Position has to be AGL/ATL, ZEN gives ASL
+            nearestObject [ASLToATL _pos, "Building"]
+        } else {
+            _object
+        };
 
         if (isNull _building) exitWith {
-            ["No building found!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["STR_ZEN_Modules_BuildingTooFar"] call zen_common_fnc_showMessage;
         };
 
         private _selectionNames = [];
@@ -47,13 +48,13 @@
             if ("door" in _x && {!("handle" in _x)} && {!("doorlocks" in _x )}) then {
                 _selectionNames pushBack _x;
             };
-        } forEach ((selectionNames _this) apply {toLowerANSI _x});
+        } forEach ((selectionNames _building) apply {toLowerANSI _x});
 
         _selectionNames sort true;
 
         // If no doors found, exit
         if (_selectionNames isEqualTo []) exitWith {
-            ["No doors were found for %1!", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
+            ["No doors were found for %1", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
         };
 
         private _lock = switch (_mode) do {
@@ -129,10 +130,9 @@
                         };
 
                         private _explosives = GETMVAR(QGVAR(explosivesBreach),['DemoCharge_Remote_Mag']);
-                        private _explosive = _explosives param [_explosives findAny (magazines _caller), ""];
 
-                        if (_explosive isEqualTo "") exitWith {
-                            hint "You need a compatible explosive to breach!";
+                        if ((_explosives param [_explosives findAny (itemsWithMagazines _caller), ""]) == "") exitWith {
+                            hint "You need a compatible item to breach!";
                         };
 
                         ["Configure Breaching Charge", [
@@ -141,7 +141,14 @@
                         {
                             params ["_results", "_args"];
                             _results params ["_timer"];
-                            _args params ["_target", "_caller", "_explosive", "_door", "_doorID"];
+                            _args params ["_target", "_caller", "_explosives", "_door", "_doorID"];
+
+                            // Check if the item hasn't disappeared since the last check
+                            private _explosive = _explosives param [_explosives findAny (itemsWithMagazines _caller), ""];
+
+                            if (_explosive == "") exitWith {
+                                hint "You need a compatible item to breach!";
+                            };
 
                             // Get door surface to place explosive on
                             private _unitPos = eyePos _caller;
@@ -298,7 +305,7 @@
 
                                 [_target, _doorID, 2] call zen_doors_fnc_setState;
                             }, [_helperObject, _target, _doorID], _timer + 0.5] call CBA_fnc_waitAndExecute;
-                        }, {}, [_target, _caller, _explosive, _door, _doorID]] call zen_dialog_fnc_create;
+                        }, {}, [_target, _caller, _explosives, _door, _doorID]] call zen_dialog_fnc_create;
                     },
                     [_selectionName, _index + 1],
                     1.5,
@@ -316,8 +323,5 @@
 
             [_jipID, _building] call CBA_fnc_removeGlobalEventJIP;
         } forEach _selectionNames;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _pos] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_DOOR] call zen_custom_modules_fnc_register;

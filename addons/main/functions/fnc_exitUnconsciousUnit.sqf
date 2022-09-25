@@ -22,11 +22,11 @@ if (isNil QGVAR(exitUnconsciousID) && {GVAR(enableExitUnconsciousUnit)}) exitWit
         // If Select Unit module is running, don't do anything
         if (!isNil QGVAR(remoteControlArgs)) exitWith {};
 
-        if !(!isNil "bis_fnc_moduleRemoteControl_unit" && {(lifeState bis_fnc_moduleRemoteControl_unit) == "INCAPACITATED" || {bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false]}}) exitWith {};
+        if !(!isNull GETMVAR("bis_fnc_moduleRemoteControl_unit",objNull) && {(lifeState bis_fnc_moduleRemoteControl_unit) == "INCAPACITATED" || {bis_fnc_moduleRemoteControl_unit getVariable ["ACE_isUnconscious", false]}}) exitWith {};
 
         [{
-            // Wait until the pause menus has been opened
-            !isNull _this;
+            // Wait until the pause menu has been opened
+            !isNull _this
         }, {
             // Close the pause menu
             _this closeDisplay IDC_CANCEL;

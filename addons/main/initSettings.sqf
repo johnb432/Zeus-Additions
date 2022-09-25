@@ -7,7 +7,7 @@
     str GVAR(NAME),\
     0,\
     {\
-        GVAR(magsTotal) set [INDEX, (if (_this isEqualType "") then { parseSimpleArray _this } else { [[], _this] select (_this isEqualType []) }) apply {configName (_x call CBA_fnc_getItemConfig)}];\
+        GVAR(magsTotal) set [INDEX, ((if (_this isEqualType "") then {parseSimpleArray _this} else {[[], _this] select (_this isEqualType [])}) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""]];\
     }\
 ] call CBA_fnc_addSetting
 
@@ -84,7 +84,7 @@
     false,
     0,
     {
-        GVAR(blacklist) = (if (_this && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+        GVAR(blacklist) = ((if (_this && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
             private _list = [];
 
             {
@@ -98,7 +98,7 @@
             } else {
                 [[], GVAR(blacklistSettings)] select (GVAR(blacklistSettings) isEqualType [])
             };
-        }) apply {configName (_x call CBA_fnc_getItemConfig)};
+        }) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
     }
 ] call CBA_fnc_addSetting;
 
@@ -112,11 +112,11 @@
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
 
-        GVAR(blacklist) = (if (_this isEqualType "") then {
+        GVAR(blacklist) = ((if (_this isEqualType "") then {
             parseSimpleArray _this
         } else {
             [[], _this] select (_this isEqualType [])
-        }) apply {configName (_x call CBA_fnc_getItemConfig)};
+        }) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
     }
 ] call CBA_fnc_addSetting;
 

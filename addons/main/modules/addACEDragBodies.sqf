@@ -103,7 +103,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
     // Go through string and remove headers
     while {true} do {
         // Remove #line blabla
-        if ((_functionString select [0, 5]) isEqualTo "#line") then {
+        if ((_functionString select [0, 5]) == "#line") then {
             _index = _functionString find ["#", 1];
 
             if (_index != -1) then {
@@ -130,10 +130,10 @@ if (isNil QGVAR(draggingKilledEH)) then {
     _functionString = [_functionString, "alive _x && {vehicle _x == _x}", "isNull objectParent _x"] call CBA_fnc_replace;
 
     // zeus_additions_main_fnc_serializeObjects; Used by this module and zeus corpse dragging
-    DFUNC(serializeObjects) = if (_functionString isNotEqualTo "") then {
-        compileFinal _functionString;
+    DFUNC(serializeObjects) = if (_functionString != "") then {
+        compileFinal _functionString
     } else {
-        zen_common_fnc_serializeObjects;
+        zen_common_fnc_serializeObjects
     };
 };
 
@@ -158,8 +158,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
         };
 
         if (_bodies isEqualTo [] && {_allFuture == 0}) exitWith {
-             ["No dead bodies were found!"] call zen_common_fnc_showMessage;
-             playSound "FD_Start_F";
+             ["No dead bodies were found"] call zen_common_fnc_showMessage;
         };
 
         // Compile action only if it's going to be used
@@ -255,58 +254,53 @@ if (isNil QGVAR(draggingKilledEH)) then {
             _bodies = _bodies select {!(_x getVariable [QGVAR(canDragBody), false])};
 
             if (_bodies isEqualTo []) exitWith {
-                "No dead bodies without ACE Drag Body were found!";
+                "No dead bodies without ACE Drag Body were found"
             };
 
             {
                 _x setVariable [QGVAR(canDragBody), true, true];
             } forEach _bodies;
 
-            format ["Added ACE Drag Body to %1", ["body", "all bodies"] select (count _bodies != 1)];
+            format ["Added ACE Drag Body to %1", ["body", "all bodies"] select (count _bodies != 1)]
         } else {
             // Remove action
             _bodies = _bodies select {_x getVariable [QGVAR(canDragBody), false]};
 
             if (_bodies isEqualTo []) exitWith {
-                "No dead bodies with ACE Drag Body were found!";
+                "No dead bodies with ACE Drag Body were found!"
             };
 
             {
                 _x setVariable [QGVAR(canDragBody), false, true];
             } forEach _bodies;
 
-            format ["Removed ACE Drag Body from %1", ["body", "all bodies"] select (count _bodies != 1)];
+            format ["Removed ACE Drag Body from %1", ["body", "all bodies"] select (count _bodies != 1)]
         };
 
         // Add missionEH
         if (_allFuture == 1) then {
-            if (!isNil QGVAR(enableDragging)) exitWith {
-                playSound "FD_Start_F";
-                _string = "ACE Drag Body was already added to all future bodies!";
+            _string = if (!isNil QGVAR(enableDragging)) then {
+                "ACE Drag Body was already added to all future bodies"
+            } else {
+                GVAR(enableDragging) = true;
+                publicVariable QGVAR(enableDragging);
+
+                "Added ACE Drag Body to all future bodies"
             };
-
-            GVAR(enableDragging) = true;
-            publicVariable QGVAR(enableDragging);
-
-            _string = "Added ACE Drag Body to all future bodies";
         };
 
         // Remove missionEH
         if (_allFuture == 2) then {
-            if (isNil QGVAR(enableDragging)) exitWith {
-                playSound "FD_Start_F";
-                _string = "ACE Drag Body was already removed from all future bodies!";
+            _string = if (isNil QGVAR(enableDragging)) then {
+                "ACE Drag Body was already removed from all future bodies"
+            } else {
+                GVAR(enableDragging) = nil;
+                publicVariable QGVAR(enableDragging);
+
+                "Removed ACE Drag Body from all future bodies"
             };
-
-            GVAR(enableDragging) = nil;
-            publicVariable QGVAR(enableDragging);
-
-            _string = "Removed ACE Drag Body from all future bodies";
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _object] call zen_dialog_fnc_create;
+    }, {}, _object] call zen_dialog_fnc_create;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;

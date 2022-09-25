@@ -5,8 +5,6 @@
  */
 
 ["Zeus Additions - Utility", "Paradrop Unit Action", {
-    params ["_pos", "_object"];
-
     ["Paradrop Units", [
         ["TOOLBOX", "Mode", [0, 1, 2, ["Add", "Remove"]]]
     ],
@@ -24,7 +22,7 @@
         // Add action
         private _string = if ((_results select 0) == 0) then {
             if (!isNil {_object getVariable QGVAR(paradropActionJIP)}) exitWith {
-                "Object already has paradrop action!";
+                "Object already has paradrop action"
             };
 
             // Only send function to all clients if script is enabled
@@ -61,7 +59,7 @@
                                     private _location = locationNull;
 
                                     {
-                                        if (text _x isNotEqualTo "") exitWith {
+                                        if (text _x != "") exitWith {
                                             _location = _x
                                         };
                                     } forEach nearestLocations [[_mapCenter, _mapCenter], ["NameVillage", "NameCity", "NameCityCapital", "NameLocal", "NameMarine", "Hill", "HandDrawnCamp"], sqrt (2 * _mapCenter ^ 2), _pos];
@@ -172,13 +170,12 @@
             // Remove from JIP if object is deleted
             [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
 
-            "Added paradrop action to object";
+            "Added paradrop action to object"
         } else {
             private _jipID = _object getVariable QGVAR(paradropActionJIP);
 
             if (isNil "_jipID") exitWith {
-                playSound "FD_Start_F";
-                "Object already has paradrop action removed!";
+                "Object already has paradrop action removed"
             };
 
             _jipID call CBA_fnc_removeGlobalEventJIP;
@@ -196,12 +193,9 @@
                 _this removeAction _actionID;
             }, _object]] call CBA_fnc_globalEvent;
 
-            "Removed paradrop action from object";
+            "Removed paradrop action from object"
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_PARADROP] call zen_custom_modules_fnc_register;

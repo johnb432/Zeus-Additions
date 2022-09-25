@@ -78,14 +78,13 @@
 
                 "Zeus has changed channel visibility for you." remoteExecCall ["hint", _unit];
 
-                "Changed channel visibility on player";
+                "Changed channel visibility on player"
             } else {
                 // If unit is AI, null or otherwise invalid, display error if not something done to self
                 if (_self) then {
-                    "Changed channel visibility on yourself";
+                    "Changed channel visibility on yourself"
                 } else {
-                    playSound "FD_Start_F";
-                    "Select a side/group/player or even yourself (must be a player)!";
+                    "Select a side/group/player or even yourself (must be a player)"
                 };
             };
 
@@ -113,8 +112,5 @@
         "Zeus has changed channel visibility for you." remoteExecCall ["hint", _players];
 
         ["Changed channel visibility on selected players"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_unit, _channelIDs]] call zen_dialog_fnc_create;
+    }, {}, [_unit, _channelIDs]] call zen_dialog_fnc_create;
 }, ICON_CHANNEL] call zen_custom_modules_fnc_register;

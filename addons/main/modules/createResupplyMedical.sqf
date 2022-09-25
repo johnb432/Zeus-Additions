@@ -4,8 +4,6 @@
  */
 
 ["Zeus Additions - Resupply", "Spawn ACE Medical Resupply", {
-    params ["_pos", "_object"];
-
     ["Spawn ACE Medical Resupply", [
         ["SLIDER", "Bandages (Elastic)", [0, 300, GETPRVAR(QGVAR(elastic),200), 0], true],
         ["SLIDER", "Bandages (Packing)", [0, 300, GETPRVAR(QGVAR(packing),200), 0], true],
@@ -66,8 +64,7 @@
 
         // If insert into inventory, but no inventory found or enabled
         if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
-            ["Object has no inventory!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["Object has no inventory"] call zen_common_fnc_showMessage;
         };
 
         // If "spawn medical crate", make a new object
@@ -137,8 +134,5 @@
         ];
 
         ["Medical resupply created"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;
