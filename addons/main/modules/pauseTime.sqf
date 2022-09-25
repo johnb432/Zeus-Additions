@@ -31,7 +31,7 @@
 
                                 SETMVAR(QGVAR(setTimeAcc),nil,true);
 
-                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed!"] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
                             };
 
                             // Looking just at the seconds is enough
@@ -50,8 +50,7 @@
 
                 "Time paused";
             } else {
-                playSound "FD_Start_F";
-                "Time already paused!";
+                "Time already paused";
             };
         } else {
             private _pfhID = GETMVAR(QGVAR(setTimeAcc),nil);
@@ -64,14 +63,10 @@
 
                 "Time reverted back to normal (1x)";
             } else {
-                playSound "FD_Start_F";
-                "Time already normal (1x)!";
+                "Time already normal (1x)";
             };
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }] call zen_dialog_fnc_create;
+    }, {}] call zen_dialog_fnc_create;
 }, ICON_TIME] call zen_custom_modules_fnc_register;

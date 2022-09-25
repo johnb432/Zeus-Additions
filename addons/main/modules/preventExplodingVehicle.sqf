@@ -6,9 +6,16 @@
 ["Zeus Additions - Utility", "Prevent Vehicle from Exploding", {
     params ["", "_object"];
 
+    if (isNull _object) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
+
+    if (!alive _object) exitWith {
+        ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+    };
+
     if ((fullCrew [_object, "driver", true]) isEqualTo []) exitWith {
-        ["Select a vehicle!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+        ["STR_ZEN_Modules_OnlyVehicles"] call zen_common_fnc_showMessage;
     };
 
     ["Prevent Vehicle from Exploding", [
@@ -17,11 +24,19 @@
     {
         params ["_results", "_object"];
 
+        // Check again, in case something has changed since dialog's opening
+        if (isNull _object) exitWith {
+            ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+        };
+
+        if (!alive _object) exitWith {
+            ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+        };
+
         // If prevention is turned on
         private _string = if (_results select 0) then {
             if (!isNil {_object getVariable QGVAR(explodingJIP)}) exitWith {
-                playSound "FD_Start_F";
-                "Vehicle already has this feature enabled!";
+                "Vehicle already has this feature enabled"
             };
 
             // "HandleDamage" only fires where the vehicle is local, therefore we need to add it to every client & JIP
@@ -42,11 +57,11 @@
 
                                     // Incoming wheel/track damage will not be changed; Allow immobilisation
                                     if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {
-                                        _damage;
+                                        _damage
                                     } else {
                                         // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
                                         _object setHitPointDamage ["hithull", (_object getHitPointDamage "hithull") min 0.75];
-                                        ([0.75, 0.95] select (_hitPoint isNotEqualTo "" && {_hitPoint isNotEqualTo "hithull"})) min _damage;
+                                        ([0.75, 0.95] select (_hitPoint != "" && {_hitPoint != "hithull"})) min _damage
                                     };
                                 }]
                             ];
@@ -74,11 +89,11 @@
 
                         // Incoming wheel/track damage will not be changed; Allow immobilisation
                         if ("wheel" in _hitPoint || {"track" in _hitPoint}) then {
-                            _damage;
+                            _damage
                         } else {
                             // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
                             _object setHitPointDamage ["hithull", (_object getHitPointDamage "hithull") min 0.75];
-                            ([0.75, 0.95] select (_hitPoint isNotEqualTo "" && {_hitPoint isNotEqualTo "hithull"})) min _damage;
+                            ([0.75, 0.95] select (_hitPoint != "" && {_hitPoint != "hithull"})) min _damage
                         };
                     }]
                 ];
@@ -90,14 +105,14 @@
             // In case object is deleted
             [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
 
-            "Vehicle exploding prevention has been enabled";
+            "Vehicle exploding prevention has been enabled"
         } else {
             // If prevention is turned off
             private _jipID = _object getVariable QGVAR(explodingJIP);
 
             if (isNil "_jipID") exitWith {
                 playSound "FD_Start_F";
-                "Vehicle already has this feature disabled!";
+                "Vehicle already has this feature disabled"
             };
 
             // Remove JIP event
@@ -124,12 +139,9 @@
                 _this setVariable [QGVAR(localID), nil];
             }, _object]] call CBA_fnc_globalEvent;
 
-            "Vehicle exploding prevention has been disabled";
+            "Vehicle exploding prevention has been disabled"
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _object] call zen_dialog_fnc_create;
+    }, {}, _object] call zen_dialog_fnc_create;
 }, ICON_TRUCK] call zen_custom_modules_fnc_register;

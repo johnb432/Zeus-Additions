@@ -3,8 +3,12 @@
  * Adds two modules that can create ACE medical injuries on units.
  */
 
-["Zeus Additions - Medical", "Create ACE Injuries", {
+["Zeus Additions - Medical", "Create ACE Medical Injuries", {
     params ["", "_unit"];
+
+    if (isNull _object) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
 
     // If opening on a vehicle; effectiveCommander returns objNull when unit is dead
     if (alive _unit) then {
@@ -13,11 +17,10 @@
 
     // Can be applied to dead units too!
     if !(_unit isKindOf "CAManBase") exitWith {
-        ["Select a unit!"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
+        ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
     };
 
-    ["Create ACE Injuries (Random Damage does not work on dead units!)", [
+    ["Create ACE Injuries (Random Damage doesn't work on dead units!)", [
         ["TOOLBOX", "Damage Head", [0, 1, 3, ["Small/Minor", "Medium", "Large"]]],
         ["SLIDER", "Number of Wounds Head", [0, 20, 0, 0]],
 
@@ -48,6 +51,11 @@
     {
         params ["_results", "_unit"];
 
+        // Check again, in case something has changed since dialog's opening
+        if (isNull _unit) exitWith {
+            ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+        };
+
         private _formattedResults = [];
         private _temp = 0;
 
@@ -60,11 +68,7 @@
             _temp = _results select _i;
 
             // If it's a number, round it; For number of wounds
-            if (_temp isEqualType 0) then {
-                _temp = round _temp;
-            };
-
-            _formattedResults pushBack _temp;
+            _formattedResults pushBack (if (_temp isEqualType 0) then {round _temp} else {_temp});
         };
 
         // Apply wounds using function
@@ -77,14 +81,11 @@
             [_unit, _randomDamage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], ["grenade", "explosive", "shell", "vehiclecrash", "collision", "backblast"] select (_results select 18)] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _unit];
         };
 
-        // Notify the player if affected unit is a player; For fairness reasons
+        // Notify unit if affected unit is a player; For fairness reasons
         if (isPlayer _unit) then {
             "Zeus has injured you using a module." remoteExecCall ["hint", _unit];
         };
 
         ["Injuries created"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
+    }, {}, _unit] call zen_dialog_fnc_create;
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;

@@ -6,54 +6,61 @@
  */
 
 ["Zeus Additions - Utility", "Configure Doors (Extended)", {
-    params ["_pos"];
-
-    // Position has to be AGL/ATL, ZEN gives ASL
-    _pos set [2, 0.5];
-
     ["Configure Building Doors", [
         ["TOOLBOX", "Lock state", [0, 1, 4, ["Unbreachable", "Breachable", "Closed", "Open"]], false],
-        ["EDIT", ["Explosives", "An array that contains all allowed explosives used for breaching.\nEach time this dialog is opened and not aborted, the array used for checking explosives compatibility will be updated."], GETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']"), true],
-        ["EDIT", ["Stun grenades", "An array that contains all allowed explosives."], GETPRVAR(QGVAR(stunsBreach),"['ACE_M84']"), true],
-        ["CHECKBOX", ["Reset to default lists", "Resets the explosives & stuns lists above to the default."], false, true]
+        ["EDIT", ["Explosives/Items", "An array that contains all allowed explosives/items used for breaching.\nEach time this dialog is opened and not aborted, the array used for checking explosives/items compatibility will be updated."], GETPRVAR(QGVAR(explosivesBreach), str ['DemoCharge_Remote_Mag']), true],
+        ["CHECKBOX", ["Reset to default lists", "Resets the explosives list above to the default."], false, true]
     ],
     {
-        params ["_results", "_pos"];
-        _results params ["_mode", "_explosives", "_stuns", "_reset"];
+        params ["_results", "_args"];
+        _results params ["_mode", "_explosives", "_reset"];
+        _args params ["_pos", "_object"];
 
         if (_reset) exitWith {
-            SETPRVAR(QGVAR(explosivesBreach),"['DemoCharge_Remote_Mag']");
-            SETPRVAR(QGVAR(stunsBreach),"['ACE_M84']");
-
-            SETMVAR(QGVAR(explosivesBreach),['DemoCharge_Remote_Mag'],true);
-            SETMVAR(QGVAR(stunsBreach),['ACE_M84'],true);
+            SETPRVAR(QGVAR(explosivesBreach),str ['DemoCharge_Remote_Mag']);
+            SETMVAR(QGVAR(explosivesBreach),["DemoCharge_Remote_Mag"],true);
 
             ["Reset lists to default"] call zen_common_fnc_showMessage;
         };
 
-        SETPRVAR(QGVAR(explosivesBreach),_explosives);
-        SETPRVAR(QGVAR(stunsBreach),_stuns);
+        // Convert to config case and remove non-existent items
+        _explosives = ((parseSimpleArray _explosives) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
 
+        SETPRVAR(QGVAR(explosivesBreach),str _explosives);
         SETMVAR(QGVAR(explosivesBreach),_explosives,true);
-        SETMVAR(QGVAR(stunsBreach),_stuns,true);
 
-        _building = nearestObject [_pos, "Building"];
-
-        if (isNull _building) exitWith {
-            ["No building found!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+        // Use passed object if valid
+        private _building = if (isNull _object || {!(_object isKindOf "Building")}) then {
+            // Position has to be AGL/ATL, ZEN gives ASL
+            nearestObject [ASLToATL _pos, "Building"]
+        } else {
+            _object
         };
 
-        private _sortedSelectionNames = _building call FUNC(findDoors);
+        if (isNull _building) exitWith {
+            ["STR_ZEN_Modules_BuildingTooFar"] call zen_common_fnc_showMessage;
+        };
 
-        if (isNil "_sortedSelectionNames") exitWith {};
+        private _selectionNames = [];
 
-        private _lock = 1;
+        // Find doors; Done with help from scripts from mharis001 (ZEN) & Kex (Achilles)
+        {
+            if ("door" in _x && {!("handle" in _x)} && {!("doorlocks" in _x )}) then {
+                _selectionNames pushBack _x;
+            };
+        } forEach ((selectionNames _building) apply {toLowerANSI _x});
 
-        switch (_mode) do {
-            case 2: {_lock = 0};
-            case 3: {_lock = 2};
-            default {};
+        _selectionNames sort true;
+
+        // If no doors found, exit
+        if (_selectionNames isEqualTo []) exitWith {
+            ["No doors were found for %1", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
+        };
+
+        private _lock = switch (_mode) do {
+            case 2: {0};
+            case 3: {2};
+            default {1};
         };
 
         private _jipID = "";
@@ -70,7 +77,7 @@
 
                 _building setVariable [format [QGVAR(doorJIP_%1_%2), _x, _forEachIndex + 1], nil, true];
             };
-        } forEach _sortedSelectionNames;
+        } forEach _selectionNames;
 
         // Remove all previous breaching actions from building
         ["zen_common_execute", [{
@@ -80,7 +87,7 @@
                 if ("Breach door using explosives" in ((_this actionParams _x) select 0)) then {
                     _this removeAction _x;
                 };
-            } forEach actionIDs _this;
+            } forEach (actionIDs _this);
         }, _building]] call CBA_fnc_globalEvent;
 
         [(["Building doors locked (not breachable)", "Building doors locked (breachable)", "Building doors unlocked", "Building doors opened"] select _mode)] call zen_common_fnc_showMessage;
@@ -118,52 +125,55 @@
                                     if ("Breach door using explosives" in (_actionParams select 0) && {_door == (_actionParams select 12)}) then {
                                         _target removeAction _x;
                                     };
-                                } forEach actionIDs _target;
+                                } forEach (actionIDs _target);
                             }, [_target, _door]]] call CBA_fnc_globalEvent;
                         };
 
-                        private _explosive = nil;
                         private _explosives = GETMVAR(QGVAR(explosivesBreach),['DemoCharge_Remote_Mag']);
 
-                        {
-                            if (_x in _explosives) exitWith {
-                               _explosive = _x;
-                            };
-                        } forEach magazines _caller;
-
-                        if (isNil "_explosive") exitWith {
-                            hint "You need a compatible explosive to breach!";
+                        if ((_explosives param [_explosives findAny (itemsWithMagazines _caller), ""]) == "") exitWith {
+                            hint "You need a compatible item to breach!";
                         };
 
                         ["Configure Breaching Charge", [
-                            ["TOOLBOX:YESNO", ["Use stun grenade", "Spawns a stun grenade when opening the door. Requires a stun grenade defined by the Zeus."], false],
                             ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [5, 120, 20, 0]]
                         ],
                         {
                             params ["_results", "_args"];
-                            _results params ["_useStun", "_timer"];
-                            _args params ["_target", "_caller", "_explosive", "_door", "_doorID"];
+                            _results params ["_timer"];
+                            _args params ["_target", "_caller", "_explosives", "_door", "_doorID"];
 
-                            private _exit = false;
-                            private _stun = nil;
+                            // Check if the item hasn't disappeared since the last check
+                            private _explosive = _explosives param [_explosives findAny (itemsWithMagazines _caller), ""];
 
-                            // Find stun compatible grenade if enabled
-                            if (_useStun) then {
-                                private _stuns = GETMVAR(QGVAR(stunsBreach),['ACE_M84']);
-
-                                {
-                                    if (_x in _stuns) exitWith {
-                                       _stun = _x;
-                                    };
-                                } forEach magazines _caller;
-
-                                if (isNil "_stun") exitWith {
-                                    hint "You need a compatible stun grenade to open this door!";
-                                    _exit = true;
-                                };
+                            if (_explosive == "") exitWith {
+                                hint "You need a compatible item to breach!";
                             };
 
-                            if (_exit) exitWith {};
+                            // Get door surface to place explosive on
+                            private _unitPos = eyePos _caller;
+                            private _intersection = (lineIntersectsSurfaces [_unitPos, _unitPos vectorAdd ((eyeDirection _caller) vectorMultiply 2.5), _caller, objNull, true, 1, "GEOM"]) param [0, []];
+
+                            // If door is out of glass for example, it will not return anything
+                            if (_intersection isEqualTo []) exitWith {
+                                hint "No surface could be found to place the explosive on.";
+                            };
+
+                            _intersection params ["_intersectPosASL", "_surfaceNormal"];
+
+                            // Spawn explosive
+                            private _helperObject = "DemoCharge_F" createVehicle [0, 0, 0];
+                            _helperObject setPosASL _intersectPosASL;
+
+                            // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly
+                            if ((_surfaceNormal select 0) == 0 && {(_surfaceNormal select 2) == 0}) then {
+                                _helperObject setVectorDirAndUp [[0, 0, 1], _surfaceNormal];
+                            } else {
+                                _helperObject setVectorUp _surfaceNormal;
+                            };
+
+                            // Add object to Zeus interface
+                            ["zen_common_addObjects", [[_helperObject]]] call CBA_fnc_serverEvent;
 
                             _timer = round _timer;
 
@@ -181,7 +191,7 @@
                                     if ("Breach door using explosives" in (_actionParams select 0) && {_door == (_actionParams select 12)}) then {
                                         _target removeAction _x;
                                     };
-                                } forEach actionIDs _target;
+                                } forEach (actionIDs _target);
                             }, [_target, _door]]] call CBA_fnc_globalEvent;
 
                             // Get rid of JIP handler
@@ -193,13 +203,12 @@
                                 _target setVariable [format [QGVAR(doorJIP_%1_%2), _door, _doorID], nil, true];
                             };
 
-                            if (_timer > 5) then {
-                                hint format ["Breaching in %1s!", _timer];
+                            // Notify player
+                            hint format ["Breaching in %1s!", _timer];
 
-                                [{
-                                    hint "";
-                                }, nil, 2] call CBA_fnc_waitAndExecute;
-                            };
+                            [{
+                                hint "";
+                            }, nil, 2] call CBA_fnc_waitAndExecute;
 
                             // Do place explosive animation
                             _caller playActionNow "PutDown";
@@ -209,37 +218,8 @@
                                 _this setVariable ["ace_explosives_PlantingExplosive", false];
                             }, _caller, 1.5] call CBA_fnc_waitAndExecute;
 
-                            // Get door surface to place explosive on
-                            private _unitPos = eyePos _caller;
-                            private _intersection = (lineIntersectsSurfaces [_unitPos, _unitPos vectorAdd ((eyeDirection _caller) vectorMultiply 2.5), _caller, objNull, true, 1, "GEOM"]) select 0;
-
-                            // If door is out of glass for example, it will not return anything
-                            if (isNil "_intersection") exitWith {
-                                hint "No surface could be found to place the explosive on.";
-                            };
-
-                            _intersection params ["_intersectPosASL", "_surfaceNormal", "_intersectObject", "_parentObject"];
-
-                            // Spawn explosive
-                            private _helperObject = "DemoCharge_F" createVehicle [0, 0, 0];
-                            _helperObject setPosASL _intersectPosASL;
-
-                            // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly
-                            if ((_surfaceNormal select 0) == 0 && {(_surfaceNormal select 2) == 0}) then {
-                                _helperObject setVectorDirAndUp [[0, 0, 1], _surfaceNormal];
-                            } else {
-                                _helperObject setVectorUp _surfaceNormal;
-                            };
-
-                            // Add object to Zeus interface
-                            ["zen_common_addObjects", [[_helperObject]]] call CBA_fnc_serverEvent;
-
-                            // Remove explosive & stun once everything is sure to go through, so player doesn't lose anything unfairly
+                            // Remove explosive
                             _caller removeItem _explosive;
-
-                            if (_useStun) then {
-                                _caller removeItem _stun;
-                            };
 
                             // Do the countdown
                             [{
@@ -318,18 +298,14 @@
                             }, _helperObject, _timer] call CBA_fnc_waitAndExecute;
 
                             [{
-                                params ["_helperObject", "_surfaceNormal", "_useStun", "_target", "_door", "_doorID"];
+                                params ["_helperObject", "_target", "_doorID"];
 
                                 // Delay lets the sound play correctly
                                 deleteVehicle _helperObject;
 
-                                if (_useStun && {isClass (configFile >> "CfgPatches" >> "ace_grenades")}) then {
-                                    ["ACE_G_M84" createVehicle ((getPosATL _helperObject) vectorAdd (_surfaceNormal vectorMultiply -0.3))] call ace_grenades_fnc_flashbangThrownFuze;
-                                };
-
                                 [_target, _doorID, 2] call zen_doors_fnc_setState;
-                            }, [_helperObject, _surfaceNormal, _useStun, _target, _door, _doorID], _timer + 0.5] call CBA_fnc_waitAndExecute;
-                        }, {}, [_target, _caller, _explosive, _door, _doorID]] call zen_dialog_fnc_create;
+                            }, [_helperObject, _target, _doorID], _timer + 0.5] call CBA_fnc_waitAndExecute;
+                        }, {}, [_target, _caller, _explosives, _door, _doorID]] call zen_dialog_fnc_create;
                     },
                     [_selectionName, _index + 1],
                     1.5,
@@ -346,9 +322,6 @@
             _building setVariable [format [QGVAR(doorJIP_%1_%2), _x, _forEachIndex + 1], _jipID, true];
 
             [_jipID, _building] call CBA_fnc_removeGlobalEventJIP;
-        } forEach _sortedSelectionNames;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _pos] call zen_dialog_fnc_create;
+        } forEach _selectionNames;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_DOOR] call zen_custom_modules_fnc_register;

@@ -1,3 +1,22 @@
+# Changelog for Zeus Additions 25.9.2022
+
+1.6.3.10
+- Added support for 2.10.
+- Added Receiving Range editing for "Change TFAR Radio Range" module.
+- Added support for CBA extended loadouts.
+- Removed "Give death stare ability" module.
+- Removed stun grenade options from "Configure Doors" module.
+- Removed "Snow" type of storm from storm script, as it's a weather option now. A temporary solution will remain available until ZEN updates.
+- Removed button for toggling ability to give UGL rounds or not. If module is used, it will give all compatible magazines for all weapons on players.
+- Fixed inverted curator messages in "Track Unit Death" module.
+- General improvements.
+
+# Changelog for Zeus Additions 22.7.2022
+
+1.6.3.9
+- Added captive module.
+- Change force toggle consciousness behaviour to open prompt for toggling players in cardiac arrest. 
+
 # Changelog for Zeus Additions 7.5.2022
 
 1.6.3.8

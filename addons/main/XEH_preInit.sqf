@@ -55,4 +55,7 @@ SETUVAR(QGVAR(sortedKeys),_keys);
 // CBA Settings
 #include "initSettings.sqf"
 
+// Remove stuns saved
+SETPRVAR(QGVAR(stunsBreach),nil);
+
 ADDON = true;

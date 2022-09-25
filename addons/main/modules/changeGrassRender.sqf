@@ -23,19 +23,18 @@
         };
 
         // If no sides, groups or units were selected in the dialog, check if module was placed on a unit
-        if (_sides isEqualTo [] && {_groups isEqualTo [] && {_players isEqualTo []}}) exitWith {
+        if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
                 _setting remoteExecCall ["setTerrainGrid", _unit];
 
-                "Grass rendering changed on player";
+                "Grass rendering changed on player"
             } else {
                 // If unit is AI, null or otherwise invalid, display error if not something done to self
                 if (_self) then {
-                    "Grass rendering changed on yourself";
+                    "Grass rendering changed on yourself"
                 } else {
-                    playSound "FD_Start_F";
-                    "Select a side/group/player or even yourself (must be a player)!";
+                    "Select a side/group/player or even yourself (must be a player)!"
                 };
             };
 
@@ -45,7 +44,7 @@
         // Handle JIP
         if (_doJIP) then {
             if (GETMVAR(QGVAR(handleServerJIP),false)) then {
-                GVAR(grassSettingsJIP) = [_setting, _players apply {getPlayerUID _x}, _groups, _sides];
+                GVAR(grassSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _setting];
                 publicVariableServer QGVAR(grassSettingsJIP);
             } else {
                 hint "JIP disabled. Turn on in CBA Settings to enable it.";
@@ -59,8 +58,5 @@
         _setting remoteExecCall ["setTerrainGrid", _players];
 
         ["Grass rendering changed on selected players"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _unit] call zen_dialog_fnc_create;
+    }, {}, _unit] call zen_dialog_fnc_create;
 }, ICON_TREE] call zen_custom_modules_fnc_register;

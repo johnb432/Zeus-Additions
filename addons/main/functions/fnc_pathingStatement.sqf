@@ -31,11 +31,16 @@ if (_type == "enableAI") then {
     };
 
     [_x, "PATH"] remoteExecCall [_type, _x];
-} forEach (_objects select {(_x isKindOf "CAManBase" || {
-    if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
-        _x = driver _x;
-        true
-    } else {
-        false
-    }
-}) && {alive _x && {!isPlayer _x && _condition}}});
+} forEach (_objects select {
+    (_x isKindOf "CAManBase" || {
+        if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
+            _x = driver _x;
+            true
+        } else {
+            false
+        }
+    }) &&
+    {alive _x} &&
+    {!isPlayer _x} &&
+    _condition
+});

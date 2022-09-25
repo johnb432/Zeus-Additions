@@ -22,8 +22,7 @@
                 private _vehicles = entities [["rhs_t14_base", "rhs_t15_base"], [], false, true];
 
                 if (_vehicles isEqualTo []) exitWith {
-                    playSound "FD_Start_F";
-                    "No valid vehicles were found!";
+                    "No valid vehicles were found"
                 };
 
                 private _count = count _apsVehicles;
@@ -33,19 +32,18 @@
 
                 // See if any vehicles were added
                 if ((count _apsVehicles) == _count) then {
-                    playSound "FD_Start_F";
-                    "All Vehicles already had RHS APS enabled!";
+                    "All Vehicles already had RHS APS enabled"
                 } else {
                     SETMVAR("rhs_aps_vehicles",_apsVehicles,true);
-                    "RHS APS enabled on all vehicles";
+                    "RHS APS enabled on all vehicles"
                 };
             } else {
-                if (_apsVehicles isEqualTo []) exitWith {
-                    "All Vehicles already had RHS APS disabled!";
+                if (_apsVehicles isEqualTo []) then {
+                    "All Vehicles already had RHS APS disabled"
+                } else {
+                    SETMVAR("rhs_aps_vehicles",[],true);
+                    "Disabled RHS APS on all vehicles"
                 };
-
-                SETMVAR("rhs_aps_vehicles",[],true);
-                "Disabled RHS APS on all vehicles";
             };
 
             [_string] call zen_common_fnc_showMessage;
@@ -53,37 +51,33 @@
 
         // If not valid vehicle
         if !(alive _object && {_object isKindOf "rhs_t14_base" || {_object isKindOf "rhs_t15_base"}}) exitWith {
-             ["Place on an undestroyed vehicle with RHS APS!"] call zen_common_fnc_showMessage;
-             playSound "FD_Start_F";
+             ["Place on an undestroyed vehicle with RHS APS"] call zen_common_fnc_showMessage;
         };
 
         private _string = if (_enabled) then {
             // Add if necessary
             if ((_apsVehicles pushBackUnique _object) == -1) exitWith {
-                "Vehicle aleady had RHS APS enabled!";
+                "Vehicle aleady had RHS APS enabled"
             };
 
             SETMVAR("rhs_aps_vehicles",_apsVehicles,true);
 
-            "Enabled RHS APS on vehicle";
+            "Enabled RHS APS on vehicle"
         } else {
             // Remove if necessary
             private _index = _apsVehicles find _object;
 
             if (_index == -1) exitWith {
-                "Vehicle aleady had RHS APS disabled!";
+                "Vehicle aleady had RHS APS disabled"
             };
 
             _apsVehicles deleteAt _index;
 
             SETMVAR("rhs_aps_vehicles",_apsVehicles,true);
 
-            "Disabled RHS APS on vehicle";
+            "Disabled RHS APS on vehicle"
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _object] call zen_dialog_fnc_create;
+    }, {}, _object] call zen_dialog_fnc_create;
 }, ICON_TRUCK] call zen_custom_modules_fnc_register;

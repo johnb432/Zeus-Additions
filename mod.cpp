@@ -1,15 +1,15 @@
+// https://community.bistudio.com/wiki/modParams
 name = "Zeus Additions";
 author = "johnb43";
-tooltip = "Zeus Additions";
-tooltipOwned = "Zeus Additions";
-hideName = 0;
-hidePicture = 0;
-actionName = "Github";
-action = "https://github.com/johnb432/Zeus-Additions";
-description = "A small mod that adds Zeus modules, made by johnb43.";
-overview = "A small mod that adds Zeus modules, made by johnb43.";
+// https://community.bistudio.com/wiki/ImageToPAA
 picture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
 logo = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
 logoOver = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
 logoSmall = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
-overviewPicture = "\x\zeus_additions\addons\main\ui\logo_zeus_additions.paa";
+tooltip = "Zeus Additions";
+tooltipOwned = "Zeus Additions";
+action = "https://github.com/johnb432/Zeus-Additions";
+actionName = "Github";
+overview = "A small mod that adds Zeus modules, made by johnb43.";
+hidePicture = 0;
+hideName = 0;

@@ -7,14 +7,7 @@
     str GVAR(NAME),\
     0,\
     {\
-        private _list = if (!isNil "_this") then {\
-            if (_this isEqualType "") then {\
-                parseSimpleArray _this;\
-            } else {\
-                [[], _this] select (_this isEqualType []);\
-            };\
-        };\
-        GVAR(magsTotal) set [INDEX, _list];\
+        GVAR(magsTotal) set [INDEX, ((if (_this isEqualType "") then {parseSimpleArray _this} else {[[], _this] select (_this isEqualType [])}) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""]];\
     }\
 ] call CBA_fnc_addSetting
 
@@ -91,19 +84,21 @@
     false,
     0,
     {
-        if (_this && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
-            GVAR(blacklist) = [];
+        GVAR(blacklist) = ((if (_this && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) then {
+            private _list = [];
 
             {
-                GVAR(blacklist) append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
+                _list append ((format ["FKF/CfgArsenalBlacklist/%1", _x]) call Clib_fnc_getSetting);
             } forEach ("FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings);
+
+            _list
         } else {
-            GVAR(blacklist) = if (GVAR(blacklistSettings) isEqualType "") then {
-                parseSimpleArray GVAR(blacklistSettings);
+            if (GVAR(blacklistSettings) isEqualType "") then {
+                parseSimpleArray GVAR(blacklistSettings)
             } else {
-                [[], GVAR(blacklistSettings)] select (GVAR(blacklistSettings) isEqualType []);
+                [[], GVAR(blacklistSettings)] select (GVAR(blacklistSettings) isEqualType [])
             };
-        };
+        }) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
     }
 ] call CBA_fnc_addSetting;
 
@@ -117,11 +112,11 @@
     {
         if (GVAR(blacklistFKEnable) && {!isNil {"FKF/CfgArsenalBlacklist" call Clib_fnc_getSettings}}) exitWith {};
 
-        GVAR(blacklist) = if (_this isEqualType "") then {
-            parseSimpleArray _this;
+        GVAR(blacklist) = ((if (_this isEqualType "") then {
+            parseSimpleArray _this
         } else {
-            [[], _this] select (_this isEqualType []);
-        };
+            [[], _this] select (_this isEqualType [])
+        }) apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
     }
 ] call CBA_fnc_addSetting;
 
@@ -137,6 +132,5 @@ MAGAZINES_SETTINGS(AARED,7);
 HINT_SETTINGS(enableACECargoHint,"Enable ACE Cargo missing addon hint");
 HINT_SETTINGS(enableACEDragHint,"Enable ACE Dragging missing addon hint");
 HINT_SETTINGS(enableACEMedicalHint,"Enable ACE Medical missing addon hint");
-HINT_SETTINGS(enableSnowScriptHint,"Enable Snow Script missing addon hint");
 HINT_SETTINGS(enableTFARHint,"Enable Radio Range Script missing addon hint");
 HINT_SETTINGS(enableRHSHint,"Enable RHS APS Script addon missing hint");

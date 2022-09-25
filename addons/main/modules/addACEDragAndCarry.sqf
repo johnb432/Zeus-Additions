@@ -6,14 +6,16 @@
 ["Zeus Additions - Utility", "Add ACE Drag and Carry Options", {
     params ["", "_object"];
 
+    if (isNull _object) exitWith {
+        ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+    };
+
     if (!alive _object) exitWith {
-         ["Select an undestroyed object!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
     };
 
     if (_object isKindOf "CAManBase") exitWith {
-         ["Select a non-unit!"] call zen_common_fnc_showMessage;
-         playSound "FD_Start_F";
+        ["STR_ZEN_Modules_OnlyNonInfantry"] call zen_common_fnc_showMessage;
     };
 
     ["Add ACE Drag and Carry Options", [
@@ -24,6 +26,15 @@
     ],
     {
         params ["_results", "_object"];
+
+        // Check again, in case something has changed since dialog's opening
+        if (isNull _object) exitWith {
+            ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;
+        };
+
+        if (!alive _object) exitWith {
+            ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
+        };
 
         // Try to calculate offset and angle
         (boundingCenter _object) params ["_xCenter", "_yCenter"];
@@ -50,8 +61,5 @@
         }, [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
 
         ["Changed ACE Drag and Carry abilities"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _object] call zen_dialog_fnc_create;
+    }, {}, _object] call zen_dialog_fnc_create;
 }, ICON_OBJECT] call zen_custom_modules_fnc_register;

@@ -4,8 +4,6 @@
  */
 
 ["Zeus Additions - Resupply", "Spawn ACE Medical Resupply", {
-    params ["_pos", "_object"];
-
     ["Spawn ACE Medical Resupply", [
         ["SLIDER", "Bandages (Elastic)", [0, 300, GETPRVAR(QGVAR(elastic),200), 0], true],
         ["SLIDER", "Bandages (Packing)", [0, 300, GETPRVAR(QGVAR(packing),200), 0], true],
@@ -64,12 +62,9 @@
 
         private _emptyInventory = _results select (count _results - 2);
 
-        private _config = configOf _object;
-
         // If insert into inventory, but no inventory found or enabled
-        if (_emptyInventory > 0 && {!alive _object || {getNumber (_config >> "maximumLoad") == 0 || {getNumber (_config >> "disableInventory") == 1}}}) exitWith {
-            ["Object has no inventory!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+        if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
+            ["Object has no inventory"] call zen_common_fnc_showMessage;
         };
 
         // If "spawn medical crate", make a new object
@@ -78,8 +73,6 @@
             _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearItemCargoGlobal _object;
-
-            _config = configOf _object;
 
             if (!GVAR(ACEDraggingLoaded)) exitWith {};
 
@@ -91,7 +84,7 @@
                 // Dragging & Carrying
                 [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                 [_object, true, [_config, "ace_dragging_carryPosition", [0, 0.8, 0.8]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-            }, [_object, _config]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            }, [_object, configOf _object]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         // Clear all content of other types of inventories
@@ -141,8 +134,5 @@
         ];
 
         ["Medical resupply created"] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;

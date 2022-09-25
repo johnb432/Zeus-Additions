@@ -7,7 +7,7 @@
     params ["_pos"];
 
     // Position has to be AGL/ATL, ZEN gives ASL
-    _pos set [2, 0];
+    _pos = ASLToATL _pos;
 
     ["Spawn Attack Dog", [
         ["SIDES", ["Spawn as", "Only the first selected side will be taken into account."], []],
@@ -24,8 +24,7 @@
         _results params ["_sides", "_attackSides", "_radius", "_damage", "_spawnLightning", "_spawnBolt", "_animalBehaviour", "_name"];
 
         if (_sides isEqualTo []) exitWith {
-            ["You must select a side!"] call zen_common_fnc_showMessage;
-            playSound "FD_Start_F";
+            ["You must select a side"] call zen_common_fnc_showMessage;
         };
 
         private _lightning = objNull;
@@ -56,7 +55,7 @@
 
             ["zen_common_addObjects", [[_dog]]] call CBA_fnc_serverEvent;
 
-            _dog setName ([selectRandom ["Fluffy", "Doggo", "Cuddles", "Santa's Little Helper", "Biter", "Foxer", "Boxy", "Death", "SirKillsALot"], _name] select (_name isNotEqualTo ""));
+            _dog setName ([selectRandom ["Fluffy", "Doggo", "Cuddles", "Santa's Little Helper", "Biter", "Foxer", "Boxy", "Death", "SirKillsALot"], _name] select (_name != ""));
 
             // If no side to be attacked are provided, dog is peaceful
             if (_attackSides isEqualTo []) exitWith {
@@ -142,12 +141,12 @@
                 // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
                     _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {
-                        (side _x in _attackSides) &&
-                        {_x isNotEqualTo _helperUnit &&
-                        {alive _x &&
-                        {!(_x getVariable ["ACE_isUnconscious", false]) &&
-                        {(lifeState _x) != "INCAPACITATED" &&
-                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                        ((side _x) in _attackSides) &&
+                        {_x != _helperUnit} &&
+                        {alive _x} &&
+                        {!(_x getVariable ["ACE_isUnconscious", false])} &&
+                        {(lifeState _x) != "INCAPACITATED"} &&
+                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
                     }) param [0, objNull];
 
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -162,12 +161,12 @@
                     if (!alive _dogNearestEnemy || {_dogNearestEnemy getVariable ["ACE_isUnconscious", false] || {(lifeState _dogNearestEnemy) == "INCAPACITATED"}}) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units (both "internal" and "external"), dead or unconscious units
                         _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {
-                            (side _x in _attackSides) &&
-                            {_x isNotEqualTo _helperUnit &&
-                            {alive _x &&
-                            {!(_x getVariable ["ACE_isUnconscious", false]) &&
-                            {(lifeState _x) != "INCAPACITATED" &&
-                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}}}}}
+                            ((side _x) in _attackSides) &&
+                            {_x != _helperUnit} &&
+                            {alive _x} &&
+                            {!(_x getVariable ["ACE_isUnconscious", false])} &&
+                            {(lifeState _x) != "INCAPACITATED"} &&
+                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
                         }) param [0, objNull];
 
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -207,8 +206,5 @@
             }, 0.25, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
         }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _pos, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
     },
-    {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, _pos] call zen_dialog_fnc_create;
+    {}, _pos] call zen_dialog_fnc_create;
 }, ICON_DOG] call zen_custom_modules_fnc_register;

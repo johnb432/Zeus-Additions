@@ -5,8 +5,6 @@
  */
 
 ["Zeus Additions - Utility", "Paradrop Unit Action", {
-    params ["_pos", "_object"];
-
     ["Paradrop Units", [
         ["TOOLBOX", "Mode", [0, 1, 2, ["Add", "Remove"]]]
     ],
@@ -24,7 +22,16 @@
         // Add action
         private _string = if ((_results select 0) == 0) then {
             if (!isNil {_object getVariable QGVAR(paradropActionJIP)}) exitWith {
-                "Object already has paradrop action!";
+                "Object already has paradrop action"
+            };
+
+            // Only send function to all clients if script is enabled
+            if (isNil QFUNC(addParachute)) then {
+                // Define a function on the client
+                DFUNC(addParachute) = compileScript [format ["\%1\%2\%3\%4\functions\fnc_addParachute.sqf", QUOTE(MAINPREFIX), QUOTE(PREFIX), QUOTE(SUBPREFIX), QUOTE(COMPONENT)], true];
+
+                // Broadcast function to everyone, so it can be executed for all players
+                publicVariable QFUNC(addParachute);
             };
 
             private _jipID = ["zen_common_execute", [{
@@ -52,7 +59,7 @@
                                     private _location = locationNull;
 
                                     {
-                                        if (text _x isNotEqualTo "") exitWith {
+                                        if (text _x != "") exitWith {
                                             _location = _x
                                         };
                                     } forEach nearestLocations [[_mapCenter, _mapCenter], ["NameVillage", "NameCity", "NameCityCapital", "NameLocal", "NameMarine", "Hill", "HandDrawnCamp"], sqrt (2 * _mapCenter ^ 2), _pos];
@@ -136,45 +143,7 @@
 
                                                 cutText ["", "BLACK IN", 2, true];
 
-                                                // If automatic parachute distribution is disabled, don't continue
-                                                if (!_giveUnitParachute) exitWith {};
-
-                                                [{
-                                                    // If the unit is on the ground or in water
-                                                    isTouchingGround (_this select 0) || {(eyePos (_this select 0)) select 2 < 1};
-                                                }, {
-                                                    params ["_unit", "_backpack", "_backpackContent"];
-
-                                                    // Unit is no longer paradropping
-                                                    _unit setVariable [QGVAR(isParadropping), false, true];
-
-                                                    // Remove parachute and give old backpack back
-                                                    removeBackpack _unit;
-
-                                                    if (_backpack isEqualTo "") exitWith {};
-
-                                                    _unit addBackpack _backpack;
-
-                                                    if (_backpackContent isEqualTo []) exitWith {};
-
-                                                    {
-                                                        _unit addItemToBackpack _x;
-                                                    } forEach _backpackContent;
-                                                }, [_unit, backpack _unit, backpackItems _unit]] call CBA_fnc_waitUntilAndExecute;
-
-                                                [{
-                                                    // If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
-                                                    (getPos _this) select 2 < 100 || {!alive _this};
-                                                }, {
-                                                    // If parachute is already open or unit is unconscious or dead, don't do action
-                                                    if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {_this getVariable ["ACE_isUnconscious", false] || {(lifeState _this) == "INCAPACITATED" || {!alive _this}}}) exitWith {};
-
-                                                    _this action ["OpenParachute", _this];
-                                                }, _unit] call CBA_fnc_waitUntilAndExecute;
-
-                                                // Add parachute last so that other commands have time to update
-                                                removeBackpack _unit;
-                                                _unit addBackpack "B_Parachute";
+                                                [_unit, _giveUnitParachute] call FUNC(addParachute);
                                             }, _this, 3] call CBA_fnc_waitAndExecute;
                                         }, [_unit, _pos, _giveUnitParachute]], _unit] call CBA_fnc_targetEvent;
                                     }, {
@@ -201,13 +170,12 @@
             // Remove from JIP if object is deleted
             [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
 
-            "Added paradrop action to object";
+            "Added paradrop action to object"
         } else {
             private _jipID = _object getVariable QGVAR(paradropActionJIP);
 
             if (isNil "_jipID") exitWith {
-                playSound "FD_Start_F";
-                "Object already has paradrop action removed!";
+                "Object already has paradrop action removed"
             };
 
             _jipID call CBA_fnc_removeGlobalEventJIP;
@@ -225,12 +193,9 @@
                 _this removeAction _actionID;
             }, _object]] call CBA_fnc_globalEvent;
 
-            "Removed paradrop action from object";
+            "Removed paradrop action from object"
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {
-        ["Aborted"] call zen_common_fnc_showMessage;
-        playSound "FD_Start_F";
-    }, [_pos, _object]] call zen_dialog_fnc_create;
+    }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_PARADROP] call zen_custom_modules_fnc_register;

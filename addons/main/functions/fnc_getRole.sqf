@@ -25,22 +25,18 @@ private _type = switch (toLowerANSI getText (configOf _this >> "icon")) do {
 };
 
 if (_type != 0) exitWith {
-    _type;
-};
-
-private _weapon = "";
-
-if ((primaryWeapon _this) isNotEqualTo "") then {
-    _weapon = primaryWeapon _this;
+    _type
 };
 
 // Tertiary weapon overwrites primary weapons
-if ((secondaryWeapon _this) isNotEqualTo "") then {
-    _weapon = secondaryWeapon _this;
+private _weapon = secondaryWeapon _this;
+
+if (_weapon == "") then {
+    _weapon = primaryWeapon _this;
 };
 
-if (_weapon isEqualTo "") exitWith {
-    0;
+if (_weapon == "") exitWith {
+    0
 };
 
 switch (toLowerANSI getText (configFile >> "CfgWeapons" >> _weapon >> "UiPicture")) do {

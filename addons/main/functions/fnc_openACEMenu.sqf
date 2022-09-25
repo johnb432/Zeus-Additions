@@ -60,7 +60,7 @@ private _display = switch (_menuType) do {
 
         ["To quit, exit the medical menu.", false, 5, 2] call ace_common_fnc_displayText;
 
-        "ace_medical_gui_menuDisplay";
+        "ace_medical_gui_menuDisplay"
     };
     case CARGO_MENU: {
         ace_cargo_interactionVehicle = _object;
@@ -69,7 +69,7 @@ private _display = switch (_menuType) do {
 
         ["To quit, exit the cargo menu.", false, 5, 2] call ace_common_fnc_displayText;
 
-        "ace_cargo_menuDisplay";
+        "ace_cargo_menuDisplay"
     };
     default {""};
 };

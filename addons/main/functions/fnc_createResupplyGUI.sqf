@@ -42,7 +42,7 @@ if (_weapons isNotEqualTo []) then {
             if (_x in GETUVAR(QGVAR(sortedKeys),[])) then {
                 _keys pushBackUnique _x;
             };
-        } foreach getArray (_cfgWeapons >> _x >> "magazineWell");
+        } forEach getArray (_cfgWeapons >> _x >> "magazineWell");
     } forEach _weapons;
 
     SETUVAR(QGVAR(sortedKeysMagazines),_keys);
@@ -126,13 +126,13 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
+    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
     "ace_clipboard" callExtension "--COMPLETE--";
 
-    true;
+    true
 }];
 
 // List for selected magazines
@@ -162,13 +162,13 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control && {GVAR(ACEClipboardLoaded)}}) exitWith {};
+    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
 
     // Copy to clipboard
     "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");
     "ace_clipboard" callExtension "--COMPLETE--";
 
-    true;
+    true
 }];
 
 // Buttons
@@ -356,7 +356,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _value = 0;
 
     {
-        // Get old value and decrement it; if below 0, set to 0; Do not show "0x"
+        // Get old value and decrement it; If below 0, set to 0; Do not show "0x"
         _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
         _ctrlListSelected lbSetValue [_x, _value];
         _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value != 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
@@ -394,9 +394,9 @@ _display displayAddEventHandler ["KeyDown", {
 
         _display closeDisplay IDC_OK;
 
-        true;
+        true
     };
 
     // Don't let random input change background stuff
-    true;
+    true
 }];
