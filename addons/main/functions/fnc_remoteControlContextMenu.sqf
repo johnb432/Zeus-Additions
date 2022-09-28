@@ -156,9 +156,11 @@ private _id = if (!local _unit) then {
                 GVAR(remoteControlKilledEH) = nil;
                 bis_fnc_moduleRemoteControl_unit = nil;
 
-                // Open curator interface
+                // Open curator interface, with a delay
                 {
-                    openCuratorInterface;
+                    {
+                        openCuratorInterface;
+                    } call CBA_fnc_execNextFrame;
                 } call CBA_fnc_execNextFrame;
             }, _this select 0] call CBA_fnc_waitUntilAndExecute;
         }] call BIS_fnc_addScriptedEventHandler;
@@ -187,9 +189,11 @@ private _id = if (!local _unit) then {
             GVAR(remoteControlKilledEH) = nil;
             bis_fnc_moduleRemoteControl_unit = nil;
 
-            // Open curator interface
+            // Open curator interface, with a delay
             {
-                openCuratorInterface;
+                {
+                    openCuratorInterface;
+                } call CBA_fnc_execNextFrame;
             } call CBA_fnc_execNextFrame;
         }];
     }, [_pos, _unit]] call CBA_fnc_waitUntilAndExecute;
