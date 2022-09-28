@@ -116,12 +116,14 @@
                 _oldPlayer allowDamage _isDamageAllowed;
 
                 [{
-                    // Open curator interface
-                    openCuratorInterface;
-
                     [{
-                        // Remove helper unit
-                        deleteVehicle _this;
+                        // Open curator interface
+                        openCuratorInterface;
+
+                        [{
+                            // Remove helper unit
+                            deleteVehicle _this;
+                        }, _this] call CBA_fnc_execNextFrame;
                     }, _this] call CBA_fnc_execNextFrame;
                 }, _helperUnit] call CBA_fnc_execNextFrame;
             }, _this];
