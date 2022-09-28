@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 28.9.2022
+
+1.6.3.11
+- Potentially fixed a remote controlling bug where zeus couldn't move their camera using WASD when leaving a remote control.
+
 # Changelog for Zeus Additions 25.9.2022
 
 1.6.3.10
