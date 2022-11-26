@@ -128,5 +128,5 @@
                 }, _helperUnit] call CBA_fnc_execNextFrame;
             }, _this];
         }, [_helperUnit, _oldPlayer, _isDamageAllowed, _channelSettings, _channelIDs]] call CBA_fnc_waitUntilAndExecute;
-    }, {}] call zen_dialog_fnc_create;
+    }] call zen_dialog_fnc_create;
 }, ICON_DOCUMENTS] call zen_custom_modules_fnc_register;

@@ -131,7 +131,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         GVAR(gearPreset) = _selectedPreset;
 
         ["Chosen preset: %1", _selectedPreset] call zen_common_fnc_showMessage;
-    }, {}] call zen_dialog_fnc_create;
+    }] call zen_dialog_fnc_create;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Loadout", "Loadout: Set", {
@@ -158,7 +158,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         } forEach GVAR(loadoutTypes);
 
         ["Loadouts saved to '%1'", GVAR(gearPreset)] call zen_common_fnc_showMessage;
-    }, {}] call zen_dialog_fnc_create;
+    }] call zen_dialog_fnc_create;
 }, ICON_PERSON] call zen_custom_modules_fnc_register;
 
 ["Zeus Additions - Loadout", "Loadout: Apply to single unit", {
