@@ -20,6 +20,10 @@
 
 params ["_object", "_menuType", ["_previousCoeffValue", 5, [0]]];
 
+if (_menuType == MEDICAL_MENU && {GVAR(KATZeusLoaded)}) exitWith {
+    _object call ace_medical_gui_fnc_openMenu;
+};
+
 // Create a helper unit to access medical menu
 private _helperUnit = createAgent ["C_man_1", [0, 0, 0], [], 0, "CAN_COLLIDE"];
 
@@ -75,7 +79,7 @@ private _display = switch (_menuType) do {
 };
 
 [{
-    // Wait for the medical menu to close
+    // Wait for the menu to close
     isNull (GETUVAR(_this select 0,displayNull));
 }, {
     params ["_display", "_helperUnit", "_previousCoeffValue"];

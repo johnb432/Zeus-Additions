@@ -69,5 +69,5 @@
 
         RscDisplayDebriefing_params = _debriefText;
         publicVariable "RscDisplayDebriefing_params";
-    }, {}] call zen_dialog_fnc_create;
+    }] call zen_dialog_fnc_create;
 }, ICON_END] call zen_custom_modules_fnc_register;

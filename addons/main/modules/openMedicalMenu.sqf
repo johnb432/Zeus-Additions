@@ -16,7 +16,8 @@
     };
 
     if !(_unit isKindOf "CAManBase") exitWith {
-         ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;};
+        ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
+    };
 
     [_unit, MEDICAL_MENU] call FUNC(openACEMenu);
 }, ICON_MEDICAL] call zen_custom_modules_fnc_register;

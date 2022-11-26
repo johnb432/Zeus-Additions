@@ -7,6 +7,7 @@ private _cfgPatches = configFile >> "CfgPatches";
 // Optionals
 GVAR(ACEDraggingLoaded) = isClass (_cfgPatches >> "ace_dragging");
 GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
+GVAR(KATZeusLoaded) = isClass (_cfgPatches >> "kat_zeus");
 
 // If for some reason this postInit loads before the ZEN one, make sure there is something
 if (isNil "zen_common_aceMedical") then {
@@ -38,6 +39,7 @@ if (isNil "zen_common_aceMedicalTreatment") then {
 
 // Add modules
 #include "modules\behaviourAIModules.sqf"
+#include "modules\carBomb.sqf"
 #include "modules\changeChannelVisibility.sqf"
 #include "modules\changeGrassRender.sqf"
 #include "modules\configureDoors.sqf"
@@ -54,6 +56,7 @@ if (isNil "zen_common_aceMedicalTreatment") then {
 #include "modules\removeGrenades.sqf"
 #include "modules\setCaptive.sqf"
 #include "modules\stormScript.sqf"
+#include "modules\suicideBomber.sqf"
 #include "modules\toggleConsciousnessForced.sqf"
 #include "modules\trackUnitDeath.sqf"
 #include "modules\unitParadrop.sqf"
@@ -92,7 +95,11 @@ if (isClass (_cfgPatches >> "rhs_main_loadorder")) then {
 // Check if ACE Medical is loaded
 if (zen_common_aceMedical) then {
     #include "modules\createInjuries.sqf"
-    #include "modules\openMedicalMenu.sqf"
+
+    // If KAT is loaded, don't load module
+    if (!GVAR(KATZeusLoaded)) then {
+        #include "modules\openMedicalMenu.sqf"
+    };
 
     // Check if ACE Medical Treatment is loaded
     if (zen_common_aceMedicalTreatment) then {

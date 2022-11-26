@@ -14,11 +14,12 @@
 * **Create ACE Medical Injuries:** Allows the Zeus to create ACE Medical injuries on AI or players, either dead or alive. Also can create random wounds, taking a damage value and type you are able to set. Random damage can only be applied to a living unit. When applied to players, it will notify the player in question that they have been injured. This is to avoid abuse.
 * **Delete Object (forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 * **End Mission with Player Modifier:** Ends the mission with all players except Zeuses having the chosen modifier applied to them.
-* **Give Death Stare Ability:** If used this module grants the chosen unit to have a "death stare". The unit uses an ACE self-interaction whilst looking at the desired target. The result of the action will the inducing pain the target and doing some sort of harm, depending on the settings.
 * **Loadout: Apply to group:** Applies predetermined loadouts to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role as it isn't very precise).
 * **Loadout: Apply to single unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
 * **Loadout: Set:** Allows the Zeus to set loadouts for the "Loadout: Apply to group" and "Loadout: Apply to single unit" modules. These are saved on a profile basis, which means they stick around, allowing you to use them on various servers.
 * **Loadout: Presets:** Allows the Zeus to create, delete, import, export and select presets.
+* **Make Unit into Suicide Bomber:** Allows the Zeus to make units into suicide bombers. Suicide bombers trigger when a scroll wheel action is used when remote controlling them or, if the dead man switch option is enabled, when they die or go unconscious.
+* **Make Vehicle into VBIED:** Allows the Zeus to make a vehicle into a VBIED (vehicle bound IED). VBIEDs trigger when a unit turns its engine on.
 * **Open ACE Medical Menu:** Allows the Zeus to open a unit's medical menu.
 * **Pause Time:** Allows the Zeus to effectively stop time. It sets time acceleration to a minimum and reverts time every 100 seconds to when the module was placed.
 * **Place Map Markers:** Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.

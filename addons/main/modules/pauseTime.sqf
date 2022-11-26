@@ -68,5 +68,5 @@
         };
 
         [_string] call zen_common_fnc_showMessage;
-    }, {}] call zen_dialog_fnc_create;
+    }] call zen_dialog_fnc_create;
 }, ICON_TIME] call zen_custom_modules_fnc_register;

@@ -1,7 +1,13 @@
+# Changelog for Zeus Additions 26.11.2022
+
+1.6.3.12
+- Added "Make unit into Suicide Bomber" & "Make vehicle into VBIED" modules.
+- Unconscious module only notifies player if they were toggled unconscious (and not conscious anymore).
+
 # Changelog for Zeus Additions 28.9.2022
 
 1.6.3.11
-- Potentially fixed a remote controlling bug where zeus couldn't move their camera using WASD when leaving a remote control.
+- Potentially fixed a remote controlling bug where Zeus couldn't move their camera using WASD when leaving a remote control.
 
 # Changelog for Zeus Additions 25.9.2022
 

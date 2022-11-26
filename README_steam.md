@@ -14,11 +14,12 @@
 [*] Create ACE Medical Injuries
 [*] Delete Object (forced)
 [*] End Mission with Player Modifier
-[*] Give Death Stare Ability
 [*] Loadout: Apply to group
 [*] Loadout: Apply to single unit
 [*] Loadout: Set
 [*] Loadout: Presets
+[*] Make Unit into Suicide Bomber
+[*] Make Vehicle into VBIED
 [*] Open ACE Medical Menu
 [*] Pause Time
 [*] Place Map Markers
