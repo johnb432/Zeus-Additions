@@ -2,7 +2,7 @@
 
 /*
  * Author: JW, AZCoder, modified by johnb43
- * Make dust clouds.
+ * Makes dust clouds.
  * https://forums.bohemia.net/forums/topic/215391-light-snowfall-script/?tab=comments#comment-3276526
  *
  * Arguments:
@@ -36,10 +36,8 @@
             _handleID call CBA_fnc_removePerFrameHandler;
         };
 
-        private _playerPos = getPosWorld _player;
-
-        // See if there is a roof over the player's head; If inside, don't do script
-        if (((lineIntersectsSurfaces [_playerPos, _playerPos vectorAdd [0, 0, 50], _player, objNull, true, 1, "GEOM", "NONE"]) param [0, []] param [3, objNull]) isKindOf "Building") exitWith {};
+        // If inside, don't do script
+        if (insideBuilding _player > 0.5) exitWith {};
 
         private _vehicle = vehicle _player;
         private _pos = getPosATL _vehicle;

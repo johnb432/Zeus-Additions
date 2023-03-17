@@ -35,14 +35,23 @@ if (_weapons isNotEqualTo []) then {
 
     // Get magazines compatible with weapons
     private _keys = [];
+    private _muzzles = [];
+    private _magazineWells = [];
     private _cfgWeapons = configFile >> "CfgWeapons";
 
     {
-        {
-            if (_x in GETUVAR(QGVAR(sortedKeys),[])) then {
-                _keys pushBackUnique _x;
-            };
-        } forEach getArray (_cfgWeapons >> _x >> "magazineWell");
+        _magazineWells = getArray (_cfgWeapons >> _x >> "magazineWell");
+        _muzzles = getArray (configFile >> "CfgWeapons" >> _x >> "muzzles") - ["this"];
+
+        if (_muzzles isNotEqualTo []) then {
+            _weapon = _x;
+
+            {
+                _magazineWells append (getArray (_cfgWeapons >> _weapon >> _x >> "magazineWell"));
+            } forEach _muzzles;
+        };
+
+        _keys insert [-1, _magazineWells arrayIntersect GETUVAR(QGVAR(sortedKeys),[]), true];
     } forEach _weapons;
 
     SETUVAR(QGVAR(sortedKeysMagazines),_keys);
@@ -89,7 +98,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
         _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
         _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
         _ctrlListMagazines lbSetValue [_addedIndex, 0];
-    } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
+    } forEach (GETUVAR(QGVAR(magazinesHashmap),createHashMap) getOrDefault [GETUVAR(QGVAR(sortedKeysMagazines),[]) param [_selectedIndex, ""], []]);
 
     // Sort alphabetically
     lbSort _ctrlListMagazines;
@@ -146,7 +155,7 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
     private _toolTip = _ctrlListSelected lbTooltip _selectedIndex;
 
     // Move magazine back into selection if correct category
-    if (_toolTip in (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES))))) then {
+    if (_toolTip in (GETUVAR(QGVAR(magazinesHashmap),createHashMap) getOrDefault [GETUVAR(QGVAR(sortedKeysMagazines),[]) param [lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES), ""], ""])) then {
         // Name is magazine display name, picture is magazine icon & tooltip is classname
         private _addedIndex = _ctrlListMagazines lbAdd (getText (configFile >> "CfgMagazines" >> _toolTip >> "displayName"));
         _ctrlListMagazines lbSetPicture [_addedIndex, _ctrlListSelected lbPicture _selectedIndex];
@@ -252,7 +261,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _addedIndex = -1;
     private _toolTip = "";
     private _cfgMagazines = configFile >> "CfgMagazines";
-    private _currentlySelected = GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select (lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES)));
+    private _currentlySelected = GETUVAR(QGVAR(magazinesHashmap),createHashMap) getOrDefault [GETUVAR(QGVAR(sortedKeysMagazines),[]) param [lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES), ""], ""];
 
     {
         _toolTip = _ctrlListSelected lbTooltip _x;
@@ -303,7 +312,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
          _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
          _ctrlListMagazines lbSetPicture [_forEachIndex, getText (_cfgMagazines >> _x >> "picture")];
          _ctrlListMagazines lbSetTooltip [_forEachIndex, _x];
-    } forEach (GETUVAR(QGVAR(magazinesHashmap),[]) get (GETUVAR(QGVAR(sortedKeysMagazines),[]) select _selectedIndex));
+    } forEach (GETUVAR(QGVAR(magazinesHashmap),createHashMap) getOrDefault [GETUVAR(QGVAR(sortedKeysMagazines),[]) param [_selectedIndex, ""], []]);
 
     // Sort alphabetically
     lbSort _ctrlListMagazines;

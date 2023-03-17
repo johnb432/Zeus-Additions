@@ -15,8 +15,7 @@ GVAR(trackUnits) = [];
         ["TOOLBOX:YESNO", ["Display in System Chat", "Displays notification in system chat."], false],
         ["TOOLBOX:YESNO", ["Display in Zeus Banner", "Displays notification in zeus interface."], false],
         ["TOOLBOX:YESNO", ["Log", "Write notification in Log (RPT)."], false]
-    ],
-    {
+    ], {
         params ["_results", "_unit"];
         _results params ["_selected", "_add", "_hint", "_systemChat", "_zeusBanner", "_log"];
         _selected params ["", "", "_players"];
@@ -36,6 +35,12 @@ GVAR(trackUnits) = [];
         if (!_add) exitWith {
             GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);
 
+            // Remove EH if unit tracking is empty
+            if (GVAR(trackUnits) isEqualTo []) then {
+                removeMissionEventHandler ["EntityKilled", GVAR(trackUnitDeathEH)];
+                GVAR(trackUnitDeathEH) = nil;
+            };
+
             ["Unit is no longer being tracked"] call zen_common_fnc_showMessage;
         };
 
@@ -50,7 +55,7 @@ GVAR(trackUnits) = [];
             GVAR(trackUnitDeathEH) = addMissionEventHandler ["EntityKilled", {
                 params ["_unit", "_killer", "_instigator"];
 
-                if !(GVAR(trackUnits) isNotEqualTo [] && {_unit in GVAR(trackUnits)}) exitWith {};
+                if !(_unit in GVAR(trackUnits)) exitWith {};
 
                 private _nameUnit = name _unit;
 
@@ -81,10 +86,10 @@ GVAR(trackUnits) = [];
                 GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);
 
                 // Remove EH if unit tracking is empty
-                if (GVAR(trackUnits) isEqualTo []) then {
-                    removeMissionEventHandler [_thisEvent, _thisEventHandler];
-                    GVAR(trackUnitDeathEH) = nil;
-                };
+                if (GVAR(trackUnits) isNotEqualTo []) exitWith {};
+
+                removeMissionEventHandler [_thisEvent, _thisEventHandler];
+                GVAR(trackUnitDeathEH) = nil;
             }];
         };
 

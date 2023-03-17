@@ -54,40 +54,34 @@ _unit setvariable ["bis_fnc_moduleRemoteControl_owner", _oldPlayer, true];
 GVAR(remoteControlArgs) = [_oldPlayer, _unit, isDamageAllowed _oldPlayer];
 
 private _group = group _unit;
-private _id = if (!local _unit) then {
-    // Save name to apply again later
-    private _vehicleVarName = vehicleVarName _unit;
+private _groupID = groupId _unit;
+private _teamColor = assignedTeam _unit;
 
-    _unit setVehicleVarName "";
+// Make unit local
+if (!local _unit) then {
+    ["zen_common_execute", [{
+        params ["_clientOwner", "_unit", "_group", "_groupID", "_teamColor"];
 
-    // Get unit position in group
-    private _str = str _unit;
+        // If ownership was transferred succesfully, quit
+        if (_group setGroupOwner _clientOwner) exitWith {};
 
-    _unit setVehicleVarName _vehicleVarName;
-
-    _id = parseNumber (_str select [(_str find ":") + 1]);
-
-    // Check if unit is alone in group or not
-    if ((count units _unit) > 1) then {
-        // Create temp group if not alone
-        private _tempGroup = createGroup [side _unit, true];
-
-        [_unit] joinSilent _tempGroup;
-    } else {
-        // Just change locality if alone
-        [_unit, clientOwner] remoteExecCall ["setOwner", 2];
-    };
-
-    [-1, _id] select (!isNil "_id" && {_id isEqualType 0})
-} else {
-    -1
+        // If unit still isn't local, try other solutions
+        if ((count units _unit) > 1) then {
+            // Create temp group if not alone
+            _unit joinAsSilent [createGroup [side _unit, true], _groupID];
+            _unit assignTeam _teamColor;
+        } else {
+            // Just change locality if alone
+            _unit setOwner _clientOwner;
+        };
+    }, [clientOwner, _unit, _group, _groupID, _teamColor]]] call CBA_fnc_serverEvent;
 };
 
-// Wait until unit is local
 [{
+    // Wait until unit is local
     local (_this select 0)
 }, {
-    params ["_unit", "_oldPlayer", "_oldGroup", "_id"];
+    params ["_unit", "_oldPlayer", "_group", "_groupID", "_teamColor"];
 
     // Sometimes the unit that is being switched to gets teleported into the air; These are measures to prevent that
     private _pos = getPosASL _unit;
@@ -101,12 +95,9 @@ private _id = if (!local _unit) then {
     _oldPlayer allowDamage false;
 
     // If new group had to be created to change locality, add to old group
-    if ((group _unit) != _oldGroup) then {
-        if (_id != -1) then {
-            _unit joinAsSilent [_oldGroup, _id];
-        } else {
-            [_unit] joinSilent _oldGroup;
-        };
+    if ((group _unit) != _group) then {
+        _unit joinAsSilent [_group, _groupID];
+        _unit assignTeam _teamColor;
     };
 
     [{
@@ -125,76 +116,18 @@ private _id = if (!local _unit) then {
             };
         }, _this, 0.25] call CBA_fnc_waitAndExecute;
 
-        // To exit the unit, the player must get to the pause menu
-        GVAR(remoteControlUserActionEH) = [missionNamespace, "OnGameInterrupt", {
-            if (isNil QGVAR(remoteControlArgs)) exitWith {};
-
-            [{
-                // Wait until the pause menu has been opened
-                !isNull _this
-            }, {
-                // Close the pause menu
-                _this closeDisplay IDC_CANCEL;
-
-                GVAR(remoteControlArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed"];
-
-                [missionNamespace, "OnGameInterrupt", GVAR(remoteControlUserActionEH)] call BIS_fnc_removeScriptedEventHandler;
-                _unit removeEventHandler ["Killed", GVAR(remoteControlKilledEH)];
-
-                // Switch back to old player
-                selectPlayer _oldPlayer;
-
-                _oldPlayer enableAI "ALL";
-                _oldPlayer allowDamage _isDamageAllowed;
-
-                objNull remoteControl _unit;
-
-                _unit setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
-
-                GVAR(remoteControlArgs) = nil;
-                GVAR(remoteControlUserActionEH) = nil;
-                GVAR(remoteControlKilledEH) = nil;
-                bis_fnc_moduleRemoteControl_unit = nil;
-
-                // Open curator interface, with a delay
-                {
-                    {
-                        openCuratorInterface;
-                    } call CBA_fnc_execNextFrame;
-                } call CBA_fnc_execNextFrame;
-            }, _this select 0] call CBA_fnc_waitUntilAndExecute;
-        }] call BIS_fnc_addScriptedEventHandler;
-
-        // Handle killed with EH
-        GVAR(remoteControlKilledEH) = (_this select 1) addEventHandler ["Killed", {
-            if (isNil QGVAR(remoteControlArgs)) exitWith {};
-
-            GVAR(remoteControlArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed"];
-
-            [missionNamespace, "OnGameInterrupt", GVAR(remoteControlUserActionEH)] call BIS_fnc_removeScriptedEventHandler;
-            _unit removeEventHandler ["Killed", GVAR(remoteControlKilledEH)];
-
-            // Switch back to old player
-            selectPlayer _oldPlayer;
-
-            _oldPlayer enableAI "ALL";
-            _oldPlayer allowDamage _isDamageAllowed;
-
-            objNull remoteControl _unit;
-
-            _unit setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
-
-            GVAR(remoteControlArgs) = nil;
-            GVAR(remoteControlUserActionEH) = nil;
-            GVAR(remoteControlKilledEH) = nil;
-            bis_fnc_moduleRemoteControl_unit = nil;
-
-            // Open curator interface, with a delay
-            {
-                {
-                    openCuratorInterface;
-                } call CBA_fnc_execNextFrame;
-            } call CBA_fnc_execNextFrame;
-        }];
+        // To exit the unit, the player must use the curator interface keybind or get killed
+        GVAR(remoteControlArgs) append [
+            addUserActionEventHandler ["curatorInterface", "Activate", FUNC(remoteControlStop)],
+            (_this select 1) addEventHandler ["Killed", FUNC(remoteControlStop)]
+        ];
     }, [_pos, _unit]] call CBA_fnc_waitUntilAndExecute;
-}, [_unit, _oldPlayer, _group, _id]] call CBA_fnc_waitUntilAndExecute;
+}, [_unit, _oldPlayer, _group, _groupID, _teamColor], 5, {
+    // If locality failed to be transferred after 5s, quit
+    (_this select 0) setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
+
+    GVAR(remoteControlArgs) = nil;
+    bis_fnc_moduleRemoteControl_unit = nil;
+
+    ["Failed to remote control unit"] call zen_common_fnc_showMessage;
+}] call CBA_fnc_waitUntilAndExecute;

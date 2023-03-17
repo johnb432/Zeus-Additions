@@ -23,8 +23,7 @@
         ["TOOLBOX:ENABLED", ["Carrying", "Enables the carrying of an object."], true],
         ["TOOLBOX:ENABLED", ["Overweight dragging", "Ignores the weight limit for dragging if enabled."], true],
         ["TOOLBOX:ENABLED", ["Overweight carrying", "Ignores the weight limit for carrying if enabled."], true]
-    ],
-    {
+    ], {
         params ["_results", "_object"];
 
         // Check again, in case something has changed since dialog's opening

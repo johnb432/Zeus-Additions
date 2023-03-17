@@ -5,65 +5,65 @@
 
 ["Zeus Additions - Utility", "Pause Time", {
     ["Pause time", [
-        ["TOOLBOX:ENABLED", ["Pause Time", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], false]
-    ],
-    {
+        ["TOOLBOX:YESNO", ["Time is paused", "Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time."], !isNil {GETMVAR(QGVAR(setTimeAcc),nil)}, true]
+    ], {
         params ["_results"];
 
         private _string = if (_results select 0) then {
             if (isNil {GETMVAR(QGVAR(setTimeAcc),nil)}) then {
-                // Get old time multiplier
-                private _timeMult = timeMultiplier;
-                0.1 remoteExecCall ["setTimeMultiplier", 2];
-
                 ["zen_common_execute", [{
-                    [{
-                        // Wait for new time multiplier to be active
-                        timeMultiplier != _this;
-                    }, {
+                    // Set time to slowest possible
+                    setTimeMultiplier 0.1;
 
-                        private _pfhID = [{
-                            params ["_startSeconds", "_pfhID"];
+                    private _pfhID = GETMVAR(QGVAR(setTimeAcc),nil);
 
-                            // If time acceleration has been changed, stop
-                            if (timeMultiplier > 0.11) exitWith {
-                                _pfhID call CBA_fnc_removePerFrameHandler;
+                    if (!isNil "_pfhID") exitWith {};
 
-                                SETMVAR(QGVAR(setTimeAcc),nil,true);
+                    _pfhID = [{
+                        params ["_startTime", "_pfhID"];
 
-                                ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
-                            };
+                        private _deltaTime = dayTime - _startTime;
 
-                            // Looking just at the seconds is enough
-                            private _deltaSec = (parseNumber ((([] call BIS_fnc_timeToString) splitString ":") select 2)) - (parseNumber _startSeconds);
+                        // Check if a day has passed
+                        if (_deltaTime < 0) then {
+                            _deltaTime = _deltaTime + 24;
+                        };
 
-                            if (_deltaSec < 0) then {
-                                _deltaSec = _deltaSec + 60;
-                            };
+                        // If time acceleration has been changed or more than 15 seconds have gone by in game, stop
+                        if (timeMultiplier > 0.1 || {(abs _deltaTime) >= (15 / 3600)}) exitWith {
+                            _pfhID call CBA_fnc_removePerFrameHandler;
 
-                            (-_deltaSec / 3600) remoteExecCall ["skipTime", 0];
-                        }, 100, (([] call BIS_fnc_timeToString) splitString ":") select 2] call CBA_fnc_addPerFrameHandler;
+                            SETMVAR(QGVAR(setTimeAcc),nil,true);
 
-                        SETMVAR(QGVAR(setTimeAcc),_pfhID,true);
-                    }, _this, 10] call CBA_fnc_waitUntilAndExecute;
-                }, _timeMult]] call CBA_fnc_serverEvent;
+                            ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+                        };
 
-                "Time paused";
+                        // Revert time
+                        -_deltaTime remoteExecCall ["skipTime", 0];
+                    }, 100, dayTime] call CBA_fnc_addPerFrameHandler;
+
+                    SETMVAR(QGVAR(setTimeAcc),_pfhID,true);
+                }, []]] call CBA_fnc_serverEvent;
+
+                "Time paused"
             } else {
-                "Time already paused";
+                "Time already paused"
             };
         } else {
             private _pfhID = GETMVAR(QGVAR(setTimeAcc),nil);
 
             if (!isNil "_pfhID") then {
-                _pfhID remoteExecCall ["CBA_fnc_removePerFrameHandler", 2];
-                1 remoteExecCall ["setTimeMultiplier", 2];
+                // Set everything back to normal
+                ["zen_common_execute", [{
+                    _this call CBA_fnc_removePerFrameHandler;
+                    setTimeMultiplier 1;
 
-                SETMVAR(QGVAR(setTimeAcc),nil,true);
+                    SETMVAR(QGVAR(setTimeAcc),nil,true);
+                }, _pfhID]] call CBA_fnc_serverEvent;
 
-                "Time reverted back to normal (1x)";
+                "Time reverted back to normal (1x)"
             } else {
-                "Time already normal (1x)";
+                "Time already normal (1x)"
             };
         };
 

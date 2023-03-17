@@ -12,8 +12,7 @@
         ["SLIDER", ["Transmission Range Multiplier", "Determines how far a radio can transmit. Default is 1.0."], [0, 50, 1, 2]],
         ["SLIDER", ["Reception Range Multiplier", "Determines from how far a radio can receive. Default is 1.0."], [0, 50, 1, 2]],
         ["TOOLBOX:YESNO", ["Account for JIP players", "When players join in progress (JIP), it will automatically apply this setting."], false]
-    ],
-    {
+    ], {
         params ["_results", "_unit"];
         _results params ["_selected", "_self", "_txMultiplier", "_rxMultiplier", "_doJIP"];
         _selected params ["_sides", "_groups", "_players"];

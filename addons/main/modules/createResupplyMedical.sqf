@@ -28,13 +28,12 @@
         ["SLIDER", "Personal Aid Kit", [0, 100, GETPRVAR(QGVAR(PAK),0), 0], true],
         ["TOOLBOX:WIDE", ["Spawn Medical Crate", "If no, it selects the object the module was placed on and places items in its inventory."], [0, 1, 3, ["Spawn Medical Crate", "Insert in inventory", "Clear inventory and insert"]]],
         ["CHECKBOX", ["Reset to default"], false, true]
-    ],
-    {
+    ], {
         params ["_results", "_args"];
         _args params ["_pos", "_object"];
 
         // If reset if wanted
-        if (_results select (count _results - 1)) exitWith {
+        if (_results select -1) exitWith {
             SETPRVAR(QGVAR(elastic),200);
             SETPRVAR(QGVAR(packing),200);
             SETPRVAR(QGVAR(quickclot),50);
@@ -60,7 +59,7 @@
             ["Reset to default completed"] call zen_common_fnc_showMessage;
         };
 
-        private _emptyInventory = _results select (count _results - 2);
+        private _emptyInventory = _results select -2;
 
         // If insert into inventory, but no inventory found or enabled
         if (_emptyInventory > 0 && {!alive _object || {maxLoad _object == 0} || {getNumber (configOf _object >> "disableInventory") == 1}}) exitWith {
@@ -74,7 +73,7 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearItemCargoGlobal _object;
 
-            if (!GVAR(ACEDraggingLoaded)) exitWith {};
+            if (isNil "ace_dragging") exitWith {};
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
             // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
@@ -84,7 +83,7 @@
                 // Dragging & Carrying
                 [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                 [_object, true, [_config, "ace_dragging_carryPosition", [0, 0.8, 0.8]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-            }, [_object, configOf _object]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            }, [_object, configOf _object]], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         // Clear all content of other types of inventories

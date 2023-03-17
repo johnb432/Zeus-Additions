@@ -8,4 +8,6 @@ PREP(openACEMenu);
 PREP(pathingCondition);
 PREP(pathingStatement);
 PREP(remoteControlContextMenu);
+PREP(remoteControlStop);
+PREP(removeSuicideBomberIDs);
 PREP(unitParadropContextMenu);

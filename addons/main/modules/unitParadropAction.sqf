@@ -7,8 +7,7 @@
 ["Zeus Additions - Utility", "Paradrop Unit Action", {
     ["Paradrop Units", [
         ["TOOLBOX", "Mode", [0, 1, 2, ["Add", "Remove"]]]
-    ],
-    {
+    ], {
         params ["_results", "_args"];
         _args params ["_pos", "_object"];
 
@@ -41,124 +40,94 @@
                     "<t color='#FF0000'>Paradrop (click on map)</t>", {
                         params ["", "_caller"];
 
-                        // If unit is already paradropping, don't TP
+                        // If unit is already paradropping, don't do anything
                         if (_caller getVariable [QGVAR(isParadropping), false]) exitWith {};
 
                         openMap true;
 
                         if (!isNil {_caller getVariable QGVAR(handleMapParadrop)}) exitWith {};
 
-                        _caller setVariable [QGVAR(handleMapParadrop),
-                            addMissionEventHandler ["MapSingleClick", {
-                                [_this select 1, _thisArgs select 0] spawn {
-                                    params ["_pos", "_unit"];
+                        _caller setVariable [QGVAR(handleMapParadrop), true];
 
-                                    private _mapCenter = worldSize / 2;
+                        addMissionEventHandler ["MapSingleClick", {
+                            // Remove mapclick EH
+                            removeMissionEventHandler [_thisEvent, _thisEventHandler];
 
-                                    // Find the nearest to the given position location with text
-                                    private _location = locationNull;
+                            [_this select 1, _thisArgs select 0] spawn {
+                                params ["_pos", "_unit"];
 
-                                    {
-                                        if (text _x != "") exitWith {
-                                            _location = _x
-                                        };
-                                    } forEach nearestLocations [[_mapCenter, _mapCenter], ["NameVillage", "NameCity", "NameCityCapital", "NameLocal", "NameMarine", "Hill", "HandDrawnCamp"], sqrt (2 * _mapCenter ^ 2), _pos];
+                                _unit setVariable [QGVAR(handleMapParadrop), nil];
 
-                                    // No suitable location exists
-                                    private _text = if (isNull _location) then {
-                                        format [localize "STR_A3_BIS_fnc_locationDescription_grid", mapGridPosition _pos];
-                                    } else {
-                                        // Location exists and close
-                                        if (_pos in _location) exitWith {
-                                            format [localize "STR_A3_BIS_fnc_locationDescription_near", text _location];
-                                        };
+                                // Find the nearest to the given position location with text
+                                private _location = locationNull;
+                                private _mapCenter = worldSize / 2;
 
-                                        private _locPos = locationPosition _location;
+                                {
+                                    if (text _x != "") exitWith {
+                                        _location = _x
+                                    };
+                                } forEach nearestLocations [[_mapCenter, _mapCenter], ["NameVillage", "NameCity", "NameCityCapital", "NameLocal", "NameMarine", "Hill", "HandDrawnCamp"], sqrt (2 * _mapCenter ^ 2), _pos];
 
-                                        // Location exists and not close, format the heading message
+                                // No suitable location exists
+                                private _text = if (isNull _location) then {
+                                    format [localize "STR_A3_BIS_fnc_locationDescription_grid", mapGridPosition _pos]
+                                } else {
+                                    // Location exists and close
+                                    if (_pos in _location) exitWith {
+                                        format [localize "STR_A3_BIS_fnc_locationDescription_near", text _location]
+                                    };
+
+                                    private _locPos = locationPosition _location;
+
+                                    // Location exists and not close, format the heading message
+                                    format [
+                                        "%1m %2",
+                                        _pos vectorDistance _locPos,
                                         format [
-                                            "%1m %2",
-                                            _pos vectorDistance _locPos,
-                                            format [
-                                                localize (switch (round ((_locPos getDir _pos) % 360 / 45)) do {
-                                                    default {"STR_A3_BIS_fnc_locationDescription_n"};
-                                                    case 1: {"STR_A3_BIS_fnc_locationDescription_ne"};
-                                                    case 2: {"STR_A3_BIS_fnc_locationDescription_e"};
-                                                    case 3: {"STR_A3_BIS_fnc_locationDescription_se"};
-                                                    case 4: {"STR_A3_BIS_fnc_locationDescription_s"};
-                                                    case 5: {"STR_A3_BIS_fnc_locationDescription_sw"};
-                                                    case 6: {"STR_A3_BIS_fnc_locationDescription_w"};
-                                                    case 7: {"STR_A3_BIS_fnc_locationDescription_nw"};
-                                                }),
-                                                text _location
-                                            ]
-                                        ];
-                                    };
+                                            localize (switch (round ((_locPos getDir _pos) % 360 / 45)) do {
+                                                default {"STR_A3_BIS_fnc_locationDescription_n"};
+                                                case 1: {"STR_A3_BIS_fnc_locationDescription_ne"};
+                                                case 2: {"STR_A3_BIS_fnc_locationDescription_e"};
+                                                case 3: {"STR_A3_BIS_fnc_locationDescription_se"};
+                                                case 4: {"STR_A3_BIS_fnc_locationDescription_s"};
+                                                case 5: {"STR_A3_BIS_fnc_locationDescription_sw"};
+                                                case 6: {"STR_A3_BIS_fnc_locationDescription_w"};
+                                                case 7: {"STR_A3_BIS_fnc_locationDescription_nw"};
+                                            }),
+                                            text _location
+                                        ]
+                                    ]
+                                };
 
-                                    // Wait for confirmation
-                                    if !([format ["Are you sure you want to teleport to and paradrop %1?", _text], "Confirmation", "Yes", "No"] call BIS_fnc_guiMessage) exitWith {
-                                        // Remove mapclick EH
-                                        removeMissionEventHandler ["MapSingleClick", _unit getVariable QGVAR(handleMapParadrop)];
-                                        _unit setVariable [QGVAR(handleMapParadrop), nil];
+                                // Close map
+                                openMap false;
 
-                                        // Close map
-                                        openMap false;
-                                    };
+                                // Wait for confirmation
+                                if !([format ["Are you sure you want to teleport to and paradrop %1?", _text], "Confirmation", "Yes", "No"] call BIS_fnc_guiMessage) exitWith {};
 
-                                    // Allow player to give some information about paradrop
-                                    ["Set Paradrop Height", [
-                                        ["SLIDER", ["Paradrop Altitude", "Determines how far up you are paradropped over terrain level."], [150, 5000, 1000, 0]],
-                                        ["TOOLBOX:YESNO", ["Give Yourself a Parachute", "Stores your backpack and gives you a parachute automatically. Upon landing you get your backpacks back."], true]
-                                    ],
-                                    {
-                                        params ["_results", "_args"];
-                                        _results params ["_height", "_giveUnitParachute"];
-                                        _args params ["_pos", "_unit"];
+                                // Allow player to give some information about paradrop
+                                ["Set Paradrop Height", [
+                                    ["SLIDER", ["Paradrop Altitude", "Determines how far up you are paradropped over terrain level."], [150, 5000, 1000, 0]],
+                                    ["TOOLBOX:YESNO", ["Give Yourself a Parachute", "Stores your backpack and gives you a parachute automatically. Upon landing you get your backpacks back."], true]
+                                ],
+                                {
+                                    params ["_results", "_args"];
+                                    _results params ["_height", "_giveUnitParachute"];
+                                    _args params ["_pos", "_unit"];
 
-                                        // Remove mapclick EH
-                                        removeMissionEventHandler ["MapSingleClick", _unit getVariable QGVAR(handleMapParadrop)];
-                                        _unit setVariable [QGVAR(handleMapParadrop), nil];
+                                    // If unit is already paradropping, don't TP
+                                    if (_unit getVariable [QGVAR(isParadropping), false]) exitWith {};
 
-                                        // Close map
-                                        openMap false;
+                                    _unit setVariable [QGVAR(isParadropping), true, true];
 
-                                        // If unit is already paradropping, don't TP
-                                        if (_unit getVariable [QGVAR(isParadropping), false]) exitWith {};
+                                    // Set correct height
+                                    _pos set [2, _height];
 
-                                        _unit setVariable [QGVAR(isParadropping), true, true];
-
-                                        // Set correct height
-                                        _pos set [2, _height];
-
-                                        // Start paradrop
-                                        ["zen_common_execute", [{
-                                            // Transition screen and inform about paradrop
-                                            cutText ["You are being paradropped...", "BLACK OUT", 2, true];
-                                            hint "The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing.";
-
-                                            [{
-                                                params ["_unit", "_pos", "_giveUnitParachute"];
-
-                                                _unit setPosATL _pos;
-
-                                                cutText ["", "BLACK IN", 2, true];
-
-                                                [_unit, _giveUnitParachute] call FUNC(addParachute);
-                                            }, _this, 3] call CBA_fnc_waitAndExecute;
-                                        }, [_unit, _pos, _giveUnitParachute]], _unit] call CBA_fnc_targetEvent;
-                                    }, {
-                                        private _unit = _this select 1 select 1;
-
-                                        // Remove mapclick EH
-                                        removeMissionEventHandler ["MapSingleClick", _unit getVariable QGVAR(handleMapParadrop)];
-                                        _unit setVariable [QGVAR(handleMapParadrop), nil];
-
-                                        // Close map
-                                        openMap false;
-                                    }, [_pos, _unit]] call zen_dialog_fnc_create;
-                                }
-                            }, [_caller]]
-                        ];
+                                    // Start paradrop
+                                    [_unit, _pos, _giveUnitParachute] call FUNC(addParachute);
+                                }, {}, [_pos, _unit]] call zen_dialog_fnc_create;
+                            }
+                        }, [_caller]];
                     }
                 ];
 

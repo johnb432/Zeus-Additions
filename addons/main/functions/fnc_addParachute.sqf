@@ -6,7 +6,8 @@
  *
  * Arguments:
  * 0: Unit <OBJECT>
- * 1: Give unit parachute <BOOLEAN>
+ * 1: Position <VECTOR>
+ * 2: Give unit parachute <BOOLEAN>
  *
  * Return Value:
  * None
@@ -17,104 +18,160 @@
  * Public: No
  */
 
-params ["_unit", "_giveUnitParachute"];
+params ["_unit", "_posATL", "_giveUnitParachute"];
 
-// If the units is <100m AGL, deploy parachute to prevent them splatting on the ground
-[{
-    (getPos _this) select 2 < 100 || {!alive _this}
-}, {
-    // If parachute is already open or unit is unconscious or dead, don't do action
-    if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {_this getVariable ["ACE_isUnconscious", false] || {(lifeState _this) == "INCAPACITATED" || {!alive _this}}}) exitWith {};
+// Hide unit during preparation
+private _isObjectHidden = isObjectHidden _unit;
 
-    _this action ["OpenParachute", _this];
-}, _unit] call CBA_fnc_waitUntilAndExecute;
+if (!_isObjectHidden) then {
+    [_unit, true] remoteExecCall ["hideObjectGlobal", 2];
+};
 
-if (!_giveUnitParachute) exitWith {};
+// If AI, don't do transition screen or inform about paradrop
+if (isPlayer _unit) then {
+    cutText ["You are being paradropped...", "BLACK OUT", 2, true];
+    hint "The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing.";
+};
 
 private _backpackClass = backpack _unit;
+private _packHolder = objNull;
 
-// If the unit already has a chute, exit
-if (getText (configFile >> "CfgVehicles" >> _backpackClass >> "backpackSimulation") == "ParachuteSteerable") exitWith {};
-
-// If the unit doesn't have a chute, give one to unit
+// If unit has a backpack, drop it
 if (_backpackClass != "") then {
-    // This script does not account for backpacks within backpacks
-    private _container = backpackContainer _unit;
-    private _packHolder = createVehicle ["groundWeaponHolder", [0, 0, 0], [], 0, "CAN_COLLIDE"];
-    _packHolder addBackpackCargoGlobal [_backpackClass, 1];
+    _packHolder = createVehicle ["groundWeaponHolder", [0, 0, 0], [], 0, "CAN_COLLIDE"];
 
-    // If player has changes into free fall animation, add old backpack model to the front of the player and attach it there
+    // Add temp magazine, so that ground holder doesn't automatically get deleted
+    _packHolder addMagazineCargo ["30Rnd_556x45_Stanag", 1];
+
+    // Drop bag into weapon holder
+    _unit action ["DropBag", _packHolder, _backpackClass];
+};
+
+[{
+    // Wait until unit has dropped its backpack
+    params ["_unit"];
+
+    backpack _unit == ""
+}, {
+    params ["", "", "", "", "_packHolder"];
+
+    // Remove temp magazine
+    clearMagazineCargo _packHolder;
+
     [{
-        params ["_unit"];
-        (getUnitFreefallInfo _unit) params ["_isFalling", "_isInFreeFallPose"];
+        params ["_unit", "_posATL", "_giveUnitParachute", "_backpackClass", "_packHolder", "_isObjectHidden"];
 
-        !alive _unit || {_isFalling && {_isInFreeFallPose}}
-    }, {
-        params ["_unit", "_packHolder"];
+        _unit setPosATL _posATL;
 
-        _packHolder attachTo [_unit, [-0.12, -0.02, -0.74], "pelvis"];
-        _packHolder setVectorDirAndUp [[0, -1, -0.05], [0, 0, -1]];
+        // If AI, don't do transition screen
+        if (isPlayer _unit) then {
+            cutText ["", "BLACK IN", 2, true];
+        };
 
-        // If unit has deployed parachute (or has crashed, but survived), change attaching position of the backpack
+        // Unhide unit
+        if (!_isObjectHidden) then {
+            [_unit, false] remoteExecCall ["hideObjectGlobal", 2];
+        };
+
         [{
+            // Wait until the unit is <100m AGL or dead
+            (getPos _this) select 2 < 100 || {!alive _this}
+        }, {
+            // If parachute is already open or unit is unconscious or dead, don't deploy parachute
+            if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {_this getVariable ["ACE_isUnconscious", false] || {(lifeState _this) == "INCAPACITATED" || {!alive _this}}}) exitWith {};
+
+            _this action ["OpenParachute", _this];
+        }, _unit] call CBA_fnc_waitUntilAndExecute;
+
+        if (!_giveUnitParachute) exitWith {};
+
+        // If the unit doesn't have a backpack, give one to unit
+        if (_backpackClass == "") exitWith {
+            // If the unit had no backpack, just add parachute
+            _unit addBackpack "B_Parachute";
+
+            [{
+                // Wait until unit is on ground or dead
+                isTouchingGround _this || {(getPos _this) select 2 < 1} || {!alive _this}
+            }, {
+                // Remove parachute
+                removeBackpack _this;
+
+                // Unit is no longer paradropping
+                _this setVariable [QGVAR(isParadropping), nil, true];
+            }, _unit] call CBA_fnc_waitUntilAndExecute;
+        };
+
+        // If the unit already has a chute, exit
+        if (getText (configFile >> "CfgVehicles" >> _backpackClass >> "backpackSimulation") == "ParachuteSteerable") exitWith {};
+
+        _unit addBackpack "B_Parachute";
+
+        [{
+            // Wait until unit has changed into free fall animation
             params ["_unit"];
             (getUnitFreefallInfo _unit) params ["_isFalling", "_isInFreeFallPose"];
 
-            !alive _unit || {_isFalling && {!_isInFreeFallPose}} || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
+            !alive _unit || {_isFalling && {_isInFreeFallPose}}
         }, {
             params ["_unit", "_packHolder"];
 
-            _packHolder attachTo [vehicle _unit, [-0.07, 0.67, -0.13], "pelvis"];
-            _packHolder setVectorDirAndUp [[0, -0.2, -1], [0, 1, 0]];
+            // Add old backpack model to the front of the player and attach it there
+            _packHolder attachTo [_unit, [-0.12, -0.02, -0.74], "pelvis"];
 
-            // When unit lands, remove parachute as well as backpack displayed on the unit's front and add old backpack on unit's back
+            // Remove from JIP if object is deleted
+            [["zen_common_setVectorDirAndUp", [_packHolder, [[0, -1, -0.05], [0, 0, -1]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP, _packHolder] call CBA_fnc_removeGlobalEventJIP;
+
             [{
+                // Wait until unit has deployed parachute or crashed or is dead
                 params ["_unit"];
+                (getUnitFreefallInfo _unit) params ["_isFalling", "_isInFreeFallPose"];
 
-                !alive _unit || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
+                !alive _unit || {_isFalling && {!_isInFreeFallPose}} || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
             }, {
-                params ["_unit", "_packHolder", "_backpackClass", "_weaponItemsCargo", "_magazinesAmmoCargo", "_itemCargo"];
-                _itemCargo params ["_items", "_itemsCount"];
+                params ["_unit", "_packHolder"];
 
-                // Unit is no longer paradropping
-                _unit setVariable [QGVAR(isParadropping), nil, true];
+                // Change attaching position of the backpack
+                _packHolder attachTo [vehicle _unit, [-0.07, 0.67, -0.13], "pelvis", true];
+                ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP;
 
-                removeBackpack _unit;
-                deleteVehicle _packHolder;
+                [{
+                    // Wait until unit has landed or is dead
+                    params ["_unit"];
 
-                // Add old backpack, make sure to remove any linked items in class
-                _unit addBackpack _backpackClass;
-                clearAllItemsFromBackpack _unit;
+                    !alive _unit || {isTouchingGround _unit} || {(getPos _unit) select 2 < 1}
+                }, {
+                    params ["_unit", "_packHolder", "_backpackClass"];
 
-                // Add all old items back
-                private _container = backpackContainer _unit;
+                    // Reattach to fix buggy behaviour
+                    _packHolder attachTo [_unit, [-0.07, 0.67, -0.13], "pelvis", true];
+                    ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP;
 
-                {
-                    _container addWeaponWithAttachmentsCargoGlobal [_x, 1];
-                } forEach _weaponItemsCargo;
+                    // Unit is no longer paradropping
+                    _unit setVariable [QGVAR(isParadropping), nil, true];
 
-                {
-                    _container addMagazineAmmoCargo [_x select 0, 1, _x select 1];
-                } forEach _magazinesAmmoCargo;
+                    if (!alive _unit) exitWith {};
 
-                {
-                    _container addItemCargoGlobal [_x, _itemsCount select _forEachIndex];
-                } forEach _items;
+                    // Remove parachute
+                    removeBackpack _unit;
+
+                    // Pick up old bag
+                    _unit action ["AddBag", _packHolder, _backpackClass];
+
+                    // Try picking up bag until success
+                    [{
+                        (_this select 0) params ["_unit", "_packHolder", "_backpackClass"];
+
+                        _unit action ["AddBag", _packHolder, _backpackClass];
+
+                        // Wait until the backpack has been picked up
+                        if (backpack _unit != _backpackClass) exitWith {};
+
+                        // Stop checking loop
+                        [_this select 1] call CBA_fnc_removePerFrameHandler;
+                    }, 0.25, [_unit, _packHolder, _backpackClass]] call CBA_fnc_addPerFrameHandler;
+                }, _this] call CBA_fnc_waitUntilAndExecute;
             }, _this] call CBA_fnc_waitUntilAndExecute;
-        }, _this] call CBA_fnc_waitUntilAndExecute;
-    }, [_unit, _packHolder, _backpackClass, weaponsItemsCargo _container, magazinesAmmoCargo _container, getItemCargo _container]] call CBA_fnc_waitUntilAndExecute;
-
-    // Add parachute to unit
-    removeBackpack _unit;
-    _unit addBackpack "B_Parachute";
-} else {
-     // If the unit has no backpack, just wait until he lands and remove it
-     _unit addBackpack "B_Parachute";
-
-     [{isTouchingGround _this || {(getPos _this) select 2 < 1} || {!alive _this}}, {
-         removeBackpack _this;
-
-         // Unit is no longer paradropping
-         _this setVariable [QGVAR(isParadropping), nil, true];
-     }, _unit] call CBA_fnc_waitUntilAndExecute;
-};
+        }, [_unit, _packHolder, _backpackClass]] call CBA_fnc_waitUntilAndExecute;
+    }, _this, 2] call CBA_fnc_waitAndExecute;
+}, [_unit, _posATL, _giveUnitParachute, _backpackClass, _packHolder, _isObjectHidden]] call CBA_fnc_waitUntilAndExecute;

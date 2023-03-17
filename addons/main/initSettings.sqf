@@ -55,23 +55,6 @@
     false,
     0,
     {
-        private _curator = getAssignedCuratorLogic player;
-
-        // If there is no curator object, don't do anything
-        if (isNull _curator) exitWith {};
-
-        // If setting is off and there is stuff still there, remove it
-        if (!_this && {!isNil QGVAR(curatorHandleIDs)}) exitWith {
-            GVAR(curatorHandleIDs) params ["_handleID1", "_handleID2", "_handleID3", "_handleID4"];
-
-            _curator removeEventHandler ["CuratorObjectDeleted", _handleID1];
-            _curator removeEventHandler ["CuratorObjectPlaced", _handleID2];
-            _curator removeEventHandler ["CuratorGroupPlaced", _handleID3];
-            _curator removeEventHandler ["CuratorPinged", _handleID4];
-
-            GVAR(curatorHandleIDs) = nil;
-        };
-
         call FUNC(objectsCounterMissionEH);
     }
 ] call CBA_fnc_addSetting;

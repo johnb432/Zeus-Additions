@@ -3,7 +3,7 @@
  * Creates a module that can create suicide bombers.
  */
 
-["Zeus Additions - Utility", "[WIP] Make Unit into Suicide Bomber", {
+["Zeus Additions - Utility", "Make Unit into Suicide Bomber", {
     params ["", "_unit"];
 
     if (isNull _unit) exitWith {
@@ -19,10 +19,9 @@
     };
 
     ["Make Unit into Suicide Bomber", [
-        ["TOOLBOX:YESNO", ["Make unit into Suicide bomber", ""], isNil {_unit getVariable QGVAR(suicideBomberActionJIPID)}],
-        ["TOOLBOX:YESNO", ["Dead man switch", ""], isNil {_unit getVariable QGVAR(suicideBomberEHJIPID)}]
-    ],
-    {
+        ["TOOLBOX:YESNO", ["Unit is Suicide Bomber", "Make a unit into a suicide bomber. To trigger its explosvies, the Zeus must remote control the unit."], !isNil {_unit getVariable QGVAR(suicideBomberActionJIP)}, true],
+        ["TOOLBOX:YESNO", ["Unit has Dead man switch", "If the unit has a dead man switch, the unit will detonate its explosives if the unit goes unconscious or dies."], !isNil {_unit getVariable QGVAR(suicideBomberDeadManSwitchJIP)}, true]
+    ], {
         params ["_results", "_unit"];
         _results params ["_makeIntoSuicideBomber", "_deadManSwitchEnabled"];
 
@@ -35,8 +34,17 @@
             ["STR_ZEN_Modules_OnlyAlive"] call zen_common_fnc_showMessage;
         };
 
+        // Only send function to all clients if script is enabled
+        if (isNil QFUNC(removeSuicideBomberIDs)) then {
+            // Define a function on the client
+            DFUNC(removeSuicideBomberIDs) = compileScript [format ["\%1\%2\%3\%4\functions\fnc_removeSuicideBomberIDs.sqf", QUOTE(MAINPREFIX), QUOTE(PREFIX), QUOTE(SUBPREFIX), QUOTE(COMPONENT)], true];
+
+            // Broadcast function to everyone, so it can be executed for JIP players
+            publicVariable QFUNC(removeSuicideBomberIDs);
+        };
+
         if (_makeIntoSuicideBomber) then {
-            if (isNil {_unit getVariable QGVAR(suicideBomberActionJIPID)}) then {
+            if (isNil {_unit getVariable QGVAR(suicideBomberActionJIP)}) then {
                 // Create explosives around player
                 ["zen_common_execute", [{
                     private _pos = getPosATL _this;
@@ -44,15 +52,17 @@
                     // Create demo block belt and attack to unit
                     private _expl1 = createVehicle ["DemoCharge_Remote_Ammo", _pos, [], 0, "CAN_COLLIDE"];
                     _expl1 attachTo [_this, [-0.1, 0.1, 0.15], "Pelvis", true];
-                    _expl1 setVectorDirAndUp [[0.5, 0.5, 0], [-0.5, 0.5, 0]];
+
+                    // Remove from JIP when object is deleted
+                    [["zen_common_setVectorDirAndUp", [_expl1, [[0.5, 0.5, 0], [-0.5, 0.5, 0]]]] call CBA_fnc_globalEventJIP, _expl1] call CBA_fnc_removeGlobalEventJIP;
 
                     private _expl2 = createVehicle ["DemoCharge_Remote_Ammo", _pos, [], 0, "CAN_COLLIDE"];
                     _expl2 attachTo [_this, [0, 0.15, 0.15], "Pelvis", true];
-                    _expl2 setVectorDirAndUp [[1, 0, 0], [0, 1, 0]];
+                    [["zen_common_setVectorDirAndUp", [_expl2, [[1, 0, 0], [0, 1, 0]]]] call CBA_fnc_globalEventJIP, _expl2] call CBA_fnc_removeGlobalEventJIP;
 
                     private _expl3 = createVehicle ["DemoCharge_Remote_Ammo", _pos, [], 0, "CAN_COLLIDE"];
                     _expl3 attachTo [_this, [0.1, 0.1, 0.15], "Pelvis", true];
-                    _expl3 setVectorDirAndUp [[0.5, -0.5, 0], [0.5, 0.5, 0]];
+                    [["zen_common_setVectorDirAndUp", [_expl3, [[0.5, -0.5, 0], [0.5, 0.5, 0]]]] call CBA_fnc_globalEventJIP, _expl3] call CBA_fnc_removeGlobalEventJIP;
 
                     _this setVariable [QGVAR(suicideBomberExplosives), [_expl1, _expl2, _expl3], true];
                 }, _unit], _unit] call CBA_fnc_targetEvent;
@@ -69,46 +79,8 @@
                                 _x setDamage 1;
                             } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
-                            _unit setVariable [QGVAR(suicideBomberExplosives), nil, true];
-
-                            // Remove JIP
-                            private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-                            if (!isNil "_jipID") then {
-                                _jipID call CBA_fnc_removeGlobalEventJIP;
-                                _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-                            };
-
-                            _jipID = _unit getVariable QGVAR(suicideBomberActionJIPID);
-
-                            if (!isNil "_jipID") then {
-                                _jipID call CBA_fnc_removeGlobalEventJIP;
-                                _unit setVariable [QGVAR(suicideBomberActionJIPID), nil, true];
-                            };
-
-                            // Remove actions and EHs
-                            ["zen_common_execute", [{
-                                private _actionID = _this getVariable QGVAR(suicideBomberActionID);
-
-                                if (!isNil "_actionID") then {
-                                    _this removeAction _actionID;
-                                    _this setVariable [QGVAR(suicideBomberActionID), nil];
-                                };
-
-                                private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                                if (isNil "_ehIDs") exitWith {};
-
-                                if (zen_common_aceMedical) then {
-                                    ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                                } else {
-                                    _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                                };
-
-                                _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                                _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-                            }, _unit]] call CBA_fnc_globalEvent;
+                            // Remove JIP, action and EHs
+                            _unit call FUNC(removeSuicideBomberActions);
                         },
                         [],
                         6,
@@ -124,12 +96,12 @@
 
                 [_jipID, _unit] call CBA_fnc_removeGlobalEventJIP;
 
-                _unit setVariable [QGVAR(suicideBomberActionJIPID), _jipID, true];
+                _unit setVariable [QGVAR(suicideBomberActionJIP), _jipID, true];
             };
 
             // Dead man switch abilities
             if (_deadManSwitchEnabled) then {
-                if (!isNil {_unit getVariable QGVAR(suicideBomberEHJIPID)}) exitWith {};
+                if (!isNil {_unit getVariable QGVAR(suicideBomberDeadManSwitchJIP)}) exitWith {};
 
                 // ACE Medical
                 private _jipID = ["zen_common_execute", [{
@@ -151,53 +123,15 @@
                                     _x setDamage 1;
                                 } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
-                                _unit setVariable [QGVAR(suicideBomberExplosives), nil, true];
-
-                                // Remove JIP
-                                private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-                                if (!isNil "_jipID") then {
-                                    _jipID call CBA_fnc_removeGlobalEventJIP;
-                                    _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-                                };
-
-                                _jipID = _unit getVariable QGVAR(suicideBomberActionJIPID);
-
-                                if (!isNil "_jipID") then {
-                                    _jipID call CBA_fnc_removeGlobalEventJIP;
-                                    _unit setVariable [QGVAR(suicideBomberActionJIPID), nil, true];
-                                };
-
-                                // Remove actions and EHs
-                                ["zen_common_execute", [{
-                                    private _actionID = _this getVariable QGVAR(suicideBomberActionID);
-
-                                    if (!isNil "_actionID") then {
-                                        _this removeAction _actionID;
-                                        _this setVariable [QGVAR(suicideBomberActionID), nil];
-                                    };
-
-                                    private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                                    if (isNil "_ehIDs") exitWith {};
-
-                                    if (zen_common_aceMedical) then {
-                                        ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                                    } else {
-                                        _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                                    };
-
-                                    _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                                    _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-                                }, _unit]] call CBA_fnc_globalEvent;
+                                // Remove JIP, action and EHs
+                                _unit call FUNC(removeSuicideBomberActions);
                             }, _this, random 2] call CBA_fnc_waitAndExecute;
                         }, [_this]] call CBA_fnc_addEventHandlerArgs;
                     } else {
                         _this addEventHandler ["HandleDamage", {
                             params ["_unit"];
 
-                            if (lifeState _unit != "INCAPACITATED") exitWith {};
+                            if (!local _unit || {lifeState _unit != "INCAPACITATED"}) exitWith {};
 
                             [{
                                 params ["_unit"];
@@ -207,134 +141,37 @@
                                     _x setDamage 1;
                                 } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
-                                _unit setVariable [QGVAR(suicideBomberExplosives), nil, true];
-
-                                // Remove JIP
-                                private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-                                if (!isNil "_jipID") then {
-                                    _jipID call CBA_fnc_removeGlobalEventJIP;
-                                    _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-                                };
-
-                                _jipID = _unit getVariable QGVAR(suicideBomberActionJIPID);
-
-                                if (!isNil "_jipID") then {
-                                    _jipID call CBA_fnc_removeGlobalEventJIP;
-                                    _unit setVariable [QGVAR(suicideBomberActionJIPID), nil, true];
-                                };
-
-                                // Remove actions and EHs
-                                ["zen_common_execute", [{
-                                    private _actionID = _this getVariable QGVAR(suicideBomberActionID);
-
-                                    if (!isNil "_actionID") then {
-                                        _this removeAction _actionID;
-                                        _this setVariable [QGVAR(suicideBomberActionID), nil];
-                                    };
-
-                                    private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                                    if (isNil "_ehIDs") exitWith {};
-
-                                    if (zen_common_aceMedical) then {
-                                        ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                                    } else {
-                                        _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                                    };
-
-                                    _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                                    _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-                                }, _unit]] call CBA_fnc_globalEvent;
+                                // Remove JIP, action and EHs
+                                _unit call FUNC(removeSuicideBomberActions);
                             }, _this, random 2] call CBA_fnc_waitAndExecute;
                         }];
                     };
 
-                    private _killedEhID = _this addEventHandler ["Killed", {
+                    _this setVariable [QGVAR(suicideBomberDeadManSwitchEhIDs), [
+                        _unconEhID,
+                        _this addEventHandler ["Killed", {
                         [{
                             params ["_unit"];
+
+                            if (!local _unit) exitWith {};
 
                             // Detonate explosives
                             {
                                 _x setDamage 1;
                             } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
-                            _unit setVariable [QGVAR(suicideBomberExplosives), nil, true];
-
-                            // Remove JIP
-                            private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-                            if (!isNil "_jipID") then {
-                                _jipID call CBA_fnc_removeGlobalEventJIP;
-                                _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-                            };
-
-                            _jipID = _unit getVariable QGVAR(suicideBomberActionJIPID);
-
-                            if (!isNil "_jipID") then {
-                                _jipID call CBA_fnc_removeGlobalEventJIP;
-                                _unit setVariable [QGVAR(suicideBomberActionJIPID), nil, true];
-                            };
-
-                            // Remove actions and EHs
-                            ["zen_common_execute", [{
-                                private _actionID = _this getVariable QGVAR(suicideBomberActionID);
-
-                                if (!isNil "_actionID") then {
-                                    _this removeAction _actionID;
-                                    _this setVariable [QGVAR(suicideBomberActionID), nil];
-                                };
-
-                                private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                                if (isNil "_ehIDs") exitWith {};
-
-                                if (zen_common_aceMedical) then {
-                                    ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                                } else {
-                                    _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                                };
-
-                                _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                                _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-                            }, _unit]] call CBA_fnc_globalEvent;
+                            // Remove JIP, action and EHs
+                            _unit call FUNC(removeSuicideBomberActions);
                         }, _this, random 2] call CBA_fnc_waitAndExecute;
-                    }];
-
-                    _this setVariable [QGVAR(suicideBomberEHIDs), [_unconEhID, _killedEhID]];
+                    }]]];
                 }, _unit]] call CBA_fnc_globalEventJIP;
 
                 [_jipID, _unit] call CBA_fnc_removeGlobalEventJIP;
 
-                _unit setVariable [QGVAR(suicideBomberEHJIPID), _jipID, true];
+                _unit setVariable [QGVAR(suicideBomberDeadManSwitchJIP), _jipID, true];
             } else {
-                // Remove JIP
-                private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-                if (!isNil "_jipID") then {
-                    _jipID call CBA_fnc_removeGlobalEventJIP;
-
-                    _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-                };
-
-                // Remove EHs
-                ["zen_common_execute", [{
-                    private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                    if (isNil "_ehIDs") exitWith {};
-
-                    if (zen_common_aceMedical) then {
-                        ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                    } else {
-                        _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                    };
-
-                    _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                    _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-                }, _unit]] call CBA_fnc_globalEvent;
+                // Remove JIP and EHs, but not action
+                [_unit, false] call FUNC(removeSuicideBomberActions);
             };
 
             ["Made unit into suicide bomber"] call zen_common_fnc_showMessage;
@@ -344,46 +181,8 @@
                 deleteVehicle _x;
             } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
-            _unit setVariable [QGVAR(suicideBomberExplosives), nil, true];
-
-            // Remove JIP
-            private _jipID = _unit getVariable QGVAR(suicideBomberEHJIPID);
-
-            if (!isNil "_jipID") then {
-                _jipID call CBA_fnc_removeGlobalEventJIP;
-                _unit setVariable [QGVAR(suicideBomberEHJIPID), nil, true];
-            };
-
-            _jipID = _unit getVariable QGVAR(suicideBomberActionJIPID);
-
-            if (!isNil "_jipID") then {
-                _jipID call CBA_fnc_removeGlobalEventJIP;
-                _unit setVariable [QGVAR(suicideBomberActionJIPID), nil, true];
-            };
-
-            // Remove actions and EHs
-            ["zen_common_execute", [{
-                private _actionID = _this getVariable QGVAR(suicideBomberActionID);
-
-                if (!isNil "_actionID") then {
-                    _this removeAction _actionID;
-                    _this setVariable [QGVAR(suicideBomberActionID), nil];
-                };
-
-                private _ehIDs = _this getVariable QGVAR(suicideBomberEHIDs);
-
-                if (isNil "_ehIDs") exitWith {};
-
-                if (zen_common_aceMedical) then {
-                    ["ace_unconscious", _ehIDs select 0] call CBA_fnc_removeEventHandler;
-                } else {
-                    _this removeEventHandler ["HandleDamage", _ehIDs select 0];
-                };
-
-                _this removeEventHandler ["Killed", _ehIDs select 1];
-
-                _this setVariable [QGVAR(suicideBomberEHIDs), nil];
-            }, _unit]] call CBA_fnc_globalEvent;
+            // Remove JIP, action and EHs
+            _unit call FUNC(removeSuicideBomberActions);
 
             ["Reverted unit's suicide bomber status"] call zen_common_fnc_showMessage;
         };

@@ -11,8 +11,7 @@
         ["TOOLBOX:YESNO", ["Change yourself", "You can use this whilst as a curator to change your grass rendering."], false, true],
         ["LIST", ["Setting", "Choose Low to turn off grass rendering. Choose Standard if you want to render it again."], [[50, 25, 12.5, 6.25, 3.125], ["Low (Off)", "Standard (Normal)", "High", "Very High", "Ultra"], 0, 5]],
         ["TOOLBOX:YESNO", ["Account for JIP players", "When players join in progress (JIP), it will automatically apply this setting."], false]
-    ],
-    {
+    ], {
         params ["_results", "_unit"];
         _results params ["_selected", "_self", "_setting", "_doJIP"];
         _selected params ["_sides", "_groups", "_players"];

@@ -34,8 +34,7 @@
     // Add JIP to dialog
     _dialogChoices pushBack (["TOOLBOX:YESNO", ["Account for JIP players", "When players join in progress (JIP), it will automatically apply this setting."], false, false]);
 
-    ["Change Channel Visibility", _dialogChoices,
-    {
+    ["Change Channel Visibility", _dialogChoices, {
         params ["_results", "_args"];
         _args params ["_unit", "_channelIDs"];
 

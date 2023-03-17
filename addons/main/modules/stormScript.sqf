@@ -10,34 +10,11 @@
         ["OWNERS", ["Players selected", "Select sides/groups/players. Module can also be placed on a player."], [[], [], [], 0], true],
         ["SLIDER", ["Intensity", "Determines how many particles are spawned. 0 turns off script."], [0, 1000, 50, 0]],
         ["TOOLBOX:YESNO", ["Change Weather", "If yes, it will open another dialog after this one is closed to change the weather."], false],
-        ["TOOLBOX:YESNO", ["Account for JIP players", "When players join in progress (JIP), it will automatically apply this setting."], false],
-        ["TOOLBOX:YESNO", ["Set precipitation type to snow", "If yes, rain particles become snow. Weather must be set to rain."], false]
-    ],
-    {
+        ["TOOLBOX:YESNO", ["Account for JIP players", "When players join in progress (JIP), it will automatically apply this setting."], false]
+    ], {
         params ["_results", "_unit"];
-        _results params ["_selected", "_stormIntensity", "_changeWeather", "_doJIP", "_isSnow"];
+        _results params ["_selected", "_stormIntensity", "_changeWeather", "_doJIP"];
         _selected params ["_sides", "_groups", "_players"];
-
-        ////////// Remove once ZEN releases Snow in weather module
-        ([[], [
-            "a3\data_f\snowflake4_ca.paa", // rainDropTexture
-            4, // texDropCount
-            0.01, // minRainDensity
-            25, // effectRadius
-            0.05, // windCoef
-            2.5, // dropSpeed
-            0.5, // rndSpeed
-            0.5, // rndDir
-            0.07, // dropWidth
-            0.07, // dropHeight
-            [1, 1, 1, 0.5], // dropColor
-            0.0, // lumSunFront
-            0.2, // lumSunBack
-            0.5, // refractCoef
-            0.5, // refractSaturation
-            true, // snow
-            false // dropColorStrong
-        ]] select _isSnow) remoteExecCall ["BIS_fnc_setRain", 2];
 
         // If a weather change is wanted, open ZEN weather module
         if (_changeWeather) then {
@@ -81,8 +58,8 @@
         // Handle JIP
         if (_doJIP) then {
             if (GETMVAR(QGVAR(handleServerJIP),false)) then {
-                GVAR(snowSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _stormIntensity];
-                publicVariableServer QGVAR(snowSettingsJIP);
+                GVAR(stormSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _stormIntensity];
+                publicVariableServer QGVAR(stormSettingsJIP);
                 _string = "Dust Storm Script JIP setting changed";
             } else {
                 hint "JIP disabled. Turn on in CBA Settings to enable it.";

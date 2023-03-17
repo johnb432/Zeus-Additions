@@ -66,26 +66,23 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
                 GVAR(radioSettingsJIP) params ["_players", "_groups", "_sides", "_txMultiplier", "_rxMultiplier"];
 
                 if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
-                    ["zen_common_execute", [{
-                        params ["_unit", "_txMultiplier", "_rxMultiplier"];
-
-                        _unit setVariable ["tf_sendingDistanceMultiplicator", _txMultiplier];
-                        _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
-                    }, [_player, _txMultiplier, _rxMultiplier]], _unit] call CBA_fnc_targetEvent;
+                    // Events do not work with JIP (they do not wait until locality has changed from server to client)
+                    [_player, ["tf_sendingDistanceMultiplicator", _txMultiplier]] remoteExecCall ["setVariable", _player];
+                    [_player, ["tf_receivingDistanceMultiplicator", _rxMultiplier]] remoteExecCall ["setVariable", _player];
                 };
             };
 
             // For snow script
-            if (!isNil QGVAR(snowSettingsJIP)) then {
-                GVAR(snowSettingsJIP) params ["_players", "_groups", "_sides", "_stormIntensity"];
+            if (!isNil QGVAR(stormSettingsJIP)) then {
+                GVAR(stormSettingsJIP) params ["_players", "_groups", "_sides", "_stormIntensity"];
 
                 if (_stormIntensity == 0) exitWith {};
 
                 if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
                     _player setVariable [QGVAR(stormIntensity), _stormIntensity, true];
 
-                    // Using events doesn't seem to work
-                    remoteExecCall [QFUNC(snowScriptPFH), _player];
+                    // Events do not work with JIP (they do not wait until locality has changed from server to client)
+                    remoteExecCall [QFUNC(stormScriptPFH), _player];
                 };
             };
         }, [_uid, _idstr, _name], 60, {

@@ -1,3 +1,11 @@
+# Changelog for Zeus Additions 17.3.2023
+
+1.6.3.13
+- Added support for 2.12.
+- Changed "Remote Control (Switch Unit)" module method of going back into Zeus from pressing getting into the pause menu to pressing the Zeus interface keybind.
+- Unconscious and create injuries module doesn't notify players anymore.
+- Fixed numerous bugs.
+
 # Changelog for Zeus Additions 26.11.2022
 
 1.6.3.12

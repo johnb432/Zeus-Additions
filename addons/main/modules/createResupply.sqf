@@ -11,8 +11,7 @@
         ["SLIDER", ["Tertiary Magazine", "Spawns in x amount of each launcher compatible magazines for each unit (not x total!)."], [0, 200, 5, 0]],
         ["TOOLBOX:YESNO", ["Allow blacklisted ammo", "Allows ammo that is normally blacklisted to be spawned in."], false, true],
         ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory. Units are excluded from this."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]]]
-    ],
-    {
+    ], {
         params ["_results", "_args"];
 
         _results params ["_selected", "_numPrim", "_numHand", "_numSec", "_allowBlackList", "_emptyInventory"];
@@ -39,7 +38,7 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
-            if (!GVAR(ACEDraggingLoaded)) exitWith {};;
+            if (isNil "ace_dragging") exitWith {};
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
             // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
@@ -49,7 +48,7 @@
                 // Dragging & Carrying
                 [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                 [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-            }, [_object, configOf _object]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            }, [_object, configOf _object]], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         if (_numPrim == 0 && {_numHand == 0} && {_numSec == 0}) exitWith {
@@ -67,7 +66,7 @@
         // Check if blacklist is enabled
         private _blackList = [GVAR(blacklist), []] select _allowBlackList;
 
-        // Spawn ammo
+        // Spawn ammo; 'addItemCargoGlobal' allows overloading of inventories
         {
             if (_numPrim > 0 && {(primaryWeapon _x) != ""}) then {
                 {
@@ -104,8 +103,7 @@
         ["SLIDER", ["AA BLUFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["SLIDER", ["AA REDFOR", RESUPPLY_TEXT], [0, 200, 0, 0]],
         ["TOOLBOX:WIDE", ["Spawn Ammo Box", "If no, it selects the object the module was placed on and places items in its inventory. Units are excluded from this."], [0, 1, 3, ["Spawn Ammo Box", "Insert in inventory", "Clear inventory and insert"]]]
-    ],
-    {
+    ], {
         params ["_results", "_args"];
 
         _args params ["_pos", "_object"];
@@ -128,7 +126,7 @@
             ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
-            if (!GVAR(ACEDraggingLoaded)) exitWith {};
+            if (isNil "ace_dragging") exitWith {};
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility
             // Remove event immediately so that it's removed from JIP queue in case object gets deleted. https://cbateam.github.io/CBA_A3/docs/files/events/fnc_removeGlobalEventJIP-sqf.html
@@ -138,7 +136,7 @@
                 // Dragging & Carrying
                 [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                 [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-            }, [_object, configOf _object]]] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            }, [_object, configOf _object]], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
         };
 
         // Clear all content of other types of inventories
