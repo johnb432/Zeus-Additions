@@ -1,7 +1,7 @@
 /*
  * Author: johnb43
  * Spawns a module that allows Zeus to make dead bodies draggable.
- * Cobbled together out of ACE3 code
+ * Cobbled together out of ACE3 code.
  */
 
 if (isNil QGVAR(draggingKilledEH)) then {
@@ -9,43 +9,31 @@ if (isNil QGVAR(draggingKilledEH)) then {
     publicVariable QGVAR(draggingKilledEH);
 
     ["zen_common_execute", [{
-        // Need to check for weapon holders when the unit dies, otherwise they get deleted
-        addMissionEventHandler ["EntityKilled", {
-            params ["_unit"];
+        // Need to check for weapon holders when an entity is created, otherwise they get deleted
+        addMissionEventHandler ["EntityCreated", {
+            params ["_entity"];
 
-            if !(_unit isKindOf "CAManBase") exitWith {};
+            if (_entity isKindOf "CAManBase") exitWith {
+                if (isNil QGVAR(enableDragging)) exitWith {};
 
-            if (!isNil QGVAR(enableDragging)) then {
-                _unit setVariable [QGVAR(canDragBody), true, true];
+                _entity setVariable [QGVAR(canDragBody), true, true];
             };
 
-            if (isPlayer _unit) exitWith {};
+            if (typeOf _entity != "WeaponHolderSimulated") exitWith {};
 
-            // Find the weaponholder that goes with the unit
+            // 'getCorpse' does not work immediately upon death for weapon holders
             [{
-                params ["_unit", "_weaponsItems"];
+                private _unit = getCorpse _this;
 
-                // Find all weapon holders nearby
-                private _weaponHolders = nearestObjects [getPos _unit, ["WeaponHolderSimulated"], 5];
+                if (isNull _unit || {isNull _this}) exitWith {};
 
-                if (_weaponHolders isEqualTo []) exitWith {};
+                // Get previously saved weapon holders
+                private _savedWeaponHolders = _unit getVariable [QGVAR(weaponHolders), []];
 
-                private _weaponHoldersFiltered = [];
-                private _weaponHolder = objNull;
+                _savedWeaponHolders pushBackUnique _this;
 
-                // Find weapon holders with weapons from unit
-                {
-                    _weaponHolder = _x;
-
-                    {
-                        if (_x in _weaponsItems) then {
-                            _weaponHoldersFiltered pushBack _weaponHolder;
-                        };
-                    } forEach (weaponsItems _x);
-                } forEach _weaponHolders;
-
-                _unit setVariable [QGVAR(weaponHolders), _weaponHoldersFiltered, true];
-            }, [_unit, weaponsItems _unit], 0.5] call CBA_fnc_waitAndExecute;
+                _unit setVariable [QGVAR(weaponHolders), _savedWeaponHolders];
+            }, _entity, 0.1] call CBA_fnc_waitAndExecute;
         }];
     }, []]] call CBA_fnc_serverEvent;
 
@@ -63,10 +51,14 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
             if (isNull _body) exitWith {};
 
-            _body setVectorDirAndUp [vectorDir _bodyBag, vectorUp _bodyBag];
+            // Remove from JIP if object is deleted
+            [["zen_common_setVectorDirAndUp", [_body, [vectorDir _bodyBag, vectorUp _bodyBag]]] call CBA_fnc_globalEventJIP, _body] call CBA_fnc_removeGlobalEventJIP;
             _body setPosASL getPosASL _bodyBag;
 
             _body switchMove "AinjPpneMrunSnonWnonDb_grab";
+
+            // Remove from JIP if object is deleted
+            [["zen_common_setName", [_body, _bodyBag getVariable [QGVAR(name), "Unknown"]]] call CBA_fnc_globalEventJIP, _body] call CBA_fnc_removeGlobalEventJIP;
 
             // Set old medical state
             if (zen_common_aceMedical) then {
@@ -81,21 +73,28 @@ if (isNil QGVAR(draggingKilledEH)) then {
                 _body setVariable [QGVAR(canDragBody), true, true];
             };
 
+            private _dogTagTaken = _bodyBag getVariable "ace_dogtags_dogtagTaken";
+
+            // Mark dog tags as taken
+            if (!isNil "_dogTagTaken" && {!isNull _dogTagTaken}) then {
+                _body setVariable ["ace_dogtags_dogtagTaken", _body, true];
+            };
+
+            // Rename new body to old name
+            _body setVariable ["ACE_Name", _bodyBag getVariable ["ACE_Name", "Unknown"], true];
+            _body setVariable ["ACE_NameRaw", _bodyBag getVariable ["ACE_NameRaw", "UnknownRaw"], true];
+
             [{
-                params ["_bodyBag", "_body", "_names"];
-
                 // Delete body bag
-                deleteVehicle _bodyBag;
-
-                // Rename new body to old name
-                _body setVariable ["ACE_Name", _names select 0, true];
-                _body setVariable ["ACE_NameRaw", _names select 1, true];
-            }, [_bodyBag, _body, _bodyBag getVariable [QGVAR(bodyName), ["Unknown", "UnknownRaw"]]]] call CBA_fnc_execNextFrame;
+                deleteVehicle _this;
+            }, _bodyBag] call CBA_fnc_execNextFrame;
         }] call CBA_fnc_addEventHandler;
     }, []]] call CBA_fnc_globalEventJIP;
+};
 
+if (isNil QFUNC(serializeObjects)) then {
     // zen_common_fnc_serializeObjects does not work with dead objects
-    private _functionString = ((str zen_common_fnc_serializeObjects) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
+    private _functionString = trim (str zen_common_fnc_serializeObjects);
     _functionString = _functionString select [1, count _functionString - 2];
 
     private _index = -1;
@@ -117,7 +116,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
                     if (_index != -1) then {
                         // Remove all whitespaces on right and left
-                        _functionString = ((_functionString select [_index + 1]) call CBA_fnc_leftTrim) call CBA_fnc_rightTrim;
+                        _functionString = trim (_functionString select [_index + 1]);
                     };
                 };
             };
@@ -151,14 +150,18 @@ if (isNil QGVAR(draggingKilledEH)) then {
         _results params ["_dragging", "_all", "_includePlayers", "_allFuture"];
 
         // Select bodies not in vehicles, dead, not null and men
-        private _bodies = ([[[], [_object]] select (!isNull _object && {!alive _object}), allDeadMen] select _all) select {isNull objectParent _x && {_x isKindOf "CAManBase"}};
+        private _bodies = (if (_all == 1) then {
+            allDeadMen
+        } else {
+            [[], [_object]] select (!isNull _object && {!alive _object})
+        }) select {isNull objectParent _x && {_x isKindOf "CAManBase"}};
 
         if (!_includePlayers) then {
             _bodies = _bodies select {!isPlayer _x};
         };
 
         if (_bodies isEqualTo [] && {_allFuture == 0}) exitWith {
-             ["No dead bodies were found"] call zen_common_fnc_showMessage;
+            ["No dead bodies were found"] call zen_common_fnc_showMessage;
         };
 
         // Compile action only if it's going to be used
@@ -169,12 +172,13 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
             private _dragBodyAction =
                 ["ace_dragging_dragDeadBody", localize "STR_ACE_Dragging_Drag", "z\ace\addons\dragging\UI\icons\person_drag.paa", {
+                    // Get data from current object
                     private _data = [[_target], nil, false] call FUNC(serializeObjects);
 
                     if (_data isEqualTo [[], []]) exitWith {};
 
                     [_player, _target, true] call ace_common_fnc_claim;
-                    [_target, true] remoteExec ["hideObjectGlobal", 2];
+                    [_target, true] remoteExecCall ["hideObjectGlobal", 2];
 
                     // Dead units in grpNull don't have any of those set
                     _data set [1, [[civilian, "WEDGE", "CARELESS", "BLUE", "LIMITED", [], 1]]];
@@ -193,50 +197,75 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
                     _bodyBag setVariable [QGVAR(canDragBody), true, true];
                     _bodyBag setVariable [QGVAR(bodyData), _data, true];
-                    _bodyBag setVariable [QGVAR(bodyName), [_target call ace_common_fnc_getName, [_target, false, true] call ace_common_fnc_getName], true];
+
+                    _bodyBag setVariable ["ACE_Name", _target call ace_common_fnc_getName, true];
+                    _bodyBag setVariable ["ACE_NameRaw", [_target, false, true] call ace_common_fnc_getName, true];
+                    _bodyBag setVariable ["ace_dogtags_dogtagTaken", _target getVariable "ace_dogtags_dogtagTaken", true];
+                    _bodyBag setVariable [QGVAR(name), name _target, true];
 
                     if (zen_common_aceMedical) then {
                         _bodyBag setVariable [QGVAR(bodyState), _target call ace_medical_fnc_serializeState, true];
                     };
 
-                    [{
-                    	params ["_player", "_target", "_bodyBag"];
+                    // Start dragging
+                    [_player, _bodyBag] call ace_dragging_fnc_startDrag;
 
-                    	[_player, _bodyBag] call ace_dragging_fnc_startDrag;
+                    // Add deleted EH
+                    _target addEventHandler ["Deleted", {
+                        params ["_target"];
 
+                        // AI bodies will be deleted immediately, player bodies are deleted when they are respawned or disconnect
                         {
                             // Set cause for weapon holders
                             _x setVariable [QGVAR(deletedBecauseDragging), true];
+                        } forEach ((_target getVariable [QGVAR(weaponHolders), []]) select {!isNull _x});
+                    }];
 
-                            // Add deleted EH
-                            _x addEventHandler ["Deleted", {
-                                params ["_weaponHolder"];
+                    {
+                        // Add deleted EH
+                        _x addEventHandler ["Deleted", {
+                            params ["_weaponHolder"];
 
-                                // If deleted normally, don't bother
-                                if !(_weaponHolder getVariable [QGVAR(deletedBecauseDragging), false]) exitWith {};
+                            // If deleted normally, don't bother
+                            if !(_weaponHolder getVariable [QGVAR(deletedBecauseDragging), false]) exitWith {};
 
-                                // Check if there are any weapon still present
-                                private _weaponItems = weaponsItems _weaponHolder;
+                            // Check if there are any weapons still present
+                            private _weaponItems = weaponsItems _weaponHolder;
 
-                                if (_weaponItems isEqualTo []) exitWith {};
+                            if (_weaponItems isEqualTo []) exitWith {};
+
+                            [{
+                                // Wait until the weaponholder has been deleted
+                                isNull (_this select 0)
+                            }, {
+                                params ["", "_posATL", "_vectorDir", "_vectorUp", "_weaponItems"];
 
                                 // Create a new weapon holder & put it in the same position as the old
-                                private _newWeaponHolder = createVehicle ["WeaponHolderSimulated", (getPosATL _weaponHolder) vectorAdd [0, 0, 0.2], [], 0, "CAN_COLLIDE"];
-                                _newWeaponHolder setVectorDirAndUp [vectorDir _weaponHolder, vectorUp _weaponHolder];
+                                private _newWeaponHolder = createVehicle ["WeaponHolderSimulated", [0, 0, 0], [], 0, "CAN_COLLIDE"];
+                                _newWeaponHolder setPosATL _posATL;
+
+                                // Remove from JIP if object is deleted
+                                [["zen_common_setVectorDirAndUp", [_newWeaponHolder, [_vectorDir, _vectorUp]]] call CBA_fnc_globalEventJIP, _newWeaponHolder] call CBA_fnc_removeGlobalEventJIP;
 
                                 // Readd weapons
                                 {
                                     _newWeaponHolder addWeaponWithAttachmentsCargoGlobal [_x, 1];
                                 } forEach _weaponItems;
-                            }];
-                        } forEach ((_target getVariable [QGVAR(weaponHolders), []]) select {!isNull _x});
+                            }, [_weaponHolder, (getPosATL _weaponHolder) vectorAdd [0, 0, 0.05], vectorDir _weaponHolder, vectorUp _weaponHolder, _weaponItems]] call CBA_fnc_waitUntilAndExecute;
+                        }];
+                    } forEach ((_target getVariable [QGVAR(weaponHolders), []]) select {!isNull _x});
 
-                    	// Make sure EH have been assigned
-                    	[{
-                            // Server will handle hiding and deleting the body
-                            ["ace_placedInBodyBag", _this] call CBA_fnc_globalEvent;
-                    	}, [_target, _bodyBag]] call CBA_fnc_execNextFrame;
-                    }, [_player, _target, _bodyBag]] call CBA_fnc_execNextFrame;
+                    // Make sure EH have been assigned
+                    [{
+                        [{
+                            // Delete/hide the old body
+                            if (isPlayer _this) then {
+                                hideBody _this;
+                            } else {
+                                deleteVehicle _this;
+                            };
+                        }, _this] call CBA_fnc_execNextFrame;
+                    }, _target] call CBA_fnc_execNextFrame;
                 }, {
                     !alive _target && {isNull objectParent _target} && {[_player, _target, []] call ace_common_fnc_canInteractWith} && {_target getVariable [QGVAR(canDragBody), false]};
                 }] call ace_interact_menu_fnc_createAction;

@@ -47,8 +47,7 @@ if (_filterMode == PARADROP_MISC) exitWith {
 ["Paradrop Context Menu Selection", [
     ["TOOLBOX:YESNO", ["Include entire group", "If enabled and a unit is selected, his entire group is also selected."], false, true],
     ["TOOLBOX:YESNO", ["Include units in vehicles", "If enabled and the units selected are in vehicles, it will dismount them and paradrop them without their vehicles."], false, true]
-],
-{
+], {
     params ["_results", "_args"];
     _results params ["_includeGroup", "_includeInside"];
     _args params ["_units", "_vehicles", "_misc"];
@@ -62,19 +61,19 @@ if (_filterMode == PARADROP_MISC) exitWith {
         } forEach (_units + ([[], _vehicles] select _includeInside));
 
         {
-            _units append ((units _x) select {isNull objectParent _x || {_includeInside}});
+            _units insert [-1, (units _x) select {isNull objectParent _x || {_includeInside}}, true];
         } forEach _groups;
     } else {
         if (!_includeInside) exitWith {};
 
         // Add vehicle crews to the selected units
         {
-            _units append (crew _x);
+            _units insert [-1, crew _x, true];
         } forEach _vehicles;
     };
 
-    // Remove non-man entities and duplicates
-    _units = (_units arrayIntersect _units) select {alive _x && {_x isKindOf "CAManBase"}};
+    // Remove non-man entities
+    _units = _units select {alive _x && {_x isKindOf "CAManBase"}};
 
     GVAR(selectedParadropUnits) = _units;
 

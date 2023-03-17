@@ -15,8 +15,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         ["TOOLBOX:YESNO", ["Export current preset", "Exports preset to clipboard."], false, true],
         ["TOOLBOX:YESNO", ["Reset saved loadouts", "Resets saved loadouts in currently selected preset."], false, true],
         ["TOOLBOX:YESNO", ["Delete preset", "Deletes the currently selected preset. If you chose a preset in the current window, it will delete that one."], false, true]
-    ],
-    {
+    ], {
         params ["_results"];
         _results params ["_newPreset", "_selectedPreset", "_importData", "_exportPreset", "_resetPreset", "_deletePreset"];
 
@@ -146,8 +145,7 @@ GVAR(loadoutTypes) = [ARR_8("Default","Leader","AT","AA","AR","Medic","Engineer"
         ["EDIT", ["Medic", "Medics, Combat Life Savers. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearMedic_) + GVAR(gearPreset),"[]"), true],
         ["EDIT", ["Engineer", "Engineers, Demo. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearEngineer_) + GVAR(gearPreset),"[]"), true],
         ["EDIT", ["Single Unit", "Use this line to apply with Gear Set to Single Unit. Delete empty array and paste loadout then."], GETPRVAR(QGVAR(gearSingle_) + GVAR(gearPreset),"[]"), true]
-    ],
-    {
+    ], {
         params ["_results"];
 
         private _result = "";

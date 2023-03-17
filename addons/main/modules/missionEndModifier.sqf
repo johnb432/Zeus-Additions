@@ -9,8 +9,7 @@
         ["TOOLBOX:YESNO", ["Add Invincibility", "Invincibility will be applied with the modifier below."], false],
         ["COMBO", ["Mission end modifier", "Sets what type of action is applied to all players at scenario end."], [[0, 1, 2, 3], ["None", ["Weapon removal", "All weapons are removed from every player."], ["Disable player input", "Disables player movement and user input."], ["Death", "All players die."]], 0]],
         ["EDIT:MULTI", ["Debrief text", "Text that will show up in the debriefing screen."], ["", {}, 5]]
-    ],
-    {
+    ], {
         params ["_results"];
         _results params ["_endType", "_invincible", "_setting", "_debriefText"];
 

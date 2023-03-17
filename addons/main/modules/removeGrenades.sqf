@@ -9,8 +9,7 @@
      ["Remove Grenades from AI", [
          ["SIDES", ["AI selected", "Select AI from the list to remove grenades from."], []],
          ["TOOLBOX:YESNO", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false]
-     ],
-     {
+     ], {
          params ["_results", "_unit"];
          _results params ["_sides", "_doGroup"];
 
@@ -46,11 +45,11 @@
 
          if (_sides isNotEqualTo []) then {
              {
-                 _units append units _x;
+                 _units insert [-1, units _x, true];
              } forEach _sides;
          };
 
-         _units = (_units arrayIntersect _units) select {!isPlayer _x};
+         _units = _units select {!isPlayer _x};
 
          if (_units isEqualTo []) exitWith {
              ["No AI units were found"] call zen_common_fnc_showMessage;

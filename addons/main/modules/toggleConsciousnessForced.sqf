@@ -27,14 +27,7 @@
             params ["_curator", "_unit"];
 
             if (!isPlayer _unit || {[_unit, ace_medical_STATE_MACHINE] call CBA_statemachine_fnc_getCurrentState != "CardiacArrest"}) then {
-                private _isConscious = !(_unit getVariable ["ACE_isUnconscious", false]);
-
-                [_unit, _isConscious] call ace_medical_status_fnc_setUnconsciousState;
-
-                // Notify unit if affected unit is a player; For fairness reasons
-                if (isPlayer _unit && {_isConscious}) then {
-                    hint "Zeus has made you unconscious.";
-                };
+                [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] call ace_medical_status_fnc_setUnconsciousState;
             } else {
                 // Make this be called on the curator's PC
                 ["zen_common_execute", [{
@@ -50,13 +43,6 @@
             };
         }, [player, _unit]], _unit] call CBA_fnc_targetEvent;
     } else {
-        private _isConscious = lifeState _unit != "INCAPACITATED";
-
-        [_unit, _isConscious] remoteExecCall ["setUnconscious", _unit];
-
-        // Notify unit if affected unit is a player; For fairness reasons
-        if (isPlayer _unit && {_isConscious}) then {
-            "Zeus has made you unconscious." remoteExecCall ["hint", _unit];
-        };
+        [_unit, lifeState _unit != "INCAPACITATED"] remoteExecCall ["setUnconscious", _unit];
     };
-}, [ICON_PERSON, ICON_UNCONSCIOUS] select (isClass (configFile >> "CfgPatches" >> "ace_zeus"))] call zen_custom_modules_fnc_register;
+}, [ICON_PERSON, ICON_UNCONSCIOUS] select (!isNil "ace_zeus")] call zen_custom_modules_fnc_register;

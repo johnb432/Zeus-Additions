@@ -1,4 +1,4 @@
-**Zeus Additions** adds a handful of modules to the Zeus interface. Requires ZEN on all clients. This mod is a client side mod.
+**Zeus Additions** is a client side mod and adds a handful of modules to the Zeus interface, some of which can also be found in the context menu from ZEN (default keybind: 'V'). Requires ZEN on all clients.
 
 <h2>Modules</h2>
 
@@ -22,10 +22,11 @@
 * **Make Vehicle into VBIED:** Allows the Zeus to make a vehicle into a VBIED (vehicle bound IED). VBIEDs trigger when a unit turns its engine on.
 * **Open ACE Medical Menu:** Allows the Zeus to open a unit's medical menu.
 * **Pause Time:** Allows the Zeus to effectively stop time. It sets time acceleration to a minimum and reverts time every 100 seconds to when the module was placed.
-* **Place Map Markers:** Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
 * **Paradrop Unit Action:** Allows the Zeus to make a scroll wheel interaction for players to paradrop using the map. Module can be placed on an object to give interaction. If not placed on an object, it will spawn in a flag pole.
-* **Paradrop Units:** Allows the Zeus to paradrop units, vehicles and boxes.
+* **Paradrop Units:** Allows the Zeus to paradrop units, vehicles and boxes. Selection of AI units is done via the context menu.
+* **Place Map Markers:** Allows the Zeus to place markers in every channel, including most custom ones. If a side is selected, Zeus can mark markers on that side. If a group is selected, Zeus can mark both in that side and group.
 * **Prevent Vehicle from Exploding:** This module makes vehicles not able to blow up, but still allows them to take damage.
+* **Remote Control (Switch Unit):** This modules allows the Zeus take full control of an AI, as if the AI were a player.
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
 * **Show Mission Object Counter:** This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
 * **Spawn ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
@@ -36,7 +37,7 @@
 * **Track Unit Death:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 * **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.
 
-**Numerous CBA settings to customize modules:** To change them, go to Options -> Addon Options -> Zeus Additions - Main
+<h2>CBA Settings</h2>
 
 Inputs are arrays of strings.
 * **Blacklist:** Allows the user to set up a list of ammo that won't be put in the resupply using the "Spawn Ammo Resupply for unit" module.
@@ -70,17 +71,19 @@ This mod also adds:
 
 Only 1 client needs it to be enabled for it to be added to the server. If multiple clients have Zeus Additions, one or more have it turned on but the others not, the latter can still set JIP features in modules.
 
+<h2>Links</h2>
+
+* [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2387297579)
+* [GitHub](https://github.com/johnb432/Zeus-Additions)
+
 <h2>Credit</h2>
 
-Mod by johnb43<br/>
-[GitHub](https://github.com/johnb432/Zeus-Additions)
-
-Gear script originally made by cineafx, revamped by johnb43.<br/>
-Snow script made by JW & AZCoder, reworked by johnb43.<br/>
-Dog attack module made by Fred, reworked by johnb43.<br/>
-Parachute drop script by Kex & cobra4v320, reworked by johnb43.
-
-Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions.
+* Gear script originally made by cineafx, reworked by johnb43
+* Snow script made by JW & AZCoder, reworked by johnb43
+* Dog attack module made by Fred, reworked by johnb43
+* Parachute drop script by Kex & cobra4v320, reworked by johnb43
+* Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions
+* Mod by johnb43
 
 <h2>License</h2>
 

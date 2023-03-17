@@ -18,8 +18,7 @@
         ["TOOLBOX:YESNO", ["Spawn sound", "Adds the lightning bolt sound. This causes damage though, as it's like the Zeus bolt."], false],
         ["TOOLBOX:YESNO", ["Turn off pathing", "Turns off animal AI behaviour and pathing. Only applies if dog is peaceful."], false],
         ["EDIT", ["Name", "Sets the dog's name. If left blank, a random name will be chosen."], ""]
-    ],
-    {
+    ], {
         params ["_results", "_pos"];
         _results params ["_sides", "_attackSides", "_radius", "_damage", "_spawnLightning", "_spawnBolt", "_animalBehaviour", "_name"];
 
@@ -45,7 +44,7 @@
 
         [{
             // Wait until lightning bolt has been deleted
-            isNull (_this select 0);
+            isNull (_this select 0)
          }, {
             params ["", "_side", "_attackSides", "_radius", "_damage", "_pos", "_animalBehaviour", "_name"];
 
@@ -192,7 +191,7 @@
                                 [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy];
                             } else {
                                 private _hitPoint = selectRandom ["hitarms", "hithands", "hitlegs"];
-                                [_dogNearestEnemy, [_hitPoint, _damage + (_dogNearestEnemy getHitPointDamage _hitPoint), true, _dog]] remoteExecCall ["setHitPointDamage", _dogNearestEnemy];
+                                [_dogNearestEnemy, [_hitPoint, _damage + (_dogNearestEnemy getHitPointDamage _hitPoint), true, _dog, _dog]] remoteExecCall ["setHitPointDamage", _dogNearestEnemy];
                             };
                         };
 

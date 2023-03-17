@@ -20,7 +20,7 @@
 
 params ["_object", "_menuType", ["_previousCoeffValue", 5, [0]]];
 
-if (_menuType == MEDICAL_MENU && {GVAR(KATZeusLoaded)}) exitWith {
+if (_menuType == MEDICAL_MENU && {!isNil "kat_zeus"}) exitWith {
     _object call ace_medical_gui_fnc_openMenu;
 };
 

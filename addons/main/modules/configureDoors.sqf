@@ -10,8 +10,7 @@
         ["TOOLBOX", "Lock state", [0, 1, 4, ["Unbreachable", "Breachable", "Closed", "Open"]], false],
         ["EDIT", ["Explosives/Items", "An array that contains all allowed explosives/items used for breaching.\nEach time this dialog is opened and not aborted, the array used for checking explosives/items compatibility will be updated."], GETPRVAR(QGVAR(explosivesBreach), str ['DemoCharge_Remote_Mag']), true],
         ["CHECKBOX", ["Reset to default lists", "Resets the explosives list above to the default."], false, true]
-    ],
-    {
+    ], {
         params ["_results", "_args"];
         _results params ["_mode", "_explosives", "_reset"];
         _args params ["_pos", "_object"];
@@ -50,12 +49,12 @@
             };
         } forEach ((selectionNames _building) apply {toLowerANSI _x});
 
-        _selectionNames sort true;
-
         // If no doors found, exit
         if (_selectionNames isEqualTo []) exitWith {
             ["No doors were found for %1", getText (configOf _building >> "displayName")] call zen_common_fnc_showMessage;
         };
+
+        _selectionNames sort true;
 
         private _lock = switch (_mode) do {
             case 2: {0};
@@ -104,7 +103,7 @@
                 _building addAction [
                     "<t color='#FF0000'>Breach door using explosives</t>",
                     {
-                        params ["_target", "_caller", "", "_args"];
+                        params ["_target", "_caller", "_actionID", "_args"];
                         _args params ["_door", "_doorID"];
 
                         // In case door has been unlocked by other means
@@ -137,11 +136,15 @@
 
                         ["Configure Breaching Charge", [
                             ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [5, 120, 20, 0]]
-                        ],
-                        {
+                        ], {
                             params ["_results", "_args"];
                             _results params ["_timer"];
-                            _args params ["_target", "_caller", "_explosives", "_door", "_doorID"];
+                            _args params ["_target", "_caller", "_explosives", "_door", "_doorID", "_actionID"];
+
+                            // Check if action hasn't alredy been used, while unit was in menu
+                            if !(_actionID in (actionIDs _target)) exitWith {
+                                hint "Door has already been breached!";
+                            };
 
                             // Check if the item hasn't disappeared since the last check
                             private _explosive = _explosives param [_explosives findAny (itemsWithMagazines _caller), ""];
@@ -165,11 +168,11 @@
                             private _helperObject = "DemoCharge_F" createVehicle [0, 0, 0];
                             _helperObject setPosASL _intersectPosASL;
 
-                            // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly
+                            // If the surface is facing either facing N or S, we must rotate it, otherwise it isn't placed correctly; Remove from JIP when object is deleted
                             if ((_surfaceNormal select 0) == 0 && {(_surfaceNormal select 2) == 0}) then {
-                                _helperObject setVectorDirAndUp [[0, 0, 1], _surfaceNormal];
+                                [["zen_common_setVectorDirAndUp", [_helperObject, [[0, 0, 1], _surfaceNormal]]] call CBA_fnc_globalEventJIP, _helperObject] call CBA_fnc_removeGlobalEventJIP;
                             } else {
-                                _helperObject setVectorUp _surfaceNormal;
+                                [["zen_common_setVectorUp", [_helperObject, _surfaceNormal]] call CBA_fnc_globalEventJIP, _helperObject] call CBA_fnc_removeGlobalEventJIP;
                             };
 
                             // Add object to Zeus interface
@@ -243,7 +246,14 @@
 
                             // Spawn grenade effect to make an explosion globally
                             [{
+                                params ["_helperObject", "_target", "_doorID"];
+
                                 ["zen_common_execute", [{
+                                    // Hide helper; This makes it as if it had blown up, however it can't be deleted too quickly, otherwise sound doesn't play
+                                    if (isServer) then {
+                                        _helperObject hideObjectGlobal true;
+                                    };
+
                                     if (!hasInterface) exitWith {};
 
                                     private _pos = getPosATL _this;
@@ -287,25 +297,19 @@
                                     [{deleteVehicle _this}, _source2, 1] call CBA_fnc_waitAndExecute;
 
                                     // Play locally because it doesn't always work globally
-                                    playSound3D ["A3\Sounds_F\arsenal\explosives\grenades\Explosion_HE_grenade_01.wss", _this, false, getPosASL _this, 1, 1, 0, 0, true];
-                                }, _this]] call CBA_fnc_globalEvent;
+                                    playSound3D ["A3\Sounds_F\arsenal\explosives\grenades\Explosion_HE_grenade_01.wss", _this, (insideBuilding _this) > 0.5, getPosASL _this, 1, 1, 0, 0, true];
+                                }, _helperObject]] call CBA_fnc_globalEvent;
 
-                                // Only execute once after this
-                                if (!local _this) exitWith {};
+                                [{
+                                    params ["_helperObject", "_target", "_doorID"];
 
-                                // Hide helper; This makes it as if it had blown up, however it can't be deleted too quickly, otherwise sound doesn't play
-                                [_this, true] remoteExecCall ["hideObjectGlobal", 2];
-                            }, _helperObject, _timer] call CBA_fnc_waitAndExecute;
+                                    // Delay lets the sound play correctly
+                                    deleteVehicle _helperObject;
 
-                            [{
-                                params ["_helperObject", "_target", "_doorID"];
-
-                                // Delay lets the sound play correctly
-                                deleteVehicle _helperObject;
-
-                                [_target, _doorID, 2] call zen_doors_fnc_setState;
-                            }, [_helperObject, _target, _doorID], _timer + 0.5] call CBA_fnc_waitAndExecute;
-                        }, {}, [_target, _caller, _explosives, _door, _doorID]] call zen_dialog_fnc_create;
+                                    [_target, _doorID, 2] call zen_doors_fnc_setState;
+                                }, _this, 0.5] call CBA_fnc_waitAndExecute;
+                            }, [_helperObject, _target, _doorID], _timer] call CBA_fnc_waitAndExecute;
+                        }, {}, [_target, _caller, _explosives, _door, _doorID, _actionID]] call zen_dialog_fnc_create;
                     },
                     [_selectionName, _index + 1],
                     1.5,

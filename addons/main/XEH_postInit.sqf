@@ -2,38 +2,29 @@
 
 if (!hasInterface) exitWith {};
 
-private _cfgPatches = configFile >> "CfgPatches";
-
 // Optionals
-GVAR(ACEDraggingLoaded) = isClass (_cfgPatches >> "ace_dragging");
 GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
-GVAR(KATZeusLoaded) = isClass (_cfgPatches >> "kat_zeus");
 
 // If for some reason this postInit loads before the ZEN one, make sure there is something
 if (isNil "zen_common_aceMedical") then {
-    zen_common_aceMedical = isClass (_cfgPatches >> "ace_medical");
+    zen_common_aceMedical = !isNil "ace_medical";
 };
 
-if (isNil "zen_common_aceMedicalTreatment") then {
-    zen_common_aceMedicalTreatment = isClass (_cfgPatches >> "ace_medical_treatment");
-};
+// Add mission counter only if player is curator; However, check every time the zeus interface is opened
+["zen_curatorDisplayLoaded", {
+    call FUNC(objectsCounterMissionEH);
+}] call CBA_fnc_addEventHandler;
 
-// Add counter and JIP functions only if player is curator
+// Add drag bodies and JIP functions only if player is curator
 ["zen_curatorDisplayLoaded", {
     [_thisType, _thisId] call CBA_fnc_removeEventHandler;
 
     // Add the JIP functionality
     call FUNC(handleJIP);
 
-    // Add mission object counter
-    if (GVAR(enableMissionCounter)) then {
-        call FUNC(objectsCounterMissionEH);
-    };
-
     // Add Drag Bodies module
-    if (zen_common_aceMedical && {zen_common_aceMedicalTreatment} && {GVAR(ACEDraggingLoaded)}) then {
+    if (zen_common_aceMedical && {!isNil "ace_medical_treatment"} && {!isNil "ace_dragging"}) then {
         #include "modules\addACEDragBodies.sqf"
-        #include "modules\dragBodies.sqf"
     };
 }] call CBA_fnc_addEventHandlerArgs;
 
@@ -63,11 +54,16 @@ if (isNil "zen_common_aceMedicalTreatment") then {
 #include "modules\unitParadropAction.sqf"
 
 // Optionals
+private _cfgPatches = configFile >> "CfgPatches";
 private _notificationArray = ["[Zeus Additions]:"];
 
 // Check if ACE Dragging is loaded
-if (GVAR(ACEDraggingLoaded)) then {
+if (!isNil "ace_dragging") then {
     #include "modules\addACEDragAndCarry.sqf"
+
+    if (zen_common_aceMedical && {!isNil "ace_medical_treatment"}) then {
+        #include "modules\dragBodies.sqf"
+    };
 } else {
     if (GVAR(enableACEDragHint)) then {
         _notificationArray pushBack "The ACE drag and carry modules aren't available because ACE dragging isn't loaded.";
@@ -97,12 +93,12 @@ if (zen_common_aceMedical) then {
     #include "modules\createInjuries.sqf"
 
     // If KAT is loaded, don't load module
-    if (!GVAR(KATZeusLoaded)) then {
+    if (isNil "kat_zeus") then {
         #include "modules\openMedicalMenu.sqf"
     };
 
     // Check if ACE Medical Treatment is loaded
-    if (zen_common_aceMedicalTreatment) then {
+    if (!isNil "ace_medical_treatment") then {
         #include "modules\createResupplyMedical.sqf"
     };
 } else {
@@ -112,7 +108,7 @@ if (zen_common_aceMedical) then {
 };
 
 // Check if ACE Cargo is loaded
-if (isClass (_cfgPatches >> "ace_cargo")) then {
+if (!isNil "ace_cargo") then {
     #include "modules\unloadACECargo.sqf"
 } else {
     if (GVAR(enableACECargoHint)) then {

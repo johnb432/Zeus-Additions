@@ -32,7 +32,7 @@ private _cfgMagazines = configFile >> "CfgMagazines";
 
     {
         // Remove non-existent magazines; Then get case-senstive names of magazines to avoid problems
-        _magazinesList append (((getArray _x) select {isClass (_cfgMagazines >> _x)}) apply {configName (_cfgMagazines >> _x)});
+        _magazinesList insert [-1, ((getArray _x) select {isClass (_cfgMagazines >> _x)}) apply {configName (_cfgMagazines >> _x)}, true];
     } forEach configProperties [_x, "isArray _x", true];
 
     // Remove duplicates

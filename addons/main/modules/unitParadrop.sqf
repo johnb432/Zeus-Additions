@@ -15,8 +15,7 @@
         ["SLIDER", ["Paradrop Altitude", "Determines how far up units are paradropped over terrain level."], [150, 5000, 1000, 0]],
         ["SLIDER", ["Unit Density", "Determines how far apart units are paradropped from each other."], [10, 100, 40, 0]],
         ["TOOLBOX:YESNO", ["Give Units Parachutes", "Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back."], true]
-    ],
-    {
+    ], {
         params ["_results", "_pos"];
         _results params ["_selected", "_includeContextMenu", "_includeVehicles", "_includePlayersInVehicles", "_height", "_density", "_giveUnitsParachutes"];
         _selected params ["_sides", "_groups", "_players"];
@@ -101,7 +100,7 @@
         private _topLeft = _pos vectorAdd [-_width / 2, -_height / 2, 0];
         private _indexUnits = 0;
         private _indexVics = 0;
-        private _unit;
+        private _unit = objNull;
 
         // Iterate through each spot in the rectangle
         for "_i" from 0 to (_width - 1) * _density step _density do {
@@ -120,26 +119,7 @@
                     _unit setVariable [QGVAR(isParadropping), true, true];
 
                     // Start paradrop
-                    ["zen_common_execute", [{
-                        // If AI, don't do transition screen or inform about paradrop
-                        if (isPlayer (_this select 0)) then {
-                            cutText ["You are being paradropped...", "BLACK OUT", 2, true];
-                            hint "The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing.";
-                        };
-
-                        [{
-                            params ["_unit", "_pos", "_giveUnitParachute"];
-
-                            _unit setPosATL _pos;
-
-                            // If AI, don't do transition screen
-                            if (isPlayer _unit) then {
-                                cutText ["", "BLACK IN", 2, true];
-                            };
-
-                            [_unit, _giveUnitParachute] call FUNC(addParachute);
-                        }, _this, 3] call CBA_fnc_waitAndExecute;
-                    }, [_unit, _topLeft vectorAdd [_i, _j, 0], _giveUnitParachute]], _unit] call CBA_fnc_targetEvent;
+                    [_unit, _topLeft vectorAdd [_i, _j, 0], _giveUnitParachute] remoteExecCall [QFUNC(addParachute), _unit];
 
                     _indexUnits = _indexUnits + 1;
                 } else {

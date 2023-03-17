@@ -16,7 +16,9 @@
  * Public: No
  */
 
-private _type = switch (toLowerANSI getText (configOf _this >> "icon")) do {
+params ["_unit"];
+
+private _type = switch (toLowerANSI getText (configOf _unit >> "icon")) do {
     case "iconmanengineer": {6};
     case "iconmanmedic": {5};
     case "iconmanmg": {4};
@@ -29,10 +31,10 @@ if (_type != 0) exitWith {
 };
 
 // Tertiary weapon overwrites primary weapons
-private _weapon = secondaryWeapon _this;
+private _weapon = secondaryWeapon _unit;
 
 if (_weapon == "") then {
-    _weapon = primaryWeapon _this;
+    _weapon = primaryWeapon _unit;
 };
 
 if (_weapon == "") exitWith {

@@ -14,18 +14,20 @@
 
     private _index = 0;
     private _types = ["Men", "Cars", "Tanks", "Static Weapons", "Helicopters", "Planes", "Misc.", "Pings", "Deletions", "Groups"];
-
-    // Add two empty lines
-    diag_log text "";
-    diag_log text "";
-
-    diag_log text "[Zeus Additions]: Your curator stats:";
+    private _addedLines = false;
 
     // List all objects in hashmaps
     {
         // Don't print to log if category is empty
         if (_x isEqualTo createHashMap) then {
             continue;
+        } else {
+            if (!_addedLines) then {
+                _addedLines = true;
+
+                diag_log text "";
+                diag_log text "[Zeus Additions]: Your curator stats:";
+            };
         };
 
         _index = _forEachIndex;
@@ -34,19 +36,23 @@
 
         {
             switch (_index) do {
-                case 7: {diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
+                case 7: {
+                    private _unit = _x call BIS_fnc_getUnitByUID;
+
+                    diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + _x, name _unit] select (!isNull _unit), _y];
+                };
                 case 8: {diag_log text format ["    %1 entities deleted", _y]};
                 case 9: {diag_log text format ["    %1 groups placed", _y]};
                 default {diag_log text format ["    %1x '%2' placed", _y, _x]};
             };
         } forEach _x;
-    } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),nil);
+    } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),[]);
 
-    // Add two empty lines
-    diag_log text "";
-    diag_log text "";
+    if (_addedLines) then {
+        diag_log text "";
+    };
 
-    ["Added curator stats to RPT log"] call zen_common_fnc_showMessage;
+    [["Nothing to print to log", "Added curator stats to RPT log"] select _addedLines] call zen_common_fnc_showMessage;
 }, ICON_OBJECT] call zen_custom_modules_fnc_register;
 
 // When mission ends, add stuff to RPT
@@ -55,18 +61,20 @@ addMissionEventHandler ["Ended", {
 
     private _index = 0;
     private _types = ["Men", "Cars", "Tanks", "Static Weapons", "Helicopters", "Planes", "Misc.", "Pings", "Deletions", "Groups"];
-
-    // Add two empty lines
-    diag_log text "";
-    diag_log text "";
-
-    diag_log text "[Zeus Additions]: Your curator stats at mission end:";
+    private _addedLines = false;
 
     // List all objects in hashmaps
     {
         // Don't print to log if category is empty
         if (_x isEqualTo createHashMap) then {
             continue;
+        } else {
+            if (!_addedLines) then {
+                _addedLines = true;
+
+                diag_log text "";
+                diag_log text "[Zeus Additions]: Your curator stats:";
+            };
         };
 
         _index = _forEachIndex;
@@ -75,15 +83,19 @@ addMissionEventHandler ["Ended", {
 
         {
             switch (_index) do {
-                case 7: {diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + str _x, name (_x call BIS_fnc_getUnitByUID)] select (!isNull (_x call BIS_fnc_getUnitByUID)), _y]};
+                case 7: {
+                    private _unit = _x call BIS_fnc_getUnitByUID;
+
+                    diag_log text format ["    %1x pinged %2 time(s)", ["UID: " + _x, name _unit] select (!isNull _unit), _y];
+                };
                 case 8: {diag_log text format ["    %1 entities deleted", _y]};
                 case 9: {diag_log text format ["    %1 groups placed", _y]};
                 default {diag_log text format ["    %1x '%2' placed", _y, _x]};
             };
         } forEach _x;
-    } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),nil);
+    } forEach GETMVAR(FORMAT_1(QGVAR(curatorObjects_%1),str (getAssignedCuratorLogic player)),[]);
 
-    // Add two empty lines
-    diag_log text "";
-    diag_log text "";
+    if (_addedLines) then {
+        diag_log text "";
+    };
 }];

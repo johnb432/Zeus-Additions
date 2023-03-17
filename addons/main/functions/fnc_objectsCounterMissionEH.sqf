@@ -18,6 +18,21 @@
 
 private _curator = getAssignedCuratorLogic player;
 
+GVAR(curatorEhIDs) params [["_oldCurator", objNull], "_deletedEhID", "_objectPlacedEhID", "_groupPlacedEhID", "_pingedEhID"];
+
+// If setting is off or different curator unit and there is stuff still there, remove it
+if (!GVAR(enableMissionCounter) || {_oldCurator != _curator}) exitWith {
+    if (isNull _oldCurator || {isNil "_deletedEhID"}) exitWith {};
+
+    _oldCurator removeEventHandler ["CuratorObjectDeleted", _deletedEhID];
+    _oldCurator removeEventHandler ["CuratorObjectPlaced", _objectPlacedEhID];
+    _oldCurator removeEventHandler ["CuratorGroupPlaced", _groupPlacedEhID];
+    _oldCurator removeEventHandler ["CuratorPinged", _pingedEhID];
+
+    GVAR(curatorEhIDs) = nil;
+};
+
+// If no new unit, exit
 if (isNull _curator) exitWith {};
 
 // If stats haven't been initialised; make unique identifier for multiple people using the mod at the same time
@@ -27,9 +42,10 @@ if (isNil FORMAT_1(QGVAR(curatorObjects_%1),str _curator)) then {
 };
 
 // If EH have already been added, don't add them again
-if (!isNil QGVAR(curatorHandleIDs)) exitWith {};
+if (_oldCurator == _curator) exitWith {};
 
-GVAR(curatorHandleIDs) = [
+GVAR(curatorEhIDs) = [
+    _curator,
     _curator addEventHandler ["CuratorObjectDeleted", {
         params ["_curator", "_entity"];
 

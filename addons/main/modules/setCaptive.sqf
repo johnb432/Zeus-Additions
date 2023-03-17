@@ -11,8 +11,7 @@
         ["TOOLBOX:YESNO", ["Set Captive", "Sets the captivity status of the selected unit."], false],
         ["SIDES", ["AI selected", "Select AI from the list to change captivity status."], []],
         ["TOOLBOX:YESNO", ["Include Group", "Includes the entire group of the AI on which the module was placed."], false]
-    ],
-    {
+    ], {
         params ["_results", "_unit"];
         _results params ["_setCaptive", "_sides", "_doGroup"];
 
@@ -48,11 +47,11 @@
 
         if (_sides isNotEqualTo []) then {
             {
-                _units append units _x;
+                _units insert [-1, units _x, true];
             } forEach _sides;
         };
 
-        _units = (_units arrayIntersect _units) select {!isPlayer _x && {alive _x}};
+        _units = _units select {!isPlayer _x && {alive _x}};
 
         if (_units isEqualTo []) exitWith {
             ["No alive AI units were found"] call zen_common_fnc_showMessage;
@@ -61,12 +60,25 @@
         if (_setCaptive) then {
             {
                 if (!captive _x) then {
-                    _x stop true;
-                    _x setCaptive true;
-                    _x setBehaviourStrong "CARELESS";
+                    ["zen_common_execute", [{
+                        _this setBehaviour "CARELESS";
+                        _this setUnitPos "UP";
+                        _this playMove "aidlpercmstpsraswrfldnon_ai";
+                        _this stop true;
+                        _this setCaptive true;
+
+                        if (isNil "ace_captives") exitWith {};
+
+                        [{
+                            // Wait until unit has dropped its backpack
+                            backpack _this == ""
+                        }, {
+                            [_this, true] call ace_captives_fnc_setHandcuffed;
+                        }, _this] call CBA_fnc_waitUntilAndExecute;
+                    }, _x], _x] call CBA_fnc_targetEvent;
 
                     // Drop all weapons
-                    private _weaponHolder = createVehicle ["WeaponHolderSimulated", (getPosATL _x) vectorAdd [0, 0, 0.2], [], 0, "CAN_COLLIDE"];
+                    private _weaponHolder = createVehicle ["WeaponHolderSimulated", (getPosATL _x) vectorAdd [0, 0, 0.05], [], 0, "CAN_COLLIDE"];
 
                     {
                         switch (_forEachIndex) do {
@@ -79,11 +91,11 @@
                                     _weaponHolder addWeaponWithAttachmentsCargoGlobal [_x, 1];
                                 };
                             };
-                            // Uniforms, vests, backpacks
+                            // Uniforms, vests (backpacks are dropped instead)
                             case 3;
-                            case 4;
-                            case 5: {
+                            case 4: {
                                 {
+                                    // Containers are not handled, to avoid losing containers within containers
                                     switch (true) do {
                                         // Items
                                         case (_x isEqualTypeArray ["", 0]): {
@@ -97,16 +109,6 @@
                                         case (_x isEqualTypeArray [[], 0]): {
                                             _weaponHolder addWeaponWithAttachmentsCargoGlobal _x;
                                         };
-                                        // Containers
-                                        case (_x isEqualTypeArray ["", false]): {
-                                            // Backpacks
-                                            if (_x select 1) then {
-                                                _weaponHolder addBackpackCargoGlobal [_x select 0, 1];
-                                            } else {
-                                                // Other
-                                                _weaponHolder addItemCargoGlobal [_x select 0, 1];
-                                            };
-                                        };
                                     };
                                 } forEach (_x param [1, []]);
                             };
@@ -119,17 +121,38 @@
                         };
                     } forEach (getUnitLoadout _x);
 
-                    removeAllWeapons _x;
-                    removeAllItemsWithMagazines _x;
-                    removeAllAssignedItems _x;
+                    private _backpackClass = backpack _x;
+
+                    // If a unit has a backpack, drop it
+                    if (_backpackClass != "") then {
+                        _x action ["DropBag", _weaponHolder, _backpackClass];
+                    };
+
+                    [{
+                        // Wait until unit has dropped its backpack
+                        backpack _this == ""
+                    }, {
+                        ["zen_common_execute", [{
+                            removeAllWeapons _this;
+                            removeAllAssignedItems _this;
+                            removeAllItemsWithMagazines _this;
+                        }, _this], _this] call CBA_fnc_targetEvent;
+                    }, _x] call CBA_fnc_waitUntilAndExecute;
                 };
             } forEach _units;
         } else {
             {
                 if (captive _x) then {
-                    _x stop false;
-                    _x setCaptive false;
-                    _x setBehaviourStrong "AWARE";
+                    ["zen_common_execute", [{
+                        _this setCaptive false;
+                        _this stop false;
+                        _this setBehaviour "AWARE";
+                        _this setUnitPos "AUTO";
+
+                        if (isNil "ace_captives") exitWith {};
+
+                        [_this, false] call ace_captives_fnc_setHandcuffed;
+                    }, _x], _x] call CBA_fnc_targetEvent;
                 };
             } forEach _units;
         };

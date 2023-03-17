@@ -43,12 +43,11 @@
         ["SLIDER", "Number of Wounds Right Leg", [0, 20, 0, 0]],
         ["CHECKBOX", ["Set Fracture to Right Leg", "Forces a fracture to occur."], false],
 
-        ["TOOLBOX:WIDE", ["Wound Type", ""], [0, 1, 8, ["Abrasion", "Avulsion", "Contusion" ,"Crush", "Cut", "Laceration", "Velocity W.", "Puncture W."]], false],
+        ["TOOLBOX:WIDE", ["Wound Type", ""], [0, 1, 9, ["Abrasion", "Avulsion", "Contusion", "Crush", "Cut", "Laceration", "Velocity W.", "Puncture W.", "Therm. Burn"]], false],
 
         ["SLIDER", ["Random Damage Amount", "More damage will usually cause more wounds."], [0, 30, 0, 2]],
         ["TOOLBOX:WIDE", ["Random Damage Type", "Various types of damages produce different results."], [0, 1, 6, ["Grenade", "Explosive", "Shell", "Vehicle Crash", "Collision", "Backblast"]]]
-    ],
-    {
+    ], {
         params ["_results", "_unit"];
 
         // Check again, in case something has changed since dialog's opening
@@ -79,11 +78,6 @@
 
         if (_randomDamage > 0 && {alive _unit}) then {
             [_unit, _randomDamage, selectRandom ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"], ["grenade", "explosive", "shell", "vehiclecrash", "collision", "backblast"] select (_results select 18)] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _unit];
-        };
-
-        // Notify unit if affected unit is a player; For fairness reasons
-        if (isPlayer _unit) then {
-            "Zeus has injured you using a module." remoteExecCall ["hint", _unit];
         };
 
         ["Injuries created"] call zen_common_fnc_showMessage;

@@ -9,8 +9,7 @@
     ["Change RHS APS", [
         ["TOOLBOX:ENABLED", ["APS", "Allows you to change the APS (Active Protection System) on a vehicle with RHS APS."], true],
         ["TOOLBOX", ["Selection", "Changes APS on selected object only or all vehicles with RHS APS."], [0, 1, 2, ["Object only", "All Vehicles"]]]
-    ],
-    {
+    ], {
         params ["_result", "_object"];
         _result params ["_enabled", "_all"];
 
@@ -27,8 +26,7 @@
 
                 private _count = count _apsVehicles;
 
-                _apsVehicles append _vehicles;
-                _apsVehicles = _apsVehicles arrayIntersect _apsVehicles;
+                _apsVehicles insert [-1, _vehicles, true];
 
                 // See if any vehicles were added
                 if ((count _apsVehicles) == _count) then {

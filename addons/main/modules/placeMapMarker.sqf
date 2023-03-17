@@ -6,8 +6,7 @@
 ["Zeus Additions - Utility", "Place Map Markers", {
     ["Place Map Markers", [
         ["OWNERS", ["Select sides or groups", "Select sides/groups. Group will have priority over side. It will disregard player selection."], [[], [], [], 0], true]
-    ],
-    {
+    ], {
         params ["_results"];
         _results params ["_selected"];
         _selected params ["_sides", "_groups"];
@@ -92,7 +91,7 @@
 
         [{
             // Wait until the Zeus interface is closed
-            isNull (findDisplay IDD_RSCDISPLAYCURATOR);
+            isNull (findDisplay IDD_RSCDISPLAYCURATOR)
         }, {
             // Open map when unit is being controlled
             openMap true;
@@ -102,7 +101,7 @@
                 _thisArgs params ["_helperUnit", "_oldPlayer", "_isDamageAllowed", "_channelSettings", "_channelIDs"];
 
                 // Remove EH
-                removeMissionEventHandler ["Map", _thisEventHandler];
+                removeMissionEventHandler [_thisEvent, _thisEventHandler];
 
                 // Return channel settings to previous settings
                 {
