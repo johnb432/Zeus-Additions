@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 21.3.2023
+
+1.6.3.14
+- Minor fixes.
+
 # Changelog for Zeus Additions 17.3.2023
 
 1.6.3.13

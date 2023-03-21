@@ -55,16 +55,38 @@
 
                     // Apply damage to crew; If they don't die, make sure they do
                     {
-                        if (zen_common_aceMedical) then {
-                            [_x, [ace_medical_AIDamageThreshold, ace_medical_playerDamageThreshold] select (isPlayer _x), "Body", "explosive", objNull, nil, false] call ace_medical_fnc_addDamageToUnit;
+                        ["zen_common_execute", [{
+                            if (zen_common_aceMedical) then {
+                                private _damages = [];
 
-                            if (alive _x) then {
-                                _x call ace_medical_status_fnc_setDead;
+                                {
+                                    // 95% chance of getting a wound
+                                    if (random 1 > 0.05) then {
+                                        _damages pushBack [(random [0.5, 0.75, 1]) * 10, _x, 0];
+                                    };
+                                } forEach ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"];
+
+                                ["ace_medical_woundReceived", [_this, _damages, _this, "explosive"], _this] call CBA_fnc_localEvent;
+
+                                // If unit still alive, kill
+                                if (alive _this) then {
+                                    _this call ace_medical_status_fnc_setDead;
+                                };
+                            } else {
+                                {
+                                    // 95% chance of getting a wound
+                                    if (random 1 > 0.05) then {
+                                        _this setHitPointDamage [_x, (_this getHitPointDamage _x) + random [0.5, 0.75, 1], true];
+                                    };
+                                } forEach ["hitface", "hitneck", "hithead", "hitpelvis", "hitabdomen", "hitdiaphragm", "hitchest", "hitbody", "hitarms", "hithands", "hitlegs"];
+
+                                // If unit still alive, kill
+                                if (alive _this) then {
+                                    _this setHitPointDamage ["hithead", 1, true];
+                                };
                             };
-                        } else {
-                            _x setHitPointDamage ["HitHead", 1, true];
-                        };
-                    } forEach ((crew _object) select {alive _x && {isDamageAllowed _x}});
+                        }, _x], _x] call CBA_fnc_targetEvent;
+                    } forEach ((crew _object) select {alive _x && {isDamageAllowed _x} && {_x getVariable ["ace_medical_allowDamage", true]}});
 
                     _object setVariable [QGVAR(IEDSize), nil, true];
                 }];

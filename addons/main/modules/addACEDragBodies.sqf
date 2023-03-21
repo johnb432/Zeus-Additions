@@ -32,7 +32,7 @@ if (isNil QGVAR(draggingKilledEH)) then {
 
                 _savedWeaponHolders pushBackUnique _this;
 
-                _unit setVariable [QGVAR(weaponHolders), _savedWeaponHolders];
+                _unit setVariable [QGVAR(weaponHolders), _savedWeaponHolders, true];
             }, _entity, 0.1] call CBA_fnc_waitAndExecute;
         }];
     }, []]] call CBA_fnc_serverEvent;
