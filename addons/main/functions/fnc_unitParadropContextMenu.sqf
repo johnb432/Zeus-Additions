@@ -21,7 +21,7 @@ params ["_objects", "_filterMode"];
 
 _objects = _objects select {alive _x};
 
-private _units = _objects select {_x isKindOf "CAManBase"};
+private _units = _objects select {_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}};
 private _vehicles = _objects select {_x isKindOf "LandVehicle" || {_x isKindOf "Ship"}};
 private _misc = _objects select {_x isKindOf "Thing"};
 
@@ -73,7 +73,7 @@ if (_filterMode == PARADROP_MISC) exitWith {
     };
 
     // Remove non-man entities
-    _units = _units select {alive _x && {_x isKindOf "CAManBase"}};
+    _units = _units select {alive _x && {_x isKindOf "CAManBase"} && {!(_x isKindOf "VirtualCurator_F")}};
 
     GVAR(selectedParadropUnits) = _units;
 

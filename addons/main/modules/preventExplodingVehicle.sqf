@@ -55,8 +55,8 @@
                             _damage
                         } else {
                             // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
-                            _object setHitPointDamage ["hithull", (_object getHitPointDamage "hithull") min 0.75];
-                            ([0.75, 0.95] select (_hitPoint != "" && {_hitPoint != "hithull"})) min _damage
+                            _object setHitPointDamage ["HitHull", (_object getHitPointDamage "HitHull") min 0.75];
+                            ([0.75, 0.95] select (_hitPoint != "" && {_hitPoint != "HitHull"})) min _damage
                         };
                     }]
                 ];

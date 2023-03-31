@@ -44,29 +44,27 @@
                     // If deleted normally, don't bother
                     if !(_weaponHolder getVariable [QGVAR(deletedBecauseDragging), false]) exitWith {};
 
-                    // Check if there are any weapons still present
-                    private _weaponItems = weaponsItems _weaponHolder;
+                    private _data = _weaponHolder call zen_common_fnc_serializeInventory;
 
-                    if (_weaponItems isEqualTo []) exitWith {};
+                    // Check if there is anything still present
+                    if (_data isEqualTo [[[],[]],[],[],[[],[]],[]]) exitWith {};
 
                     [{
                         // Wait until the weaponholder has been deleted
                         isNull (_this select 0)
                     }, {
-                        params ["", "_posATL", "_vectorDir", "_vectorUp", "_weaponItems"];
+                        params ["", "_posATL", "_vectorDirAndUp", "_data"];
 
                         // Create a new weapon holder & put it in the same position as the old
                         private _newWeaponHolder = createVehicle ["WeaponHolderSimulated", [0, 0, 0], [], 0, "CAN_COLLIDE"];
                         _newWeaponHolder setPosATL _posATL;
 
                         // Remove from JIP if object is deleted
-                        [["zen_common_setVectorDirAndUp", [_newWeaponHolder, [_vectorDir, _vectorUp]]] call CBA_fnc_globalEventJIP, _newWeaponHolder] call CBA_fnc_removeGlobalEventJIP;
+                        [["zen_common_setVectorDirAndUp", [_newWeaponHolder, _vectorDirAndUp]] call CBA_fnc_globalEventJIP, _newWeaponHolder] call CBA_fnc_removeGlobalEventJIP;
 
-                        // Readd weapons
-                        {
-                            _newWeaponHolder addWeaponWithAttachmentsCargoGlobal [_x, 1];
-                        } forEach _weaponItems;
-                    }, [_weaponHolder, (getPosATL _weaponHolder) vectorAdd [0, 0, 0.05], vectorDir _weaponHolder, vectorUp _weaponHolder, _weaponItems]] call CBA_fnc_waitUntilAndExecute;
+                        // Readd all of the old items
+                        [_newWeaponHolder, _data] call FUNC(deserializeInventory);
+                    }, [_weaponHolder, (getPosATL _weaponHolder) vectorAdd [0, 0, 0.05], [vectorDir _weaponHolder, vectorUp _weaponHolder], _data]] call CBA_fnc_waitUntilAndExecute;
                 }];
             } forEach ((_entity getVariable [QGVAR(weaponHolders), []]) select {!isNull _x});
 

@@ -15,7 +15,8 @@
         _unit = effectiveCommander _unit;
     };
 
-    if !(_unit isKindOf "CAManBase") exitWith {
+    // Can be applied to dead units too!
+    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
         ["STR_ZEN_Modules_OnlyInfantry"] call zen_common_fnc_showMessage;
     };
 

@@ -28,6 +28,7 @@
 [*] Prevent Vehicle from Exploding
 [*] Remote Control (Switch Unit)
 [*] Remove Grenades from AI
+[*] Remove Zeus from units
 [*] Show Mission Object Counter
 [*] Spawn ACE Medical Resupply
 [*] Spawn Ammo Resupply for Players

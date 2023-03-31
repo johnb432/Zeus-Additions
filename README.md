@@ -28,6 +28,7 @@
 * **Prevent Vehicle from Exploding:** This module makes vehicles not able to blow up, but still allows them to take damage.
 * **Remote Control (Switch Unit):** This modules allows the Zeus take full control of an AI, as if the AI were a player.
 * **Remove Grenades from AI:** This module removes all types of grenade from the selected AI.
+* **Remove Zeus from units:** This module allows a Zeus, who has admin access, to remove other curator slots and kick the users out of the interface, if there are any.
 * **Show Mission Object Counter:** This module prints what the Zeus has placed in the mission so far if the functionality is enabled (see CBA settings).
 * **Spawn ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Spawn Ammo Resupply for Players:** Spawns a magazine resupply using the unit's weapons. The unit is either chosen by placing the module on the unit or the choosing a player from the menu. If multiple players are chosen from the menu, only the chronologically first selected one will be used. If the module is placed on a unit and you choose a player from the menu, the menu selection will take priority. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.

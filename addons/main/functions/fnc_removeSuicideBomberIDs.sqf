@@ -6,6 +6,7 @@
  *
  * Arguments:
  * 0: Unit <OBJECT>
+ * 1: Remove actions <BOOLEAN> (Optional)
  *
  * Return Value:
  * None

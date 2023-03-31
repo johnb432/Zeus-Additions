@@ -62,11 +62,11 @@
         // Add context menu selection of entities
         if (_includeContextMenu) then {
             if (!isNil QGVAR(selectedParadropUnits)) then {
-                _unitList append GVAR(selectedParadropUnits);
+                _unitList insert [-1, GVAR(selectedParadropUnits), true];
             };
 
             if (!isNil QGVAR(selectedParadropVehicles)) then {
-                _vehicleList append GVAR(selectedParadropVehicles);
+                _vehicleList insert [-1, GVAR(selectedParadropVehicles), true];
             };
 
             if (!isNil QGVAR(selectedParadropMisc)) then {

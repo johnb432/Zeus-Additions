@@ -52,7 +52,7 @@
             private _group = createGroup _side;
             private _dog = _group createUnit ["Fin_random_F", _pos, [], 0, "CAN_COLLIDE"];
 
-            ["zen_common_addObjects", [[_dog]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_dog]]] call CBA_fnc_serverEvent;
 
             _dog setName ([selectRandom ["Fluffy", "Doggo", "Cuddles", "Santa's Little Helper", "Biter", "Foxer", "Boxy", "Death", "SirKillsALot"], _name] select (_name != ""));
 
@@ -73,7 +73,7 @@
             // Make helper leader, otherwise problems arise
             [_helperUnit, _dog] joinSilent _group;
 
-            ["zen_common_addObjects", [[_helperUnit]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_helperUnit]]] call CBA_fnc_serverEvent;
 
             // Make helper invisible and invincible
             [_helperUnit, true] remoteExecCall ["hideObjectGlobal", 2];
@@ -145,7 +145,8 @@
                         {alive _x} &&
                         {!(_x getVariable ["ACE_isUnconscious", false])} &&
                         {(lifeState _x) != "INCAPACITATED"} &&
-                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
+                        {isNil {_x getVariable QGVAR(dogNearestEnemy)}} &&
+                        {!(_x isKindOf "VirtualCurator_F")}
                     }) param [0, objNull];
 
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -165,7 +166,8 @@
                             {alive _x} &&
                             {!(_x getVariable ["ACE_isUnconscious", false])} &&
                             {(lifeState _x) != "INCAPACITATED"} &&
-                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}}
+                            {isNil {_x getVariable QGVAR(dogNearestEnemy)}} &&
+                            {!(_x isKindOf "VirtualCurator_F")}
                         }) param [0, objNull];
 
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -190,20 +192,19 @@
                             if (zen_common_aceMedical) then {
                                 [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy];
                             } else {
-                                private _hitPoint = selectRandom ["hitarms", "hithands", "hitlegs"];
+                                private _hitPoint = selectRandom ["HitArms", "HitHands", "HitLegs"];
                                 [_dogNearestEnemy, [_hitPoint, _damage + (_dogNearestEnemy getHitPointDamage _hitPoint), true, _dog, _dog]] remoteExecCall ["setHitPointDamage", _dogNearestEnemy];
                             };
                         };
 
                         // Prevents excessive barking
                         if (_time >= ((_helperUnit getVariable [QGVAR(timeBark), -1]) + 3) && {random 1 < 0.4}) then {
-                            playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", _dog, false, getPosASL _dog, 5, 0.75, 100];
+                            playSound3D ["A3\Sounds_F\ambient\animals\dog3.wss", objNull, (insideBuilding _dog) > 0.5, getPosASL _dog, 5, 0.75, 100];
                             _helperUnit setVariable [QGVAR(timeBark), _time];
                         };
                     };
                 };
             }, 0.25, [_dog, _helperUnit, _attackSides, _radius, _damage]] call CBA_fnc_addPerFrameHandler;
         }, [_lightning, _sides select 0, _attackSides, _radius, _damage, _pos, _animalBehaviour, _name]] call CBA_fnc_waitUntilAndExecute;
-    },
-    {}, _pos] call zen_dialog_fnc_create;
+    }, {}, _pos] call zen_dialog_fnc_create;
 }, ICON_DOG] call zen_custom_modules_fnc_register;

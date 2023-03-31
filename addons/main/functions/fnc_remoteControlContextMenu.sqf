@@ -62,7 +62,7 @@ if (!local _unit) then {
     ["zen_common_execute", [{
         params ["_clientOwner", "_unit", "_group", "_groupID", "_teamColor"];
 
-        // If ownership was transferred succesfully, quit
+        // If ownership was transferred successfully, quit
         if (_group setGroupOwner _clientOwner) exitWith {};
 
         // If unit still isn't local, try other solutions

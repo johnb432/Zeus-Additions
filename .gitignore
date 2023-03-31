@@ -8,3 +8,4 @@ keys/*
 hemtt.exe
 .hemtt/template/
 *.pbo
+.hemttout

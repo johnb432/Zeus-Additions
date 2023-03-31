@@ -11,15 +11,9 @@ if (isNil QGVAR(draggingKilledEH)) then {
     ["zen_common_execute", [{
         // Need to check for weapon holders when an entity is created, otherwise they get deleted
         addMissionEventHandler ["EntityCreated", {
-            params ["_entity"];
+            params ["_weaponHolder"];
 
-            if (_entity isKindOf "CAManBase") exitWith {
-                if (isNil QGVAR(enableDragging)) exitWith {};
-
-                _entity setVariable [QGVAR(canDragBody), true, true];
-            };
-
-            if (typeOf _entity != "WeaponHolderSimulated") exitWith {};
+            if (typeOf _weaponHolder != "WeaponHolderSimulated") exitWith {};
 
             // 'getCorpse' does not work immediately upon death for weapon holders
             [{
@@ -33,8 +27,18 @@ if (isNil QGVAR(draggingKilledEH)) then {
                 _savedWeaponHolders pushBackUnique _this;
 
                 _unit setVariable [QGVAR(weaponHolders), _savedWeaponHolders, true];
-            }, _entity, 0.1] call CBA_fnc_waitAndExecute;
+            }, _weaponHolder, 0.2] call CBA_fnc_waitAndExecute;
         }];
+
+        // When a unit is killed, enable interaction
+        addMissionEventHandler ["EntityKilled", {
+            params ["_unit"];
+
+            if (isNil QGVAR(enableDragging) || {!(_unit isKindOf "CAManBase")} || {_unit isKindOf "VirtualCurator_F"}) exitWith {};
+
+            _unit setVariable [QGVAR(canDragBody), true, true];
+        }];
+
     }, []]] call CBA_fnc_serverEvent;
 
     ["zen_common_execute", [{
@@ -92,9 +96,10 @@ if (isNil QGVAR(draggingKilledEH)) then {
     }, []]] call CBA_fnc_globalEventJIP;
 };
 
-if (isNil QFUNC(serializeObjects)) then {
-    // zen_common_fnc_serializeObjects does not work with dead objects
-    private _functionString = trim (str zen_common_fnc_serializeObjects);
+// Sanizises a function
+private _sanitiseFunction = {
+    params ["_functionString"];
+
     _functionString = _functionString select [1, count _functionString - 2];
 
     private _index = -1;
@@ -125,14 +130,39 @@ if (isNil QFUNC(serializeObjects)) then {
         };
     };
 
+    _functionString
+};
+
+if (isNil QFUNC(serializeObjects)) then {
+    // 'zen_common_fnc_serializeObjects' does not work with dead objects
+    private _functionString = (trim str zen_common_fnc_serializeObjects) call _sanitiseFunction;
+
     // Remove condition for dead units from function
     _functionString = [_functionString, "alive _x && {vehicle _x == _x}", "isNull objectParent _x"] call CBA_fnc_replace;
 
-    // zeus_additions_main_fnc_serializeObjects; Used by this module and zeus corpse dragging
+    // 'zeus_additions_main_fnc_serializeObjects'; Used by this module and zeus corpse dragging
     DFUNC(serializeObjects) = if (_functionString != "") then {
         compileFinal _functionString
     } else {
         zen_common_fnc_serializeObjects
+    };
+};
+
+if (isNil QFUNC(deserializeInventory)) then {
+    // 'zen_common_fnc_deserializeInventory' clears the inventory first, which makes objects of type 'WeaponHolderSimulated' delete immediately
+    private _functionString = (trim str zen_common_fnc_deserializeInventory) call _sanitiseFunction;
+
+    // Remove clearing of object on highest level
+    _functionString = [_functionString, toString [10] + "clearItemCargoGlobal _object;" + toString [10], ""] call CBA_fnc_replace;
+    _functionString = [_functionString, "clearWeaponCargoGlobal _object;" + toString [10], ""] call CBA_fnc_replace;
+    _functionString = [_functionString, "clearMagazineCargoGlobal _object;" + toString [10], ""] call CBA_fnc_replace;
+    _functionString = [_functionString, "clearBackpackCargoGlobal _object;" + toString [10] + toString [10], ""] call CBA_fnc_replace;
+
+    // 'zeus_additions_main_fnc_serializeInventory'; Used by this module and zeus corpse dragging
+    DFUNC(deserializeInventory) = if (_functionString != "") then {
+        compileFinal _functionString
+    } else {
+        zen_common_fnc_serializeInventory
     };
 };
 
@@ -154,7 +184,7 @@ if (isNil QFUNC(serializeObjects)) then {
             allDeadMen
         } else {
             [[], [_object]] select (!isNull _object && {!alive _object})
-        }) select {isNull objectParent _x && {_x isKindOf "CAManBase"}};
+        }) select {isNull objectParent _x && {_x isKindOf "CAManBase"} && {!(_x isKindOf "VirtualCurator_F")}};
 
         if (!_includePlayers) then {
             _bodies = _bodies select {!isPlayer _x};
@@ -169,6 +199,7 @@ if (isNil QFUNC(serializeObjects)) then {
             GVAR(dragBodyActions) = true;
             publicVariable QGVAR(dragBodyActions);
             publicVariable QFUNC(serializeObjects);
+            publicVariable QFUNC(serializeInventory);
 
             private _dragBodyAction =
                 ["ace_dragging_dragDeadBody", localize "STR_ACE_Dragging_Drag", "z\ace\addons\dragging\UI\icons\person_drag.paa", {
@@ -229,29 +260,27 @@ if (isNil QFUNC(serializeObjects)) then {
                             // If deleted normally, don't bother
                             if !(_weaponHolder getVariable [QGVAR(deletedBecauseDragging), false]) exitWith {};
 
-                            // Check if there are any weapons still present
-                            private _weaponItems = weaponsItems _weaponHolder;
+                            private _data = _weaponHolder call zen_common_fnc_serializeInventory;
 
-                            if (_weaponItems isEqualTo []) exitWith {};
+                            // Check if there is anything still present
+                            if (_data isEqualTo [[[],[]],[],[],[[],[]],[]]) exitWith {};
 
                             [{
                                 // Wait until the weaponholder has been deleted
                                 isNull (_this select 0)
                             }, {
-                                params ["", "_posATL", "_vectorDir", "_vectorUp", "_weaponItems"];
+                                params ["", "_posATL", "_vectorDirAndUp", "_data"];
 
                                 // Create a new weapon holder & put it in the same position as the old
                                 private _newWeaponHolder = createVehicle ["WeaponHolderSimulated", [0, 0, 0], [], 0, "CAN_COLLIDE"];
                                 _newWeaponHolder setPosATL _posATL;
 
                                 // Remove from JIP if object is deleted
-                                [["zen_common_setVectorDirAndUp", [_newWeaponHolder, [_vectorDir, _vectorUp]]] call CBA_fnc_globalEventJIP, _newWeaponHolder] call CBA_fnc_removeGlobalEventJIP;
+                                [["zen_common_setVectorDirAndUp", [_newWeaponHolder, _vectorDirAndUp]] call CBA_fnc_globalEventJIP, _newWeaponHolder] call CBA_fnc_removeGlobalEventJIP;
 
-                                // Readd weapons
-                                {
-                                    _newWeaponHolder addWeaponWithAttachmentsCargoGlobal [_x, 1];
-                                } forEach _weaponItems;
-                            }, [_weaponHolder, (getPosATL _weaponHolder) vectorAdd [0, 0, 0.05], vectorDir _weaponHolder, vectorUp _weaponHolder, _weaponItems]] call CBA_fnc_waitUntilAndExecute;
+                                // Readd all of the old items
+                                [_newWeaponHolder, _data] call FUNC(deserializeInventory);
+                            }, [_weaponHolder, (getPosATL _weaponHolder) vectorAdd [0, 0, 0.05], [vectorDir _weaponHolder, vectorUp _weaponHolder], _data]] call CBA_fnc_waitUntilAndExecute;
                         }];
                     } forEach ((_target getVariable [QGVAR(weaponHolders), []]) select {!isNull _x});
 

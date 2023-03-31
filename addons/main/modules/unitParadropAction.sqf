@@ -15,7 +15,7 @@
         if (isNull _object) then {
             _object = "FlagPole_F" createVehicle _pos;
 
-            ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_object]]] call CBA_fnc_serverEvent;
         };
 
         // Add action

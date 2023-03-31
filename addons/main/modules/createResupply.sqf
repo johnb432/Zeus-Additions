@@ -18,7 +18,7 @@
         _args params ["_pos", "_object"];
         _selected params ["_sides", "_groups", "_players"];
 
-        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"}) then {
+        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {!(_object isKindOf "VirtualCurator_F")}) then {
             _players pushBackUnique _object;
         };
 
@@ -35,7 +35,7 @@
         // If "spawn ammo box", make a new object
         if (_emptyInventory == 0) then {
             _object = "Box_NATO_Ammo_F" createVehicle _pos;
-            ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
             if (isNil "ace_dragging") exitWith {};
@@ -74,13 +74,13 @@
                 } forEach (compatibleMagazines (primaryWeapon _x) - _blackList);
             };
 
-            if (_numHand > 0 && {(handgunWeapon _unit) != ""}) then {
+            if (_numHand > 0 && {(handgunWeapon _x) != ""}) then {
                 {
                     _object addItemCargoGlobal [_x, _numHand];
                 } forEach (compatibleMagazines (handgunWeapon _x) - _blackList);
             };
 
-            if (_numSec > 0 && {(secondaryWeapon _unit) != ""}) then {
+            if (_numSec > 0 && {(secondaryWeapon _x) != ""}) then {
                 {
                     _object addItemCargoGlobal [_x, _numSec];
                 } forEach (compatibleMagazines (secondaryWeapon _x) - _blackList);
@@ -109,7 +109,7 @@
         _args params ["_pos", "_object"];
         (_results deleteAt 0) params ["_sides", "_groups", "_players"];
 
-        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"}) then {
+        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {!(_object isKindOf "VirtualCurator_F")}) then {
             _players pushBackUnique _object;
         };
 
@@ -123,7 +123,7 @@
         // If "spawn ammo box", make a new object
         if (_emptyInventory == 0) then {
             _object = "Box_NATO_Ammo_F" createVehicle _pos;
-            ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearMagazineCargoGlobal _object;
 
             if (isNil "ace_dragging") exitWith {};

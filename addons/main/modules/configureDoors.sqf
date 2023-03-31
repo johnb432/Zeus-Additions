@@ -135,7 +135,7 @@
                         };
 
                         ["Configure Breaching Charge", [
-                            ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [5, 120, 20, 0]]
+                            ["SLIDER", ["Explosives Timer", "Sets how long the explosives take to blow after having interacted with them."], [3, 120, 20, 0]]
                         ], {
                             params ["_results", "_args"];
                             _results params ["_timer"];
@@ -176,7 +176,7 @@
                             };
 
                             // Add object to Zeus interface
-                            ["zen_common_addObjects", [[_helperObject]]] call CBA_fnc_serverEvent;
+                            ["zen_common_updateEditableObjects", [[_helperObject]]] call CBA_fnc_serverEvent;
 
                             _timer = round _timer;
 
@@ -207,11 +207,13 @@
                             };
 
                             // Notify player
-                            hint format ["Breaching in %1s!", _timer];
+                            if (_timer >= 5) then {
+                                hint format ["Breaching in %1s!", _timer];
 
-                            [{
-                                hint "";
-                            }, nil, 2] call CBA_fnc_waitAndExecute;
+                                [{
+                                    hint "";
+                                }, nil, 1.95] call CBA_fnc_waitAndExecute;
+                            };
 
                             // Do place explosive animation
                             _caller playActionNow "PutDown";
@@ -225,21 +227,12 @@
                             _caller removeItem _explosive;
 
                             // Do the countdown
-                            [{
-                                hint "Breaching in 5...";
-                            }, nil, _timer - 5] call CBA_fnc_waitAndExecute;
-                            [{
-                                hint "Breaching in 4...";
-                            }, nil, _timer - 4] call CBA_fnc_waitAndExecute;
-                            [{
-                                hint "Breaching in 3...";
-                            }, nil, _timer - 3] call CBA_fnc_waitAndExecute;
-                            [{
-                                hint "Breaching in 2...";
-                            }, nil, _timer - 2] call CBA_fnc_waitAndExecute;
-                            [{
-                                hint "Breaching in 1...";
-                            }, nil, _timer - 1] call CBA_fnc_waitAndExecute;
+                            for "_i" from 3 to 1 step -1 do {
+                                [{
+                                    hint format ["Breaching in %1...", _this];
+                                }, _i, _timer - _i] call CBA_fnc_waitAndExecute;
+                            };
+
                             [{
                                 hint "";
                             }, nil, _timer] call CBA_fnc_waitAndExecute;

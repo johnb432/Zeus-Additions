@@ -4,11 +4,11 @@
  */
 
 ["Zeus Additions - Utility", "Unload ACE Cargo", {
-    params ["", "_object"];
-
     if (!isNil "ace_cargo_enable" && {!ace_cargo_enable}) exitWith {
         ["ACE Cargo isn't enabled!"] call zen_common_fnc_showMessage;
     };
+
+    params ["", "_object"];
 
     if (isNull _object) exitWith {
         ["STR_ZEN_Modules_NoObjectSelected"] call zen_common_fnc_showMessage;

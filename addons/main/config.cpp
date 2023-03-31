@@ -13,7 +13,7 @@ class CfgPatches {
             "zen_modules"
         };
         author = "johnb43";
-        authors[] = {"johnb43", "cineafx"};
+        authors[] = {"johnb43"};
         url = "https://github.com/johnb432/Zeus-Additions";
         VERSION_CONFIG;
     };
