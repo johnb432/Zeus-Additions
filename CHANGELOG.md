@@ -1,3 +1,10 @@
+# Changelog for Zeus Additions 31.3.2023
+
+1.6.3.15
+- Added "Delete Zeus from units" module, that allows a Zeus with admin access to delete other Zeuses.
+- Updated to use HEMTT 1.2.0.
+- Minor fixes.
+
 # Changelog for Zeus Additions 21.3.2023
 
 1.6.3.14

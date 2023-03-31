@@ -26,7 +26,7 @@
         (radioChannelInfo _i) params ["", "_name", "", "", "", "_exists"];
 
         if (_exists) then {
-            _dialogChoices pushBack (["TOOLBOX:WIDE", [format ["'%1' channel", _name], format ["Allows to change the '%1' chat & VON.", _name]], OPTION_ARRAY, false]);
+            _dialogChoices pushBack (["TOOLBOX:WIDE", [format ["'%1' channel", _name], format ["Allows to change the '%1' chat & VON.", _name]], OPTION_ARRAY]);
             _channelIDs pushBack (_i + 5);
         };
     };

@@ -56,17 +56,11 @@
                     // Apply damage to crew; If they don't die, make sure they do
                     {
                         ["zen_common_execute", [{
+                            // 'isDamageAllowed' needs to be done locally
+                            if (!isDamageAllowed _this || {!(_this getVariable ["ace_medical_allowDamage", true])}) exitWith {};
+
                             if (zen_common_aceMedical) then {
-                                private _damages = [];
-
-                                {
-                                    // 95% chance of getting a wound
-                                    if (random 1 > 0.05) then {
-                                        _damages pushBack [(random [0.5, 0.75, 1]) * 10, _x, 0];
-                                    };
-                                } forEach ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"];
-
-                                ["ace_medical_woundReceived", [_this, _damages, _this, "explosive"], _this] call CBA_fnc_localEvent;
+                                ["ace_medical_woundReceived", [_this, ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"] apply {[(random [0.5, 0.75, 1]) * 10, _x, 0]}, objNull, "explosive"]] call CBA_fnc_localEvent;
 
                                 // If unit still alive, kill
                                 if (alive _this) then {
@@ -74,19 +68,16 @@
                                 };
                             } else {
                                 {
-                                    // 95% chance of getting a wound
-                                    if (random 1 > 0.05) then {
-                                        _this setHitPointDamage [_x, (_this getHitPointDamage _x) + random [0.5, 0.75, 1], true];
-                                    };
-                                } forEach ["hitface", "hitneck", "hithead", "hitpelvis", "hitabdomen", "hitdiaphragm", "hitchest", "hitbody", "hitarms", "hithands", "hitlegs"];
+                                    _this setHitPointDamage [_x, (_this getHitPointDamage _x) + random [0.5, 0.75, 1], true];
+                                } forEach ["HitFace", "HitNeck", "HitHead", "HitPelvis", "HitAbdomen", "HitDiaphragm", "HitChest", "HitBody", "HitArms", "HitHands", "HitLegs"];
 
                                 // If unit still alive, kill
                                 if (alive _this) then {
-                                    _this setHitPointDamage ["hithead", 1, true];
+                                    _this setHitPointDamage ["HitHead", 1, true];
                                 };
                             };
                         }, _x], _x] call CBA_fnc_targetEvent;
-                    } forEach ((crew _object) select {alive _x && {isDamageAllowed _x} && {_x getVariable ["ace_medical_allowDamage", true]}});
+                    } forEach (crew _object);
 
                     _object setVariable [QGVAR(IEDSize), nil, true];
                 }];

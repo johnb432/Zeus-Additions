@@ -7,18 +7,18 @@
  * Arguments:
  * 0: Unit <OBJECT>
  * 1: Position <VECTOR>
- * 2: Give unit parachute <BOOLEAN>
+ * 2: Give unit parachute <BOOLEAN> (Optional)
  *
  * Return Value:
  * None
  *
  * Example:
- * [player, true] call zeus_additions_main_fnc_addParachute;
+ * [player, (getPosATL player) vectorAdd [0, 0, 1000]] call zeus_additions_main_fnc_addParachute;
  *
  * Public: No
  */
 
-params ["_unit", "_posATL", "_giveUnitParachute"];
+params ["_unit", "_posATL", ["_giveUnitParachute", true]];
 
 // Hide unit during preparation
 private _isObjectHidden = isObjectHidden _unit;
@@ -38,7 +38,7 @@ private _packHolder = objNull;
 
 // If unit has a backpack, drop it
 if (_backpackClass != "") then {
-    _packHolder = createVehicle ["groundWeaponHolder", [0, 0, 0], [], 0, "CAN_COLLIDE"];
+    _packHolder = createVehicle ["GroundWeaponHolder", [0, 0, 0], [], 0, "CAN_COLLIDE"];
 
     // Add temp magazine, so that ground holder doesn't automatically get deleted
     _packHolder addMagazineCargo ["30Rnd_556x45_Stanag", 1];

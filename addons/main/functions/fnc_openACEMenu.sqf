@@ -7,7 +7,7 @@
  * Arguments:
  * 0: Object <OBJECT>
  * 1: Menu type: <NUMBER>
- * 2: Additional parameters <NUMBER>
+ * 2: Additional parameters <NUMBER> (Optional)
  *
  * Return Value:
  * None

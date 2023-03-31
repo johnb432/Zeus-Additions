@@ -36,6 +36,7 @@ if (isNil "zen_common_aceMedical") then {
 #include "modules\configureDoors.sqf"
 #include "modules\createResupply.sqf"
 #include "modules\deleteObjectForced.sqf"
+#include "modules\deleteZeus.sqf"
 #include "modules\dogAttack.sqf"
 #include "modules\gearScript.sqf"
 #include "modules\missionEndModifier.sqf"

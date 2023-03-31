@@ -26,7 +26,7 @@ if (_type == "enableAI") then {
 };
 
 _objects findIf {
-    (_x isKindOf "CAManBase" || {
+    ((_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}) || {
         if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
             _x = driver _x;
             true

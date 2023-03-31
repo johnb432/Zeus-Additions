@@ -30,7 +30,7 @@ class zen_context_menu_actions {
         priority = 10;
 
         class GVAR(selectParadropUnitsContextMenu) {
-            condition = QUOTE(_objects findIf {alive _x && {_x isKindOf 'CAManBase'}} != -1);
+            condition = QUOTE(_objects findIf {alive _x && {_x isKindOf 'CAManBase'} && {!(_x isKindOf 'VirtualCurator_F')}} != -1);
             displayName = "Select units only";
             icon = ICON_PARADROP;
             statement = QUOTE([ARR_2(_objects,PARADROP_UNITS)] call FUNC(unitParadropContextMenu));

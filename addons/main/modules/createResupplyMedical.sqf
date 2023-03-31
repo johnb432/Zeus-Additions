@@ -70,7 +70,7 @@
         if (_emptyInventory == 0) then {
             // Spawn medical crate
             _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
-            ["zen_common_addObjects", [[_object]]] call CBA_fnc_serverEvent;
+            ["zen_common_updateEditableObjects", [[_object]]] call CBA_fnc_serverEvent;
             clearItemCargoGlobal _object;
 
             if (isNil "ace_dragging") exitWith {};

@@ -72,10 +72,10 @@
 #define W_OFF (POS_CALC / 40)
 #define H_OFF (POS_CALC / 30) // (POS_CALC / 1.2) / 25
 
-#define POS_W(var1) (var1 * W_OFF)
-#define POS_H(var1) (var1 * H_OFF)
-#define POS_X(var1) (POS_W(var1) + X_OFF)
-#define POS_Y(var1) (POS_H(var1) + Y_OFF)
+#define POS_W(var1) QUOTE(var1 * W_OFF)
+#define POS_H(var1) QUOTE(var1 * H_OFF)
+#define POS_X(var1) QUOTE(var1 * W_OFF + X_OFF)
+#define POS_Y(var1) QUOTE(var1 * H_OFF + Y_OFF)
 
 #define DFUNC(var1) TRIPLES(ADDON,fnc,var1)
 
