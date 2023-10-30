@@ -2,9 +2,16 @@
 
 ADDON = false;
 
-PREP_RECOMPILE_START;
 #include "XEH_PREP.hpp"
-PREP_RECOMPILE_END;
+
+// Macros don't like commas in strings
+INFO_ZA(FORMAT_2(QUOTE(PreInit: Net mode: ARR_2(%1,Functions) sent: %2),call BIS_fnc_getNetMode,!isNil QGVAR(functionsSent)));
+
+// Execute init for everyone and JIP if init hasn't been run yet
+if (isServer && {isNil QGVAR(functionsSent)}) then {
+    SEND_MP(init);
+    remoteExecCall [QFUNC(init), 0, QGVAR(initJIPId)];
+};
 
 // Default arrays for ammunition choice
 GVAR(LATBLU) = ["UK3CB_BAF_AT4_CS_AP_Launcher","UK3CB_BAF_AT4_CS_AT_Launcher","rhs_weap_M136","rhs_weap_M136_hedp","rhs_weap_M136_hp","rhs_weap_m72a7"];
@@ -21,41 +28,7 @@ GVAR(AARED) = ["rhs_mag_9k38_rocket","Titan_AA"];
 
 GVAR(magsTotal) = [];
 
-// Get magazines for resupply module
-private _keys = [];
-private _values = [];
-private _magazinesList = [];
-private _cfgMagazines = configFile >> "CfgMagazines";
-
-{
-    _magazinesList = [];
-
-    {
-        // Remove non-existent magazines; Then get case-senstive names of magazines to avoid problems
-        _magazinesList insert [-1, ((getArray _x) select {isClass (_cfgMagazines >> _x)}) apply {configName (_cfgMagazines >> _x)}, true];
-    } forEach configProperties [_x, "isArray _x", true];
-
-    // Remove duplicates
-    _magazinesList = _magazinesList arrayIntersect _magazinesList;
-
-    // Add magazinewells and magazines themselves to hashmap only if it has items
-    if (_magazinesList isNotEqualTo []) then {
-        _keys pushBack configName _x;
-        _values pushBack _magazinesList;
-    };
-} forEach configProperties [configFile >> "CfgMagazineWells", "isClass _x", true];
-
-// Store hashmap with all info necessary
-SETUVAR(QGVAR(magazinesHashmap),_keys createHashMapFromArray _values);
-
-// Sort alphabetically
-_keys sort true;
-SETUVAR(QGVAR(sortedKeys),_keys);
-
 // CBA Settings
 #include "initSettings.sqf"
-
-// Remove stuns saved
-SETPRVAR(QGVAR(stunsBreach),nil);
 
 ADDON = true;

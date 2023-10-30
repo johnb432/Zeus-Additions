@@ -1,36 +1,32 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Adds JIP detection.
  *
  * Arguments:
- * None
+ * 0: Add or remove <BOOL>
  *
  * Return Value:
  * None
  *
  * Example:
- * call zeus_additions_main_fnc_handleJIP;
+ * true call zeus_additions_main_fnc_handleJIP;
  *
  * Public: No
  */
 
-// If EH is already added or setting is disabled, exit
-if (!isMultiplayer || {!GVAR(enableJIP)} || {GETMVAR(QGVAR(handleServerJIP),false)}) exitWith {};
+if (!isMultiplayer) exitWith {};
 
-// Make sure only 1 EH is added to the server
-SETMVAR(QGVAR(handleServerJIP),true,true);
+if (_this) then {
+    if (!isNil QGVAR(handleServerJIPEhID)) exitWith {};
 
-// remoteExecCall can account for side (and group JIP), but not for individual player JIP. That's why this function exists
-["zen_common_execute", [{
-    addMissionEventHandler ["PlayerConnected", {
+    GVAR(handleServerJIPEhID) = addMissionEventHandler ["PlayerConnected", {
         params ["", "_uid", "_name", "_jip", "", "_idstr"];
 
         if (!_jip) exitWith {};
 
         [{
-            // Wait for player to exist; If player is Virtual Curator, BIS_fnc_getUnitByUID does not work; use getUserInfo instead
+            // Wait for player to exist; If player is Virtual Curator, BIS_fnc_getUnitByUID does not work, use getUserInfo instead
             !isNull ((getUserInfo (_this select 1)) select 10)
         }, {
             params ["_uid", "_idstr"];
@@ -48,7 +44,7 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
                         _x remoteExecCall ["enableChannel", _player];
                     } forEach _enableArray;
 
-                    "Zeus has changed channel visibility for you." remoteExecCall ["hint", _player];
+                    "Zeus has changed channel visibility for you." remoteExecCall ["hint", _player]
                 };
             };
 
@@ -81,7 +77,6 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
                 if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
                     _player setVariable [QGVAR(stormIntensity), _stormIntensity, true];
 
-                    // Events do not work with JIP (they do not wait until locality has changed from server to client)
                     remoteExecCall [QFUNC(stormScriptPFH), _player];
                 };
             };
@@ -89,4 +84,13 @@ SETMVAR(QGVAR(handleServerJIP),true,true);
             ["[Zeus Additions]: Could not apply JIP features on player '%1', UID '%2'", _this select 2, _this select 0] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
         }] call CBA_fnc_waitUntilAndExecute;
     }];
-}, []]] call CBA_fnc_serverEvent;
+
+    publicVariable QGVAR(handleServerJIPEhID);
+} else {
+    if (isNil QGVAR(handleServerJIPEhID)) exitWith {};
+
+    removeMissionEventHandler ["PlayerConnected", GVAR(handleServerJIPEhID)];
+
+    GVAR(handleServerJIPEhID) = nil;
+    publicVariable QGVAR(handleServerJIPEhID);
+};

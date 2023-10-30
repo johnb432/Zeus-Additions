@@ -2,50 +2,53 @@
 
 [h2]Modules[/h2]
 [list]
-[*] Add ACE Drag and Carry Options
-[*] Add ACE Drag Body Option
-[*] Change AI Crew Behaviour
-[*] Change Captivity status
-[*] Change Channel Visibility
-[*] Change Grass Rendering
+[*] ACE Drag and Carry
+[*] ACE Drag Bodies
+[*] ACE Medical Injuries
+[*] ACE Medical Resupply
+[*] AI Crew Behaviour (does not work fully with ACE Vehicle Damage enabled)
+[*] Ammo Resupply for Players
+[*] Ammo Resupply for Players (Selection)
+[*] Attack Dog
+[*] Car Bomb
 [*] Change RHS APS
-[*] Change TFAR Radio Range
-[*] Configure Doors (Extended)
-[*] Create ACE Medical Injuries
-[*] Delete Object (forced)
-[*] End Mission with Player Modifier
-[*] Loadout: Apply to group
-[*] Loadout: Apply to single unit
-[*] Loadout: Set
+[*] Channel Visibility
+[*] Configure Doors
+[*] Delete Object (Forced)
+[*] Dust Storm
+[*] End Scenario
+[*] Grass Rendering
+[*] Loadout: Apply to Group
+[*] Loadout: Apply to Single Unit
 [*] Loadout: Presets
-[*] Make Unit into Suicide Bomber
-[*] Make Vehicle into VBIED
-[*] Open ACE Medical Menu
+[*] Loadout: Set
+[*] Map Markers
+[*] Mission Object Counter
+[*] Open Medical Menu
 [*] Paradrop Unit Action
 [*] Paradrop Units
 [*] Pause Time
-[*] Place Map Markers
-[*] Prevent Vehicle from Exploding
-[*] Remote Control (Switch Unit)
 [*] Remove Grenades from AI
-[*] Remove Zeus from units
-[*] Show Mission Object Counter
-[*] Spawn ACE Medical Resupply
-[*] Spawn Ammo Resupply for Players
-[*] Spawn Ammo Resupply for Players (Selection)
-[*] Toggle Consciousness (forced)
-[*] Toggle Dust Storm Script
-[*] Track Unit Death
+[*] Remove Zeus from Units
+[*] Suicide Bomber
+[*] Switch Unit
+[*] TFAR Radio Range
+[*] Toggle Captive
+[*] Toggle Consciousness (Forced)
+[*] Unit Death Tracking
 [*] Unload ACE Cargo
+[*] Vehicle Explosion Prevention
 [/list]
+
 For more detailed information on the modules and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
+
+[b]Numerous CBA settings to customize modules:[/b] To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
 This mod also adds:
 [list]
 [*] the ability to drag dead corpses as Zeus. In order to do so, you must be in the map screen.
+[*] gravity to objects that don't have gravity, when a building is destroyed. This must be enabled in the CBA settings.
 [/list]
-
-[b]Numerous CBA settings to customize modules:[/b] To change them, go to Options -> Addon Options -> Zeus Additions - Main
 
 [h2]Links[/h2]
 [list]
@@ -59,6 +62,9 @@ This mod also adds:
 [*] Snow script made by JW & AZCoder, reworked by johnb43
 [*] Dog attack module made by Fred, reworked by johnb43
 [*] Parachute drop script by Kex & cobra4v320, reworked by johnb43
+[*] Visual effect for breaching by Larrow, reworked by johnb43
+[*] Compiling functions script by commy2 (CBA), modified by johnb43
+[*] Sanitise functions script by BadGuy (CLib), modified by johnb43
 [*] Thanks to [url=https://gitlab.com/sh4rdknight]sh4rdknight[/url] for enduring testing sessions
 [*] Mod by johnb43
 [/list]

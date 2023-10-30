@@ -36,7 +36,7 @@ class GVAR(RscDisplay) {
                     w = POS_W(44.2);
                     h = POS_H(1);
                     colorBackground[] = {QUOTE(GETPRVAR('GUI_BCG_RGB_R',0.13)), QUOTE(GETPRVAR('GUI_BCG_RGB_G',0.54)), QUOTE(GETPRVAR('GUI_BCG_RGB_B',0.21)), QUOTE(GETPRVAR('GUI_BCG_RGB_A',0.8))};
-                    text = "SELECT MAGAZINES";
+                    text = CSTRING(selectMagazines);
                 };
 
                 class Background: RscText {
@@ -56,8 +56,8 @@ class GVAR(RscDisplay) {
                     h = POS_H(18);
                     onLoad = QUOTE((_this select 0) ctrlEnable false);
                     colorBackground[] = {0, 0, 0, 0.6};
-                    text = "Categories";
-                    tooltip = "Allows you select different categories of magazines.";
+                    text = CSTRING(categories);
+                    tooltip = CSTRING(categoriesDesc);
                 };
 
                 class GVAR(listCategories): RscListBox {
@@ -109,7 +109,7 @@ class GVAR(RscDisplay) {
                     colorBackground[] = {0, 0, 0, 0.7};
                     sytle = ST_CENTER;
                     text = ">";
-                    tooltip = "Move into selected";
+                    tooltip = CSTRING(moveIntoSelected);
                 };
 
                 class GVAR(buttonMoveOutOf): RscButtonMenu {
@@ -120,7 +120,7 @@ class GVAR(RscDisplay) {
                     h = POS_H(1.2);
                     colorBackground[] = {0, 0, 0, 0.7};
                     sytle = ST_CENTER;
-                    tooltip = "Move out of selected";
+                    tooltip = CSTRING(moveOutOfSelected);
                 };
 
                 class GVAR(buttonClear): ctrlButtonPicture {
@@ -131,7 +131,7 @@ class GVAR(RscDisplay) {
                     h = POS_H(1.2);
                     colorBackground[] = {0, 0, 0, 0.7};
                     text = "\a3\3den\data\cfg3den\history\deleteitems_ca.paa";
-                    tooltip = "Clear all selected magazines.";
+                    tooltip = CSTRING(clearAllDesc);
                 };
 
                 class GVAR(buttonIncrement): RscButtonMenu {
@@ -143,7 +143,7 @@ class GVAR(RscDisplay) {
                     colorBackground[] = {0, 0, 0, 0.7};
                     sytle = ST_CENTER;
                     text = "+";
-                    tooltip = "Shift = +5, Ctrl = +10, Shift + Ctrl = +50";
+                    tooltip = CSTRING(increaseDesc);
                 };
 
                 class GVAR(buttonDecrement): RscButtonMenu {
@@ -155,7 +155,7 @@ class GVAR(RscDisplay) {
                     colorBackground[] = {0, 0, 0, 0.7};
                     sytle = ST_CENTER;
                     text = "-";
-                    tooltip = "Shift = -5, Ctrl = -10, Shift + Ctrl = -50";
+                    tooltip = CSTRING(decreaseDesc);
                 };
             };
         };

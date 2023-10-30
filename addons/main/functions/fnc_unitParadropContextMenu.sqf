@@ -1,5 +1,4 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Adds context menu for paradrop selection.
@@ -21,32 +20,35 @@ params ["_objects", "_filterMode"];
 
 _objects = _objects select {alive _x};
 
-private _units = _objects select {_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}};
-private _vehicles = _objects select {_x isKindOf "LandVehicle" || {_x isKindOf "Ship"}};
-private _misc = _objects select {_x isKindOf "Thing"};
+private _vehicles = [];
+private _misc = [];
 
 // If selection is either vehicles or all, include all vehicles
 if (_filterMode in [PARADROP_VEHICLES, PARADROP_ALL]) then {
+    _vehicles = _objects select {_x isKindOf "LandVehicle" || {_x isKindOf "Ship"}};
     GVAR(selectedParadropVehicles) = _vehicles;
 };
 
 if (_filterMode in [PARADROP_MISC, PARADROP_ALL]) then {
+    _misc = _objects select {_x isKindOf "Thing"};
     GVAR(selectedParadropMisc) = _misc;
 };
 
 // If vehicles only, exit
 if (_filterMode == PARADROP_VEHICLES) exitWith {
-    ["Selected %1 vehicles", count _vehicles] call zen_common_fnc_showMessage;
+    [LSTRING(selectedParadropVehiclesContextMenu), count _vehicles] call zen_common_fnc_showMessage;
 };
 
 // If misc only, exit
 if (_filterMode == PARADROP_MISC) exitWith {
-    ["Selected %1 misc objects", count _misc] call zen_common_fnc_showMessage;
+    [LSTRING(selectedParadropObjectsContextMenu), count _misc] call zen_common_fnc_showMessage;
 };
 
-["Paradrop Context Menu Selection", [
-    ["TOOLBOX:YESNO", ["Include entire group", "If enabled and a unit is selected, his entire group is also selected."], false, true],
-    ["TOOLBOX:YESNO", ["Include units in vehicles", "If enabled and the units selected are in vehicles, it will dismount them and paradrop them without their vehicles."], false, true]
+private _units = _objects select {_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}};
+
+[LSTRING(paradropContextMenu), [
+    ["TOOLBOX:YESNO", [LSTRING(paradropContextMenuIncludeGroup), LSTRING(paradropContextMenuIncludeGroupDesc)], false, true],
+    ["TOOLBOX:YESNO", [LSTRING(paradropContextMenuIncludeVehicles), LSTRING(paradropContextMenuIncludeVehiclesDesc)], false, true]
 ], {
     params ["_results", "_args"];
     _results params ["_includeGroup", "_includeInside"];
@@ -77,5 +79,5 @@ if (_filterMode == PARADROP_MISC) exitWith {
 
     GVAR(selectedParadropUnits) = _units;
 
-    ["Selected %1 units, %2 vehicles & %3 objects", count _units, count _vehicles, count _misc] call zen_common_fnc_showMessage;
+    [LSTRING(paradropContextMenuMessage), count _units, count _vehicles, count _misc] call zen_common_fnc_showMessage;
 }, {}, [_units, _vehicles, _misc]] call zen_dialog_fnc_create;

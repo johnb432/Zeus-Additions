@@ -2,7 +2,7 @@
 [\
     QGVAR(DOUBLES(NAME,mags)),\
     "EDITBOX",\
-    [format ["%1 Ammunition", QUOTE(NAME)], "Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings."],\
+    [format ["%1 Ammunition", QUOTE(NAME)], LSTRING(ammunitionSettingDesc)],\
     [COMPONENT_NAME, MAGAZINES_DESC],\
     str GVAR(NAME),\
     0,\
@@ -15,16 +15,16 @@
 [\
     QGVAR(NAME),\
     "CHECKBOX",\
-    [TEXT, "Allows to toggle the hint on or off."],\
-    [COMPONENT_NAME, "Modules"],\
+    [TEXT, LSTRING(hintSettingDesc)],\
+    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modemodules_tooltip"],\
     true\
 ] call CBA_fnc_addSetting
 
 [
     QGVAR(enableExitUnconsciousUnit),
     "CHECKBOX",
-    ["Enable leave unconscious unit", "Allows people to leave an unconscious remote controlled unit by pressing the ESCAPE key."],
-    [COMPONENT_NAME, "Units"],
+    [LSTRING(enableUnconsciousLeavingSetting), LSTRING(enableUnconsciousLeavingSettingDesc)],
+    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modeunits_tooltip"],
     false,
     0,
     {
@@ -35,23 +35,34 @@
 [
     QGVAR(enableJIP),
     "CHECKBOX",
-    ["Enable JIP features", "Allows join-in-progress (JIP) functionality for some modules.\nIt requires a mission restart for it to be turned off."],
-    [COMPONENT_NAME, "Modules"],
+    [LSTRING(enableJipFeaturesSetting), LSTRING(enableJipFeaturesSettingDesc)],
+    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modemodules_tooltip"],
     false,
     0,
     {
-        // If setting is off, already added or no curator object, don't do anything
-        if !(_this && {!isNull (getAssignedCuratorLogic player)}) exitWith {};
+        // Let the server handle turning on & off
+        [QGVAR(JIP), getPlayerUID player, _this && {!isNull (getAssignedCuratorLogic player)}, QFUNC(handleJIP)] call FUNC(changeReason);
+    }
+] call CBA_fnc_addSetting;
 
-        call FUNC(handleJIP);
+[
+    QGVAR(enableBuildingDestructionHandling),
+    "CHECKBOX",
+    [LSTRING(enableBuildingDestructionSetting), LSTRING(enableBuildingDestructionSettingDesc)],
+    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modemodules_tooltip"],
+    false,
+    0,
+    {
+        // Let the server handle turning on & off
+        [QGVAR(buildingDestruction), getPlayerUID player, _this && {!isNull (getAssignedCuratorLogic player)}, QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
     }
 ] call CBA_fnc_addSetting;
 
 [
     QGVAR(enableMissionCounter),
     "CHECKBOX",
-    ["Enable Mission Object Counter", "If enabled, all objects placed and deleted by the player's curator will be kept track of.\nIf turned off, it will remove everything related to the counter, but not resetting the counter in the process."],
-    [COMPONENT_NAME, "Modules"],
+    [LSTRING(enableMissionCounterSetting), LSTRING(enableMissionCounterSettingDesc)],
+    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modemodules_tooltip"],
     false,
     0,
     {
@@ -62,7 +73,7 @@
 [
     QGVAR(blacklistFKEnable),
     "CHECKBOX",
-    ["Enable automatic blacklist detection for FK servers", "Allows the automatic adoption of the premade blacklist on FK servers. FK is an EU based unit."],
+    [LSTRING(enableBlacklistFKSetting), LSTRING(enableBlacklistFKSettingDesc)],
     [COMPONENT_NAME, MAGAZINES_DESC],
     false,
     0,
@@ -88,7 +99,7 @@
 [
     QGVAR(blacklistSettings),
     "EDITBOX",
-    ["Blacklist for ammo resupply", "Filters whatever is in the box out of the resupply crate, only applies to the 'Spawn Ammo Resupply for unit' module. Must be an array of strings."],
+    [LSTRING(blacklistSetting), LSTRING(blacklistSettingDesc)],
     [COMPONENT_NAME, MAGAZINES_DESC],
     "[]",
     0,
@@ -112,8 +123,8 @@ MAGAZINES_SETTINGS(HATRED,5);
 MAGAZINES_SETTINGS(AABLU,6);
 MAGAZINES_SETTINGS(AARED,7);
 
-HINT_SETTINGS(enableACECargoHint,"Enable ACE Cargo missing addon hint");
-HINT_SETTINGS(enableACEDragHint,"Enable ACE Dragging missing addon hint");
-HINT_SETTINGS(enableACEMedicalHint,"Enable ACE Medical missing addon hint");
-HINT_SETTINGS(enableTFARHint,"Enable Radio Range Script missing addon hint");
-HINT_SETTINGS(enableRHSHint,"Enable RHS APS Script addon missing hint");
+HINT_SETTINGS(enableACECargoHint,LSTRING(aceCargoHintSetting));
+HINT_SETTINGS(enableACEDragHint,LSTRING(aceDraggingHintSetting));
+HINT_SETTINGS(enableACEMedicalHint,LSTRING(aceMedicalHintSetting));
+HINT_SETTINGS(enableTFARHint,LSTRING(radioRangeHintSetting));
+HINT_SETTINGS(enableRHSHint,LSTRING(rhsAPSHintSetting));

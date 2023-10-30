@@ -10,6 +10,6 @@ tooltip = "Zeus Additions";
 tooltipOwned = "Zeus Additions";
 action = "https://github.com/johnb432/Zeus-Additions";
 actionName = "Github";
-overview = "A small mod that adds Zeus modules, made by johnb43.";
+overview = "A small mod that adds Zeus modules. Made by johnb43.";
 hidePicture = 0;
 hideName = 0;
