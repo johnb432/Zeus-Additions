@@ -1,15 +1,14 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Returns if there is an object in the array of objects that can have its pathing disabled or enabled.
  *
  * Arguments:
- * 0: Objects <ARRAY>
- * 1: Type <STRING>
+ * 0: Objects <ARRAY> (default: [])
+ * 1: Type <STRING> (default: "")
  *
  * Return Value:
- * If there is an object that can have its pathing enabled/disabled <BOOLEAN>
+ * If there is an object that can have its pathing enabled/disabled <BOOL>
  *
  * Example:
  * [[cursorObject], "disableAI"] call zeus_additions_main_fnc_pathingCondition;
@@ -19,10 +18,10 @@
 
 params [["_objects", []], ["_type", "", [""]]];
 
-private _condition = {_x checkAIFeature "PATH"};
-
-if (_type == "enableAI") then {
-    _condition = {!(_x checkAIFeature "PATH")};
+private _condition = if (_type == "enableAI") then {
+    {!(_x checkAIFeature "PATH")}
+} else {
+    {_x checkAIFeature "PATH"}
 };
 
 _objects findIf {

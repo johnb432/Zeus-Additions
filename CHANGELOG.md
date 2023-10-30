@@ -1,3 +1,14 @@
+# Changelog for Zeus Additions 30.10.2023
+
+1.6.4.0
+- Added support for 2.14.
+- Added a feature that makes floating objects created by a building's destruction fall to the ground.
+- Changed "Delete Zeus from units" module, so that you can now unassign a curator as well as delete the logic unit like before.
+- Fixed issues related to items loading before CBA settings were available.
+- Numerous bug fixes.
+- Improved networking (code is now more optimised for being transmitted over the network).
+- New method of body dragging now implemented.
+
 # Changelog for Zeus Additions 31.3.2023
 
 1.6.3.15

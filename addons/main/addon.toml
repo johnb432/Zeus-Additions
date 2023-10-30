@@ -1,0 +1,10 @@
+[rapify]
+exclude = [
+    "/addons/main/config.cpp"
+]
+
+[binarize]
+enabled = true
+
+[asc]
+enabled = true

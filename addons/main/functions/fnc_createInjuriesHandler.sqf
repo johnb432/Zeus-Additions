@@ -1,13 +1,12 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: Glowbal, commy2, johnb43
  * Handling of the open wounds & injuries upon the handleDamage eventhandler.
- * Based off of ACE3's ace_medical_damage_fnc_woundsHandlerSQF.
+ * Based off of ACE3's ace_medical_damage_fnc_woundsHandlerSQF. For ACE 3.16.0+.
  *
  * Arguments:
  * 0: Unit <OBJECT>
- * 1: Array of wound size, number of wounds and fracture for each body part <ARRAY>
+ * 1: Arrays of wound size, number of wounds and fracture for each body part <ARRAY>
  * 2: Type of wound <STRING>
  *
  * Return Value:
@@ -15,112 +14,159 @@
  *
  * Example:
  * [player,
- *    [0, 4, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false, 0, 0, false],
- * 1] call zeus_additions_main_fnc_createInjuriesHandler
+ *    [[0, 4, false], [0, 0, false], [0, 0, false], [0, 0, false], [0, 0, false], [0, 0, false]],
+ * "Avulsion"] call zeus_additions_main_fnc_createInjuriesHandler
  * --> 4 Minor avulsions to the Head
  *
  * Public: No
  */
 
-params ["_unit", "_args", "_woundClassIDToAdd"];
+params ["_unit", "_allDamages", "_woundTypeToAdd"];
+
+if !(isDamageAllowed _unit && {_unit getVariable ["ace_medical_allowDamage", true]}) exitWith {};
 
 // Administration for open wounds and ids
-private _openWounds = _unit getVariable ["ace_medical_openWounds", []];
+private _openWounds = _unit getVariable ["ace_medical_openWounds", createHashMap];
 
-// Get wound information (since only 1 type of wound can be applied at a time)
-private _damageType = ["Abrasion","Avulsion","Contusion","Crush","Cut","Laceration","VelocityWound","PunctureWound"] select _woundClassIDToAdd;
-private _injuryBleedingRate = getNumber (configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "bleeding");
-private _injuryPain = getNumber (configFile >> "ACE_Medical_Injuries" >> "wounds" >> _damageType >> "pain");
-
-// Various things to update after having taken damage and fractures
+private _createdWounds = false;
 private _updateDamageEffects = false;
 private _painLevel = 0;
-private _critialDamage = false;
+private _criticalDamage = false;
 private _bodyPartDamage = _unit getVariable ["ace_medical_bodyPartDamage", [0, 0, 0, 0, 0, 0]];
 private _bodyPartVisParams = [_unit, false, false, false, false]; // params array for EFUNC(medical_engine,updateBodyPartVisuals);
-private _fractures = _unit getVariable ["ace_medical_fractures", [0, 0, 0, 0, 0, 0]];
+private _bodyParts = ["head", "body", "leftarm", "rightarm", "leftleg", "rightleg"];
 
-// For every bunch of 3 arguments
-for "_i" from 0 to count _args - 3 step 3 do {
-    private _woundSize = _args select _i;
-    private _woundNumber = _args select (_i + 1);
-    private _doFracture = _args select (_i + 2);
+// Process wounds separately for each body part
+{
+    _x params ["_category", "_woundNumber", "_doFracture"];
 
-    private _bodyPartNToAdd = _i / 3;
+    private _bodyPart = _bodyParts select _forEachIndex;
+    private _bodyPartNToAdd = _forEachIndex;
 
-    if (_woundNumber > 0) then {
-        private _woundDamage = 0.25 + (_woundSize * 0.25); // wound category (minor [0.25-0.5], medium [0.5-0.75], large [0.75+])
+    // If forced fracture
+    if (_doFracture) then {
+        private _fractures = _unit getVariable ["ace_medical_fractures", [0, 0, 0, 0, 0, 0]];
+        _fractures set [_bodyPartNToAdd, 1];
+        _unit setVariable ["ace_medical_fractures", _fractures, true];
+
+        ["ace_medical_fracture", [_unit, _bodyPartNToAdd]] call CBA_fnc_localEvent;
+
+        _updateDamageEffects = true;
+    };
+
+    for "_i" from 1 to _woundNumber do {
+        // Large wounds are > LARGE_WOUND_THRESHOLD
+        // Medium is > LARGE_WOUND_THRESHOLD^2
+        // Minor is > LARGE_WOUND_THRESHOLD^3
+
+        // Add a bit of random variance to wounds
+        private _dmgPerWound = (random [0.5, 0.75, 1]) / ([4, 2, 1] select _category);
+        private _woundDamage = _dmgPerWound * random [0.9, 1, 1.1];
+        private _woundSize = _woundDamage * 2;
+
+        (ace_medical_damage_woundDetails get _woundTypeToAdd) params ["", "_injuryBleedingRate", "_injuryPain", "_causeLimping", "_causeFracture"];
 
         _bodyPartDamage set [_bodyPartNToAdd, (_bodyPartDamage select _bodyPartNToAdd) + _woundDamage];
         _bodyPartVisParams set [[1, 2, 3, 3, 4, 4] select _bodyPartNToAdd, true]; // Mark the body part index needs updating
 
-        // Damage to limbs/head is scaled higher than torso by engine
-        // Anything above this value is guaranteed worst wound possible
-        private _worstDamage = [2, 1, 4, 4, 4, 4] select _bodyPartNToAdd;
+        private _pain = _woundSize * _injuryPain;
+        _painLevel = _painLevel + _pain;
 
-        // More wounds means more likely to get nasty wound
-        private _countModifier = 1 + random (_woundNumber - 1);
+        private _bleeding = _woundSize * _injuryBleedingRate;
 
-        // Config specifies bleeding and pain for worst possible wound
-        // Worse wound correlates to higher damage, damage is not capped at 1
-        private _bleedModifier = linearConversion [0.1, _worstDamage, _woundDamage * _countModifier, 0.25, 1, true];
-        private _painModifier = (_bleedModifier * random [0.7, 1, 1.3]) min 1; // Pain isn't directly scaled to bleeding
+        private _woundClassIDToAdd = ace_medical_damage_woundClassNames find _woundTypeToAdd;
+        private _classComplex = 10 * _woundClassIDToAdd + _category;
 
-        private _bleeding = _injuryBleedingRate * _bleedModifier;
-        _painLevel = _painLevel + (_injuryPain * _painModifier);
+        // Create a new injury; Format: [0:classComplex, 1:amountOf, 2:bleedingRate, 3:woundDamage]
+        private _injury = [_classComplex, 1, _bleeding, _woundDamage];
 
-        private _classComplex = 10 * _woundClassIDToAdd + _woundSize;
-
-        // Create a new injury. Format [0:classComplex, 1:bodypart, 2:amountOf, 3:bleedingRate, 4:woundDamage]
-        private _injury = [_classComplex, _bodyPartNToAdd, _woundNumber, _bleeding, _woundDamage];
-
-        if (_bodyPartNToAdd == 0 || {_bodyPartNToAdd == 1 && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
-            _critialDamage = true;
+        if (_bodyPart == "head" || {_bodyPart == "body" && {_woundDamage > ace_medical_const_penetrationThreshold}}) then {
+            _criticalDamage = true;
         };
 
-        // if possible merge into existing wounds
-        private _createNewWound = true;
-        {
-            _x params ["_classID", "_bodyPartN", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
+        if ([_unit, _bodyPartNToAdd, _bodyPartDamage, _woundDamage] call ace_medical_damage_fnc_determineIfFatal) then {
+            if (!isPlayer _unit || {random 1 < ace_medical_deathChance}) then {
+                ["ace_medical_fatalInjury", _unit] call CBA_fnc_localEvent;
+            };
+        };
 
-            // penetrating body damage is handled differently
-            if (_classComplex == _classID && {_bodyPartNToAdd == _bodyPartN && {_bodyPartNToAdd != 1 || {_woundDamage < ace_medical_const_penetrationThreshold == _oldDamage < ace_medical_const_penetrationThreshold}}}) exitWith { // don't want/care limping
-                private _newAmountOf = _oldAmountOf + _woundNumber;
-                _x set [2, _newAmountOf];
-                _x set [3, (_oldAmountOf * _oldBleeding + _bleeding) / _newAmountOf]; // new bleeding
-                _x set [4, (_oldAmountOf * _oldDamage + _woundDamage) / _newAmountOf]; // new damage
+        switch (true) do {
+            case (
+                !_doFracture &&
+                {_causeFracture} &&
+                {ace_medical_fractures > 0} &&
+                {_bodyPartNToAdd > 1} &&
+                {_woundDamage > ace_medical_const_fractureDamageThreshold} &&
+                {random 1 < ace_medical_fractureChance}
+            ): {
+                private _fractures = _unit getVariable ["ace_medical_fractures", [0, 0, 0, 0, 0, 0]];
+                _fractures set [_bodyPartNToAdd, 1];
+                _unit setVariable ["ace_medical_fractures", _fractures, true];
+
+                ["ace_medical_fracture", [_unit, _bodyPartNToAdd]] call CBA_fnc_localEvent;
+
+                _updateDamageEffects = true;
+            };
+            case (
+                _causeLimping &&
+                {ace_medical_limping > 0} &&
+                {_bodyPartNToAdd > 3} &&
+                {_woundDamage > ace_medical_const_limpingDamageThreshold}
+            ): {
+                _updateDamageEffects = true;
+            };
+        };
+
+        // If possible merge into existing wounds
+        private _createNewWound = true;
+        private _existingWounds = _openWounds getOrDefault [_bodyPart, [], true];
+
+        {
+            _x params ["_classID", "_oldAmountOf", "_oldBleeding", "_oldDamage"];
+
+            if (
+                (_classComplex == _classID) &&
+                {(_bodyPart != "body") || {(_woundDamage < ace_medical_const_penetrationThreshold) == (_oldDamage < ace_medical_const_penetrationThreshold)}} && // penetrating body damage is handled differently
+                {(_bodyPartNToAdd > 3) || {!_causeLimping} || {(_woundDamage <= ace_medical_const_limpingDamageThreshold) == (_oldDamage <= ace_medical_const_limpingDamageThreshold)}} // ensure limping damage is stacked correctly
+            ) exitWith {
+                private _newAmountOf = _oldAmountOf + 1;
+                _x set [1, _newAmountOf];
+
+                private _newBleeding = (_oldAmountOf * _oldBleeding + _bleeding) / _newAmountOf;
+                _x set [2, _newBleeding];
+
+                private _newDamage = (_oldAmountOf * _oldDamage + _woundDamage) / _newAmountOf;
+                _x set [3, _newDamage];
+
                 _createNewWound = false;
             };
-        } forEach _openWounds;
+        } forEach _existingWounds;
 
         if (_createNewWound) then {
-            _openWounds pushBack _injury;
+            _existingWounds pushBack _injury;
         };
-    };
 
-    if (_doFracture) then {
-        _fractures set [_bodyPartNToAdd, 1];
-
-        ["ace_medical_fracture", [_unit, _bodyPartNToAdd], _unit] call CBA_fnc_targetEvent;
-        _updateDamageEffects = true;
+        _createdWounds = true;
     };
-};
+} forEach _allDamages;
 
 // Add fractures to unit if necessary
 if (_updateDamageEffects) then {
-    _unit setVariable ["ace_medical_fractures", _fractures, true];
-
-    _unit remoteExecCall ["ace_medical_engine_fnc_updateDamageEffects", _unit];
+    _unit call ace_medical_engine_fnc_updateDamageEffects;
 };
 
 // Update damage and wounds
-_unit setVariable ["ace_medical_openWounds", _openWounds, true];
-_unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
+if (_createdWounds) then {
+    _unit setVariable ["ace_medical_openWounds", _openWounds, true];
+    _unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
 
-_unit remoteExecCall ["ace_medical_status_fnc_updateWoundBloodLoss", _unit];
-_bodyPartVisParams remoteExecCall ["ace_medical_engine_fnc_updateBodyPartVisuals", _unit];
-["ace_medical_injured", [_unit, _painLevel], _unit] call CBA_fnc_targetEvent;
+    _unit call ace_medical_status_fnc_updateWoundBloodLoss;
 
-if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
-    _unit remoteExecCall ["ace_medical_damage_fnc_handleIncapacitation", _unit];
+    _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
+
+    ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
+
+    if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
+        _unit call ace_medical_damage_fnc_handleIncapacitation;
+    };
 };

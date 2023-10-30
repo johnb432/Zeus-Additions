@@ -1,13 +1,21 @@
-PREP(createInjuriesHandler);
+PREP(compileSanitisedFunction);
 PREP(createResupplyGUI);
 PREP(exitUnconsciousUnit);
+PREP(getRespawnTime);
 PREP(getRole);
-PREP(handleJIP);
+PREP(logCuratorObjects);
 PREP(objectsCounterMissionEH);
 PREP(openACEMenu);
 PREP(pathingCondition);
 PREP(pathingStatement);
-PREP(remoteControlContextMenu);
-PREP(remoteControlStop);
-PREP(removeSuicideBomberIDs);
+PREP(sanitiseFunction);
+PREP(switchUnitStart);
+PREP(switchUnitStop);
 PREP(unitParadropContextMenu);
+
+// 'PREP_MP' requires 'FUNC(compileSanitisedFunction)'
+PREP_MP(init);
+
+PREP_MP(changeReason);
+PREP_MP(handleBuildingDestruction);
+PREP_MP(handleJIP);

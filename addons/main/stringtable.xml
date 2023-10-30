@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project name="zeus_additions">
+    <Package name="main">
+        <!-- Missing addons -->
+        <Key ID="STR_zeus_additions_main_aceCargoMissing">
+            <English>The ACE unload cargo module isn't available because ACE cargo isn't loaded.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aceDraggingMissing">
+            <English>The ACE drag and carry modules aren't available because ACE dragging isn't loaded.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aceMedicalMissing">
+            <English>Multiple ACE medical related functions aren't available because ACE medical isn't loaded.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_tfarMissing">
+            <English>The radio range module isn't available because TFAR isn't loaded.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsMissing">
+            <English>The RHS APS module isn't available because RHS AFRF isn't loaded.</English>
+        </Key>
+
+        <!-- Functions -->
+        <Key ID="STR_zeus_additions_main_ammoResupplyCreated">
+            <English>Ammo resupply created</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_medicalMenuHint">
+            <English>To quit, exit the medical menu.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_cargoMenuHint">
+            <English>To quit, exit the cargo menu.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_switchUnitUAVError">
+            <English>Cannot remote control UAV units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_switchUnitFailed">
+            <English>Failed to remote control unit</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_selectedParadropVehiclesContextMenu">
+            <English>Selected %1 vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectedParadropObjectsContextMenu">
+            <English>Selected %1 misc objects</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_paradropContextMenu">
+            <English>Paradrop Context Menu Selection</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropContextMenuIncludeGroup">
+            <English>Include entire group</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropContextMenuIncludeGroupDesc">
+            <English>If enabled and a unit is selected, his entire group is also selected.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropContextMenuIncludeVehicles">
+            <English>Include units in vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropContextMenuIncludeVehiclesDesc">
+            <English>If enabled and the units selected are in vehicles, it will dismount them and paradrop them without their vehicles.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropContextMenuMessage">
+            <English>Selected %1 units, %2 vehicles &amp; %3 objects</English>
+        </Key>
+
+        <!-- Categories -->
+        <Key ID="STR_zeus_additions_main_moduleCategoryAI">
+            <English>Zeus Additions - AI</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moduleCategoryLoadout">
+            <English>Zeus Additions - Loadout</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moduleCategoryMedical">
+            <English>Zeus Additions - Medical</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moduleCategoryPlayers">
+            <English>Zeus Additions - Players</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moduleCategoryResupply">
+            <English>Zeus Additions - Resupply</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moduleCategoryUtility">
+            <English>Zeus Additions - Utility</English>
+        </Key>
+
+        <!-- Modules -->
+        <Key ID="STR_zeus_additions_main_accountForJip">
+            <English>Account for JIP players</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_accountForJipDesc">
+            <English>When players join in progress (JIP), it will automatically apply this setting.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changeYourself">
+            <English>Change yourself</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changeYourselfDesc">
+            <English>You can use this whilst as a curator to change yourself.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_channelVisibilityChangeChannelDesc">
+            <English>Allows the changing of '%1' chat &amp; VON.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_clearInventory">
+            <English>Clear inventory and insert</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_includeGroupDesc">
+            <English>Includes the entire group of the AI on which the module was placed.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_insertInventory">
+            <English>Insert in inventory</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_jipDisabledMessage">
+            <English>JIP disabled. Turn on in CBA Settings to enable it.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_objectHasNoInventory">
+            <English>Object has no valid inventory</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectAiUnits">
+            <English>Select AI units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectSidesGroupsUnits">
+            <English>Select sides/groups/players. Module can also be placed on a player.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_spawnCreate">
+            <English>Spawn Crate</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_spawnCreateDesc">
+            <English>If no, it selects the object the module was placed on and places items in its inventory. Units are excluded from this.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_aiBehaviourModuleName">
+            <English>AI Crew Behaviour</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enablePassengerDismount">
+            <English>Passenger dismount in combat</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enablePassengerDismountDesc">
+            <English>Allow passengers to dismount while in combat.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCrewDismount">
+            <English>Crew dismount in combat</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCrewDismountDesc">
+            <English>Allow crews to dismount while in combat.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCrewStayImmobile">
+            <English>Crew stay in immobile vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCrewStayImmobileDesc">
+            <English>Allow crews to stay in immobile vehicles. THIS DOES NOT WORK IF ACE VEHICLE DAMAGE IS ENABLED.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableAiTurnOut">
+            <English>Allow AI to Turn Out</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableAiTurnOutDesc">
+            <English>Makes the AI able to turn out or not.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedAiBehaviourMessage">
+            <English>Changed crew behaviour on vehicle</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_ammoResupplyModuleName">
+            <English>Ammo Resupply for Players</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyAmountDesc">
+            <English>Spawns in x amount of each weapon compatible magazines for each unit (not x total!).</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyallowBlacklist">
+            <English>Allow blacklisted ammo</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyallowBlacklistDesc">
+            <English>Allows ammo that is normally blacklisted to be spawned in.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyEmptyCrateMessage">
+            <English>Empty ammo crate created</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyMessage">
+            <English>Ammo resupply created</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_ammoResupplySelectionModuleName">
+            <English>Ammo Resupply for Players (Selection)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_ammoResupplyDesc">
+            <English>Spawns in x amount of predefined magazines (not x total!).</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_captiveDesc">
+            <English>Sets the captivity status of the selected unit.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_captiveSelectedDesc">
+            <English>Select AI from the list to change captivity status.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_captiveChangedUnitsMessage">
+            <English>Changed units' captivity status</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_captiveChangedGroupMessage">
+            <English>Changed units' captivity status in group</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_captiveChangedUnitMessage">
+            <English>Changed unit's captivity status</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_captiveNoUnitsFoundMessage">
+            <English>No alive AI units were found</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_enableCarBomb">
+            <English>Vehicle is Car Bomb</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCarBombDesc">
+            <English>Make a vehicle into a car bomb. Starting the engine will trigger the car bomb.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_explosionSizeDesc">
+            <English>Changes the size of the explosion.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCarBombMessage">
+            <English>Made vehicle into a car bomb</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableCarBombMessage">
+            <English>Reverted vehicle's car bomb status</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_channelVisibilityModuleName">
+            <English>Channel Visibility</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedChannelVisibilityOnPlayerMessage">
+            <English>Changed channel visibility on player</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedChannelVisibilityOnYourselfMessage">
+            <English>Changed channel visibility on yourself</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedChannelVisibilityOnPlayersMessage">
+            <English>Changed channel visibility on selected players</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_configureDoorsUnbreachable">
+            <English>Unbreachable</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsBreachable">
+            <English>Breachable</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsExsplosivesDesc">
+            <English>An array that contains all allowed explosives/items used for breaching.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_configureDoorsApplyList">
+            <English>Apply list</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsApplyListDesc">
+            <English>Sets the explosives list for everyone.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsSaveList">
+            <English>Save list</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsSaveListDesc">
+            <English>Saves the explosives list to your profile.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsResetList">
+            <English>Reset list to default</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsResetListDesc">
+            <English>Resets the explosives list above to the default.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsUnbreachableMessage">
+            <English>Building doors locked (not breachable)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsBreachableMessage">
+            <English>Building doors locked (breachable)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsUnlockedMessage">
+            <English>Building doors unlocked</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_configureDoorsOpenedMessage">
+            <English>Building doors opened</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_createInjuriesModuleName">
+            <English>ACE Medical Injuries</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesForceFracturesDesc">
+            <English>Forces a fracture to occur.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamage">
+            <English>Random Damage Amount</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageDesc">
+            <English>More damage will usually cause more wounds.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageType">
+            <English>Random Damage Type</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeDesc">
+            <English>Various types of damages produce different results.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeGrenade">
+            <English>Grenade</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeExplosive">
+            <English>Explosive</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeShell">
+            <English>Shell</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeVehicleCrash">
+            <English>Vehicle Crash</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeCollision">
+            <English>Collision</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_createInjuriesRandomDamageTypeBackblast">
+            <English>Backblast</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_createInjuriesMessage">
+            <English>Injuries created</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_medicalResupplyModuleName">
+            <English>ACE Medical Resupply</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_medicalResupplyReset">
+            <English>Reset to default</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_medicalResupplyMessage">
+            <English>Medical resupply created</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_deleteObjectModuleName">
+            <English>Delete Object (Forced)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deleteObjectMessage">
+            <English>Deleted %1</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_deleteZeusModuleName">
+            <English>Remove Zeus from Units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deleteZeusNoAdminAccessMessage">
+            <English>You must be a logged-in admin to be able to use this module</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deleteZeusChangedMessage">
+            <English>Changed zeus status</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_dogAttackModuleName">
+            <English>Attack Dog</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackSideDesc">
+            <English>Only the first selected side will be taken into account.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackDesc">
+            <English>Allows the dog to attack the given sides. If none are selected, it will attack no one and will be peaceful.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackSearchDesc">
+            <English>The dog will search within the given radius for targets.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackDamageDesc">
+            <English>How much damage the dog deals.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackLightning">
+            <English>Lightning</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackLightningDesc">
+            <English>Spawns a lightning bolt where the module is placed.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackThunderDesc">
+            <English>Adds thunder. This causes damage though, as it's like the Zeus bolt.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackPathingDesc">
+            <English>Turns off animal AI behaviour and pathing. Only applies if dog is peaceful.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dogAttackNameDesc">
+            <English>Sets the dog's name. If left blank, a random name will be chosen.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_dragAndCarryModuleName">
+            <English>ACE Drag and Carry</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableDragDesc">
+            <English>Enables the dragging of an object.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCarryDesc">
+            <English>Enables the carrying of an object.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableDragOverweight">
+            <English>Overweight dragging</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableDragOverweightDesc">
+            <English>Ignores the weight limit for dragging if enabled.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCarryOverweight">
+            <English>Overweight carrying</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableCarryOverweightDesc">
+            <English>Ignores the weight limit for carrying if enabled.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedDragAndCarryMessage">
+            <English>Changed ACE Drag and Carry abilities</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_dragBodiesModuleName">
+            <English>ACE Drag Bodies</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableDragBodiesDesc">
+            <English>Enables the dragging of a dead body.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changeSelectionDesc">
+            <English>Changes ACE body dragging on selected corpse only or all dead units.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_objectOnly">
+            <English>Object only</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_allDeadUnits">
+            <English>All Dead Units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_includePlayerCorpses">
+            <English>Include Player corpses</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_includePlayerCorpsesDesc">
+            <English>If selected, player corpses will also be able to be dragged.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_applyToFutureUnits">
+            <English>Apply to all future dead units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_applyToFutureUnitsDesc">
+            <English>Enables/Disables the dragging of all future dead bodies.\nTakes 'Include Player corpses' setting into account.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_noDeadBodiesWithoutDragFound">
+            <English>No dead bodies without ACE Drag Body were found</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_noDeadBodiesWithDragFound">
+            <English>No dead bodies with ACE Drag Body were found</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_noDeadBodiesFound">
+            <English>No dead bodies were found</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_addedDragToBody">
+            <English>Added ACE Drag Body to body</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_addedDragToBodies">
+            <English>Added ACE Drag Body to all bodies</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedDragToBody">
+            <English>Removed ACE Drag Body from body</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedDragToBodies">
+            <English>Removed ACE Drag Body from all bodies</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_enabledDragToAllFuturePlayerBodies">
+            <English>Enabled ACE Drag Body on all future player bodies</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disabledDragFromAllFuturePlayerBodies">
+            <English>Enabled ACE Drag Body on all future player bodies</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enabledDragToAllFutureBodies">
+            <English>Added ACE Drag Body to all future bodies</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disabledDragFromAllFutureBodies">
+            <English>Disabled ACE Drag Body from all future bodies</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_dustStormModuleName">
+            <English>Dust Storm</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormIntensityDesc">
+            <English>Determines how many particles are spawned. 0 turns off script.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormWeatherDesc">
+            <English>If yes, it will open another dialog after this one is closed to change the weather.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormTurnOnPlayerMessage">
+            <English>Turned Dust Storm Script on for player</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustTurnOffPlayerStormMessage">
+            <English>Turned Dust Storm Script off for player</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormNothingChangedMessage">
+            <English>Nothing was changed</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormJipSettingsChangedMessage">
+            <English>Dust Storm Script JIP setting changed</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormTurnOnPlayersMessage">
+            <English>Turned Dust Storm Script on for selected players</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_dustStormTurnOffPlayersMessage">
+            <English>Turned Dust Storm Script off for selected players</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_grassRenderModuleName">
+            <English>Grass Rendering</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_grassRenderSettingDesc">
+            <English>Choose 'Low' to turn off grass rendering. Choose 'Standard' if you want to render it again.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedGrassRenderingOnPlayerMessage">
+            <English>Grass rendering changed on player</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedGrassRenderingOnYourselfMessage">
+            <English>Grass rendering changed on yourself</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedGrassRenderingOnPlayersMessage">
+            <English>Grass rendering changed on selected players</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_loadoutPresetsModuleName">
+            <English>Loadout: Presets</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutCreatePreset">
+            <English>Create new loadout preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutCreatePresetDesc">
+            <English>Allows you to store multiple presets of loadouts. Profiles names are case insensitive. DO NOT USE PUNCUATION MARKS.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutSelectPreset">
+            <English>Select loadout preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutSelectPresetDesc">
+            <English>Allows you to select a preset to edit and apply.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutImportPreset">
+            <English>Import new loadout preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutImportPresetDesc">
+            <English>Place the array of loadouts here if you are importing a profile.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutExportPreset">
+            <English>Export current preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutExportPresetDesc">
+            <English>Exports preset to clipboard.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutResetPreset">
+            <English>Reset saved loadouts</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutResetPresetDesc">
+            <English>Resets saved loadouts in currently selected preset.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutDeletePreset">
+            <English>Delete preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutDeletePresetDesc">
+            <English>Deletes the currently selected preset. If you chose a preset in the current window, it will delete that one.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_aceClipboardDisabledMessage">
+            <English>ACE clipboard is disabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutNoPresetSelectedMessage">
+            <English>No preset was selected</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutPresetExportedMessage">
+            <English>Preset '%1' has been exported to your clipboard</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutNoPresetSelectedImportMessage">
+            <English>No preset name was provided for import</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutOverwritePresetMessage">
+            <English>Are you sure you want to overwrite preset '%1'?</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutOverwrittenPresetMessage">
+            <English>Preset '%1' overwritten and chosen</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutImportedPresetMessage">
+            <English>New preset '%1' imported and chosen</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutAlreadyExistsPresetMessage">
+            <English>Preset '%1' already exists</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutCreatedPresetMessage">
+            <English>New preset '%1' created and chosen</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutResetPresetMessage">
+            <English>Loadouts in preset '%1' reset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutCantDeletePresetMessage">
+            <English>You can't delete the default preset</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutDeletedPresetMessage">
+            <English>Preset '%1' deleted</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_loadoutSetModuleName">
+            <English>Loadout: Set</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutPresetSelectedMessage">
+            <English>Preset '%1' selected</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_loadoutDefaultDesc">
+            <English>Riflemen, Crew, etc. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutLeaderDesc">
+            <English>Squad leaders, Team leaders. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutATDesc">
+            <English>Anti-tank gunners, Anti-tank assistants. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutAADesc">
+            <English>Anti-air operators, Anti-air assistants. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutARDesc">
+            <English>Autoriflemen, Machine Gunners. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutMedicDesc">
+            <English>Medics, Combat Life Savers. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutEngineerDesc">
+            <English>Engineers, Demo. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutSingleUnit">
+            <English>Single Unit</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutSingleUnitDesc">
+            <English>Use this line to apply with Gear Set to Single Unit. Delete empty array and then paste loadout.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutSaved">
+            <English>Loadouts saved to '%1'</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_loadoutApplyUnitModuleName">
+            <English>Loadout: Apply to Single Unit</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutPresetAppliedMessage">
+            <English>Preset '%1' applied</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_loadoutApplyGroupModuleName">
+            <English>Loadout: Apply to Group</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_mapMarkersSelection">
+            <English>Select sides or groups</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_mapMarkersSelectionDesc">
+            <English>Select sides/groups. Group will have priority over side. It will disregard player selection.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_mapMarkersSelectSideGroupMessage">
+            <English>Select a side or group</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_missionEndModifierEndingDesc">
+            <English>Sets the type of ending.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierInvulvernabilityDesc">
+            <English>Invincibility will be applied with the modifier below.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifier">
+            <English>Mission end modifier</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierDesc">
+            <English>Sets what type of action is applied to all players at scenario end.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierWeaponRemoval">
+            <English>Weapon removal</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierWeaponRemovalDesc">
+            <English>All weapons are removed from every player.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierDisableInput">
+            <English>Disable player input</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierDisableInputDesc">
+            <English>Disables player movement and user input. Requires ACE.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierDeathDesc">
+            <English>All players die.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionEndModifierDebriefingDesc">
+            <English>Text that will show up in the debriefing screen.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_missionObjectCounterModuleName">
+            <English>Mission Object Counter</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionObjectCounterTurnedOffMessage">
+            <English>Module is turned off in CBA settings</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionObjectCounterNothingToPrintMessage">
+            <English>Nothing to print to log</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_missionObjectCounterSomethingToPrintMessage">
+            <English>Added curator stats to RPT log</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_paradropUnitsModuleName">
+            <English>Paradrop Units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsSelectionDesc">
+            <English>Select sides/groups/players.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsIncludeContextMenu">
+            <English>Include Context Menu Selection</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsIncludeContextMenuDesc">
+            <English>Paradrops units (AI or players) selected by the Zeus using the ZEN context menu.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsIncludeVehiclesDesc">
+            <English>Takes vehicles with players and paradrops them both together, crew staying inside. Applies to players only.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsIncludePlayers">
+            <English>Include Players in Vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsIncludePlayersDesc">
+            <English>Takes players only out of their vehicles and paradrops the players only.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsAltitudeDesc">
+            <English>Determines how far up units are paradropped over terrain level.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsDensityDesc">
+            <English>Determines how far apart units are paradropped from each other.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsGiveParachutes">
+            <English>Give Units Parachutes</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsGiveParachutesDesc">
+            <English>Stores their backpacks and gives them parachutes automatically. Upon landing units get their backpacks back.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropUnitsMessage">
+            <English>Paradropped %1 units, %2 vehicles &amp; %3 objects</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_paradropActionModuleName">
+            <English>Paradrop Unit Action</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropActionAlreadyAdded">
+            <English>Object already has paradrop action</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropActionAdded">
+            <English>Added paradrop action to object</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropActionAlreadyRemoved">
+            <English>Object already has paradrop action removed</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_paradropActionRemoved">
+            <English>Removed paradrop action from object</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_pauseTimeModuleName">
+            <English>Pause Time</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableTimePause">
+            <English>Time is paused</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableTimePauseDesc">
+            <English>Sets time acceleration to a minimum and reverts time every 100s. Disable whilst skipping time.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableTimePauseMessage">
+            <English>Time paused</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableTimePauseMessage">
+            <English>Time reverted back to normal (1x)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableTimePauseAlreadyMessage">
+            <English>Time already paused</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableTimePauseAlreadyMessage">
+            <English>Time already normal (1x)</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_removeGrenadesAiModuleName">
+            <English>Remove Grenades from AI</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removeGrenadesSelectionDesc">
+            <English>Select AI from the list to remove grenades from.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedGrenadesUnitsMessage">
+            <English>Removed grenades from units</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedGrenadesGroupMessage">
+            <English>Removed grenades from units in group</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedGrenadesUnitMessage">
+            <English>Removed grenades from unit</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removeGrenadesNoUnitsFoundMessage">
+            <English>No AI units were found</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_rhsApsModuleName">
+            <English>Change RHS APS</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsAps">
+            <English>APS</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsDesc">
+            <English>Allows you to change the APS (Active Protection System) on a vehicle with RHS APS.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsSelectionDesc">
+            <English>Changes APS on selected object only or all vehicles with RHS APS.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsFutureVehicles">
+            <English>APS for all future vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsFutureVehiclesDesc">
+            <English>Enables/Disables RHS APS for all future vehicles.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsNoVehiclesFoundMessage">
+            <English>No valid vehicles were found</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllVehiclesAlreadyEnabledMessage">
+            <English>All vehicles already had RHS APS enabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllVehiclesEnabledMessage">
+            <English>Enabled RHS APS on all vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllVehiclesAlreadyDisabledMessage">
+            <English>All vehicles already had RHS APS disabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllVehiclesDisabledMessage">
+            <English>Disabled RHS APS on all vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsNoVehicleFoundMessage">
+            <English>Place on a vehicle with RHS APS</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsVehicleAlreadyEnabledMessage">
+            <English>Vehicle already had RHS APS enabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsVehicleEnabledMessage">
+            <English>Enabled RHS APS on vehicle</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsVehicleAlreadyDisabledMessage">
+            <English>Vehicle already had RHS APS disabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsVehicleDisabledMessage">
+            <English>Disabled RHS APS on vehicle</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllFutureVehiclesEnabledMessage">
+            <English>Enabled RHS APS for all future vehicles</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsApsAllFutureVehiclesDisabledMessage">
+            <English>Disabled RHS APS for all future vehicles</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_enableSuicideBomberDesc">
+            <English>Make a unit into a suicide bomber. To trigger its explosvies, the Zeus must remote control the unit.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableDeadmanSwitchDesc">
+            <English>If the unit has a dead man switch, the unit will detonate its explosives if the unit goes unconscious or dies.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableSuicideBomberMessage">
+            <English>Made unit into suicide bomber</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableSuicideBomberMessage">
+            <English>Reverted unit's suicide bomber status</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_switchUnitModuleName">
+            <English>Switch Unit</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_tfarRangeModuleName">
+            <English>TFAR Radio Range</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_transmissionRange">
+            <English>Transmission Range Multiplier</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_transmissionRangeDesc">
+            <English>Determines how far a radio can transmit. Default is 1.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_receptionRange">
+            <English>Reception Range Multiplier</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_receptionRangeDesc">
+            <English>Determines from how far a radio can receive. Default is 1.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedRangesOnPlayerMessage">
+            <English>Multipliers set on player</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedRangesOnYourselfMessage">
+            <English>Multipliers set on yourself</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_changedRangesOnPlayersMessage">
+            <English>Multipliers set on selected players</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_toggleConsciousnessModuleName">
+            <English>Toggle Consciousness (Forced)</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_toggleConsciousnessConfirmation">
+            <English>Are you sure you want to force toggle consciousness on '%1'? He is in Cardiac Arrest.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_vehicleExplosionPreventionModuleName">
+            <English>Vehicle Explosion Prevention</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableVehicleExplosionPrevention">
+            <English>Vehicle has prevention on</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableVehicleExplosionPreventionDesc">
+            <English>Makes the vehicle not blow up when receiving critical damage but still allows for vulnerability.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableVehicleExplosionPreventionMessage">
+            <English>Vehicle explosion prevention has been enabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableVehicleExplosionPreventionMessage">
+            <English>Vehicle explosion prevention has been disabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableVehicleExplosionPreventionAlreadyMessage">
+            <English>Vehicle already has this feature enabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableVehicleExplosionPreventionAlreadyMessage">
+            <English>Vehicle already has this feature disabled</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingModuleName">
+            <English>Unit Death Tracking</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitTrackingSelectionDesc">
+            <English>Select unit. Module can also be placed on a unit.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTracking">
+            <English>Tracking</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDesc">
+            <English>Adds/removes tracking from the selected unit.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayHint">
+            <English>Display as a Hint</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayHintDesc">
+            <English>Displays notification as a hint.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplaySystemChat">
+            <English>Display in System Chat</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplaySystemChatDesc">
+            <English>Displays notification in system chat.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayZeusBanner">
+            <English>Display in Zeus Banner</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayZeusBannerDesc">
+            <English>Displays notification in the zeus interface.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayLog">
+            <English>Display in Log</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingDisplayLogDesc">
+            <English>Displays notification in Log (RPT).</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingSelectNotification">
+            <English>Select a way of notification</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableUnitDeathTrackingMessage">
+            <English>Unit is being tracked</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_disableUnitDeathTrackingMessage">
+            <English>Unit is no longer being tracked</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingAlreadyTracking">
+            <English>Unit is already being tracked</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unitDeathTrackingMessage">
+            <English>%1 was killed by %2 (instigator: %3)</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_unloadACECargoModuleName">
+            <English>Unload ACE Cargo</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aceCargoDisabled">
+            <English>ACE Cargo isn't enabled</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_unloadACECargoNoCargo">
+            <English>This vehicle doesn't have ACE Cargo</English>
+        </Key>
+
+        <!-- GUI -->
+        <Key ID="STR_zeus_additions_main_selectMagazines">
+            <English>SELECT MAGAZINES</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_categories">
+            <English>Categories</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_categoriesDesc">
+            <English>Allows you select different categories of magazines.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moveIntoSelected">
+            <English>Move into selected</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_moveOutOfSelected">
+            <English>Move out of selected</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_clearAllDesc">
+            <English>Clear all</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_increaseDesc">
+            <English>Shift = +5, Ctrl = +10, Shift + Ctrl = +50</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_decreaseDesc">
+            <English>Shift = -5, Ctrl = -10, Shift + Ctrl = -50</English>
+        </Key>
+
+        <!-- Context menu -->
+        <Key ID="STR_zeus_additions_main_disablePathingContextMenu">
+            <English>Disable AI Pathing</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enablePathingContextMenu">
+            <English>Enable AI Pathing</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectParadropContextMenu">
+            <English>Select objects for paradrop</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectParadropUnitsContextMenu">
+            <English>Select units only</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectParadropVehiclesContextMenu">
+            <English>Select vehicles only</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectParadropObjectsContextMenu">
+            <English>Select misc objects only</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_selectParadropAllContextMenu">
+            <English>Select all</English>
+        </Key>
+
+        <!-- Settings -->
+        <Key ID="STR_zeus_additions_main_enableUnconsciousLeavingSetting">
+            <English>Enable leave unconscious unit</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableUnconsciousLeavingSettingDesc">
+            <English>Allows Zeuses to leave an unconscious remote controlled unit by pressing the ESCAPE key.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableJipFeaturesSetting">
+            <English>Enable JIP features</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableJipFeaturesSettingDesc">
+            <English>Allows join-in-progress (JIP) functionality for some modules.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableBuildingDestructionSetting">
+            <English>Enable Building Destruction handling</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableBuildingDestructionSettingDesc">
+            <English>If enabled, it will make floating objects due to building destruction fall to the ground.\nWARNING: This is performance intensive.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableMissionCounterSetting">
+            <English>Enable Mission Object Counter</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableMissionCounterSettingDesc">
+            <English>If enabled, all objects placed and deleted by the player's curator will be kept track of.\nIf turned off, it will remove everything related to the counter, but not resetting the counter in the process.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableBlacklistFKSetting">
+            <English>Enable automatic blacklist detection for FK servers</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableBlacklistFKSettingDesc">
+            <English>Allows the automatic adoption of the premade blacklist on FK servers. FK is an EU based unit.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_blacklistSetting">
+            <English>Blacklist for ammo resupply</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_blacklistSettingDesc">
+            <English>Filters whatever is in the box out of the resupply crate, only applies to the 'Spawn Ammo Resupply for unit' module. Must be an array of strings.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_ammunitionSettingDesc">
+            <English>Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings.</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_aceCargoHintSetting">
+            <English>Enable ACE Cargo missing addon hint</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aceDraggingHintSetting">
+            <English>Enable ACE Cargo missing addon hint</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aceMedicalHintSetting">
+            <English>Enable ACE Medical missing addon hint</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_radioRangeHintSetting">
+            <English>Enable Radio Range Script missing addon hint</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_rhsAPSHintSetting">
+            <English>Enable RHS APS Script addon missing hint</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_hintSettingDesc">
+            <English>Allows to toggle the hint on or off.</English>
+        </Key>
+    </Package>
+</Project>

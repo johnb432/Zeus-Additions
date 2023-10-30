@@ -1,12 +1,11 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Creates a GUI to spawn in all available magazines in the game.
- * MUST BE CALLED WITH 'spawn' (see example)
+ * Must be called with 'spawn' (see example)
  *
  * Arguments:
- * 0: Weapons <STRING>|<ARRAY> (Optional)
+ * 0: Weapons <STRING> <ARRAY of STRINGS> (default: [])
  *
  * Return Value:
  * None
@@ -41,7 +40,7 @@ if (_weapons isNotEqualTo []) then {
 
     {
         _magazineWells = getArray (_cfgWeapons >> _x >> "magazineWell");
-        _muzzles = getArray (configFile >> "CfgWeapons" >> _x >> "muzzles") - ["this"];
+        _muzzles = ((getArray (configFile >> "CfgWeapons" >> _x >> "muzzles")) apply {toLowerANSI _x}) - ["this"];
 
         if (_muzzles isNotEqualTo []) then {
             _weapon = _x;
@@ -51,7 +50,7 @@ if (_weapons isNotEqualTo []) then {
             } forEach _muzzles;
         };
 
-        _keys insert [-1, _magazineWells arrayIntersect GETUVAR(QGVAR(sortedKeys),[]), true];
+        _keys insert [-1, (_magazineWells apply {toLowerANSI _x}) arrayIntersect GETUVAR(QGVAR(sortedKeys),[]), true];
     } forEach _weapons;
 
     SETUVAR(QGVAR(sortedKeysMagazines),_keys);
@@ -188,14 +187,14 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     private _object = GETUVAR(QGVAR(magazineInventory),objNull);
 
     if (!alive _object) then {
-        ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
+        [LSTRING_ZEN(modules,onlyAlive)] call zen_common_fnc_showMessage;
     } else {
         // Spawn in magazines
         for "_i" from 0 to lbSize _ctrlListSelected - 1 step 1 do {
             _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
         };
 
-        ["Ammo resupply created"] call zen_common_fnc_showMessage;
+        [LSTRING(ammoResupplyCreated)] call zen_common_fnc_showMessage;
     };
 
     _display closeDisplay IDC_OK;
@@ -231,13 +230,10 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
         _ctrlListSelected lbSetTooltip [_addedIndex, _toolTip];
     } forEach _selectedArray;
 
-    // When deleting, start from end to beginning, otherwise it messes up
-    reverse _selectedArray;
-
-    // Delete entry in original list; Has to be done after, otherwise it messes up
+    // Delete entry in original list; When deleting, start from end to beginning, otherwise it messes up
     {
         _ctrlListMagazines lbDelete _x;
-    } forEach _selectedArray;
+    } forEachReversed _selectedArray;
 
     // Sort alphabetically
     lbSort _ctrlListSelected;
@@ -275,13 +271,10 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
         };
     } forEach _selectedArray;
 
-    // When deleting, start from end to beginning, otherwise it messes up
-    reverse _selectedArray;
-
-    // Delete entry in original list; Has to be done after, otherwise it messes up
+    // Delete entry in original list; When deleting, start from end to beginning, otherwise it messes up
     {
         _ctrlListSelected lbDelete _x;
-    } forEach _selectedArray;
+    } forEachReversed _selectedArray;
 
     // Sort alphabetically
     lbSort _ctrlListMagazines;
@@ -374,6 +367,7 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
 
 // Prevent scroll wheel from moving curator camera
 _display setVariable [QGVAR(cameraPos), getPosASL curatorCamera];
+
 _display displayAddEventHandler ["MouseZChanged", {
     curatorCamera setPosASL ((_this select 0) getVariable QGVAR(cameraPos));
 }];
@@ -382,8 +376,8 @@ _display displayAddEventHandler ["MouseZChanged", {
 _display displayAddEventHandler ["KeyDown", {
     params ["_display", "_keyCode"];
 
-    // Cancel
-    if (_keyCode == DIK_ESCAPE) exitWith {};
+    // Cancel or moving
+    if (_keyCode in [DIK_ESCAPE, DIK_UP, DIK_DOWN]) exitWith {};
 
     // Ok
     if (_keyCode == DIK_RETURN) exitWith {
@@ -391,14 +385,14 @@ _display displayAddEventHandler ["KeyDown", {
         private _object = GETUVAR(QGVAR(magazineInventory),objNull);
 
         if (!alive _object) then {
-            ["Inventory has become invalid!"] call zen_common_fnc_showMessage;
+            [LSTRING_ZEN(modules,onlyAlive)] call zen_common_fnc_showMessage;
         } else {
             // Spawn in magazines
             for "_i" from 0 to lbSize _ctrlListSelected - 1 step 1 do {
                 _object addItemCargoGlobal [_ctrlListSelected lbTooltip _i, _ctrlListSelected lbValue _i];
             };
 
-            ["Ammo resupply created"] call zen_common_fnc_showMessage;
+            [LSTRING(ammoResupplyCreated)] call zen_common_fnc_showMessage;
         };
 
         _display closeDisplay IDC_OK;

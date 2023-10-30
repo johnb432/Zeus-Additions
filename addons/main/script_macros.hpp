@@ -9,12 +9,9 @@
 #define SETUVAR(var1,var2) (uiNamespace setVariable [ARR_2(var1,var2)])
 #define SETMVAR(var1,var2,var3) (missionNamespace setVariable [ARR_3(var1,var2,var3)])
 
-#define ARR_10(ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8,ARG9,ARG10) ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10
+#define OPTION_ARRAY [1, 1, 4, [LSTRING_ZEN(common,disabled), "STR_A3_Multiplayer_Text1", "str_usract_voice_over_net", LSTRING_ZEN(common,enabled)]]
 
-#define RESUPPLY_TEXT "Spawns in x amount of predefined magazines (not x total!)."
-#define OPTION_ARRAY [1, 1, 4, ["Disabled", "Chat only", "VON only", "Enabled"]]
-
-#define MAGAZINES_DESC "Magazines"
+#define MAGAZINES_DESC localize "STR_GEAR_MAGAZINES"
 
 #define PARADROP_UNITS 0
 #define PARADROP_VEHICLES 1
@@ -24,28 +21,16 @@
 #define MEDICAL_MENU 0
 #define CARGO_MENU 1
 
-#define ICON_CARGO "a3\ui_f\data\IGUI\Cfg\Actions\loadVehicle_ca.paa"
-#define ICON_CHANNEL "x\zen\addons\modules\ui\chat_ca.paa"
-#define ICON_DEATH_STARE "x\zen\addons\modules\ui\target_ca.paa"
-#define ICON_DELETE "\A3\ui_f\data\igui\cfg\commandbar\unitcombatmode_ca.paa"
-#define ICON_DOCUMENTS "\a3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"
-#define ICON_DOG "\a3\Modules_F_Curator\Data\portraitAnimalsGoats_ca.paa"
-#define ICON_DOOR "\a3\ui_f\data\igui\cfg\actions\open_door_ca.paa"
-#define ICON_END "\a3\Modules_F_Curator\Data\portraitEndMission_ca.paa"
 #define ICON_EXPLOSION "x\zen\addons\modules\ui\explosion_ca.paa"
-#define ICON_GRENADE "x\zen\addons\context_actions\ui\grenade_ca.paa"
 #define ICON_INVENTORY "\a3\Modules_F_Curator\Data\portraitRespawnInventory_ca.paa"
 #define ICON_MEDICAL "x\zen\addons\context_actions\ui\medical_cross_ca.paa"
 #define ICON_OBJECT "x\zen\addons\modules\ui\edit_obj_ca.paa"
-#define ICON_PARADROP "x\zen\addons\modules\ui\heli_ca.paa"//"\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
 #define ICON_PERSON "x\zen\addons\modules\ui\person_ca.paa"
 #define ICON_RADIO "\a3\Modules_F_Curator\Data\portraitRadio_ca.paa"
 #define ICON_REMOTECONTROL "\a3\modules_f_curator\data\portraitremotecontrol_ca.paa"
-#define ICON_TIME "\a3\Modules_F_Curator\Data\portraitTimeAcceleration_ca.paa"
 #define ICON_TRUCK "x\zen\addons\modules\ui\truck_ca.paa"
-#define ICON_TREE "\a3\modules_f\data\hideterrainobjects\icon32_ca.paa"
-#define ICON_UNCONSCIOUS "\z\ace\addons\zeus\ui\Icon_Module_Zeus_Unconscious_ca.paa"
-#define ICON_WEATHER "\a3\3DEN\Data\Displays\Display3DEN\ToolBar\intel_ca.paa"
+
+#define GRAVITY 9.8066
 
 #define ST_CENTER 2
 
@@ -77,12 +62,55 @@
 #define POS_X(var1) QUOTE(var1 * W_OFF + X_OFF)
 #define POS_Y(var1) QUOTE(var1 * H_OFF + Y_OFF)
 
+#define SINGLE_QUOTE    34 // '
+#define DOUBLE_QUOTE    39 // "
+#define LINE_FEED       10 //
+#define NUMBER_SIGN     35 // #
+#define REVERSE_SOLIDUS 92 // \
+
+#define CARRIAGE_RETURN 13
+#define TAB             9
+#define SPACE           32
+#define WHITESPACE [LINE_FEED, CARRIAGE_RETURN, TAB, SPACE]
+
+#define LSTRING_BASE(prefix,var1,var2) QUOTE(TRIPLES(prefix,var1,var2))
+
+#define LSTRING_ACE(var1,var2) LSTRING_BASE(STR_ACE,var1,var2)
+#define LSTRING_CBA(var1,var2) LSTRING_BASE(STR_CBA,var1,var2)
+#define LSTRING_ZEN(var1,var2) LSTRING_BASE(STR_ZEN,var1,var2)
+
+#define LLSTRING_ACE(var1,var2) localize LSTRING_ACE(var1,var2)
+#define LLSTRING_CBA(var1,var2) localize LSTRING_CBA(var1,var2)
+#define LLSTRING_ZEN(var1,var2) localize LSTRING_ZEN(var1,var2)
+
+#define CSTRING_ACE(var1,var2) LSTRING_BASE($STR_ACE,var1,var2)
+
 #define DFUNC(var1) TRIPLES(ADDON,fnc,var1)
+#define LINKFUNC(x) {_this call FUNC(x)}
 
 #ifdef DISABLE_COMPILE_CACHE
     #undef PREP
+    #undef PREP_MP
     #define PREP(fncName) DFUNC(fncName) = compile preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)
+    #define PREP_MP(fncName) DFUNC(fncName) = [preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)] call FUNC(sanitiseFunction)
 #else
     #undef PREP
+    #undef PREP_MP
     #define PREP(fncName) [QPATHTOF(functions\DOUBLES(fnc,fncName).sqf), QFUNC(fncName)] call CBA_fnc_compileFunction
+    #define PREP_MP(fncName) [QPATHTOF(functions\DOUBLES(fnc,fncName).sqf), QFUNC(fncName)] call FUNC(compileSanitisedFunction)
 #endif
+
+// INFO macro fails sometimes
+#define INFO_ZA(message) diag_log text FORMAT_4("[%1] (%2) %3: %4",toUpper QUOTE(PREFIX),QUOTE(COMPONENT),"INFO",message)
+
+#define SEND_MP(fncName)\
+SETMVAR(QFUNC(fncName),FUNC(fncName),true);\
+INFO_ZA(FORMAT_1("Sent function to all: %1",QFUNC(fncName)))
+
+#define SEND_SERVER(fncName)\
+SETMVAR(QFUNC(fncName),FUNC(fncName),2);\
+INFO_ZA(FORMAT_1("Sent function to server: %1",QFUNC(fncName)))
+
+#define PREP_SEND_MP(fncName)\
+PREP_MP(fncName);\
+SEND_MP(fncName)

@@ -1,5 +1,4 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Opens a given menu on an object.
@@ -7,7 +6,7 @@
  * Arguments:
  * 0: Object <OBJECT>
  * 1: Menu type: <NUMBER>
- * 2: Additional parameters <NUMBER> (Optional)
+ * 2: Additional parameters <NUMBER> (default: 5)
  *
  * Return Value:
  * None
@@ -20,14 +19,19 @@
 
 params ["_object", "_menuType", ["_previousCoeffValue", 5, [0]]];
 
+// KAT changes conditions for opening medical menu
 if (_menuType == MEDICAL_MENU && {!isNil "kat_zeus"}) exitWith {
     _object call ace_medical_gui_fnc_openMenu;
 };
 
 // Create a helper unit to access medical menu
 private _helperUnit = createAgent ["C_man_1", [0, 0, 0], [], 0, "CAN_COLLIDE"];
+_helperUnit setVariable [QGVAR(isHelperUnit), true, true];
 
 switch (_menuType) do {
+    case MEDICAL_MENU: {
+        _helperUnit attachTo [_object, [0, -1, 0]];
+    };
     case CARGO_MENU: {
         private _bbr = boundingBoxReal _object;
 
@@ -35,7 +39,7 @@ switch (_menuType) do {
         _helperUnit setPosATL ((getPosATL _object) vectorAdd ((vectorNormalized ((vectorDir _object) vectorCrossProduct (vectorUp _object))) vectorMultiply (((_bbr select 1 select 0) - (_bbr select 0 select 0)) / 2)));
         _helperUnit attachTo [_object];
     };
-    default {_helperUnit attachTo [_object, [0, -1, 0]]};
+    default {};
 };
 
 // Remove all items of the helper unit
@@ -62,7 +66,7 @@ private _display = switch (_menuType) do {
         // Open medical menu once in new unit
         _object call ace_medical_gui_fnc_openMenu;
 
-        ["To quit, exit the medical menu.", false, 5, 2] call ace_common_fnc_displayText;
+        [LLSTRING(medicalMenuHint), false, 5, 2] call ace_common_fnc_displayText;
 
         "ace_medical_gui_menuDisplay"
     };
@@ -71,7 +75,7 @@ private _display = switch (_menuType) do {
         ace_cargo_interactionParadrop = false;
         createDialog "ace_cargo_menu";
 
-        ["To quit, exit the cargo menu.", false, 5, 2] call ace_common_fnc_displayText;
+        [LLSTRING(cargoMenuHint), false, 5, 2] call ace_common_fnc_displayText;
 
         "ace_cargo_menuDisplay"
     };
@@ -80,7 +84,7 @@ private _display = switch (_menuType) do {
 
 [{
     // Wait for the menu to close
-    isNull (GETUVAR(_this select 0,displayNull));
+    isNull (GETUVAR(_this select 0,displayNull))
 }, {
     params ["_display", "_helperUnit", "_previousCoeffValue"];
 

@@ -1,5 +1,4 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Find a selected unit's role.
@@ -18,7 +17,21 @@
 
 params ["_unit"];
 
-private _type = switch (toLowerANSI getText (configOf _unit >> "icon")) do {
+// Use unit traits first
+private _type = switch (true) do {
+    case (_unit getVariable ["ace_medical_medicClass", parseNumber (_unit getUnitTrait "medic")] > 0): {5};
+    case (_unit getVariable ["ACE_isEOD", _unit getUnitTrait "explosiveSpecialist"]): {6};
+    case (_unit getVariable ["ACE_IsEngineer", parseNumber (_unit getUnitTrait "engineer")] > 0): {6};
+    default {0};
+};
+
+if (_type != 0) exitWith {
+    _type
+};
+
+// Check icons
+_type = switch (toLowerANSI getText (configOf _unit >> "icon")) do {
+    // "iconmanat" exists, but it's used for both AT and AA
     case "iconmanengineer": {6};
     case "iconmanmedic": {5};
     case "iconmanmg": {4};

@@ -1,12 +1,11 @@
-#include "script_component.hpp"
-
+#include "..\script_component.hpp"
 /*
  * Author: johnb43
  * Disables or enables pathing on units/drivers in array.
  *
  * Arguments:
- * 0: Objects <ARRAY>
- * 1: Type <STRING>
+ * 0: Objects <ARRAY> (default: [])
+ * 1: Type <STRING> (default: "")
  *
  * Return Value:
  * None
@@ -19,10 +18,10 @@
 
 params [["_objects", []], ["_type", "", [""]]];
 
-private _condition = {_x checkAIFeature "PATH"};
-
-if (_type == "enableAI") then {
-    _condition = {!(_x checkAIFeature "PATH")};
+private _condition = if (_type == "enableAI") then {
+    {!(_x checkAIFeature "PATH")}
+} else {
+    {_x checkAIFeature "PATH"}
 };
 
 {
