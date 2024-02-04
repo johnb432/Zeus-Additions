@@ -69,7 +69,7 @@
                     _this setUnitPos "UP";
                     _this playMove "aidlpercmstpsraswrfldnon_ai";
                     _this setCaptive true;
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 DFUNC(dropInventory) = [{
                     removeAllWeapons _this;
@@ -79,7 +79,7 @@
                     if (isNil "ace_captives") exitWith {};
 
                     [_this, true] call ace_captives_fnc_setHandcuffed;
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(setCaptive);
                 SEND_MP(dropInventory);
@@ -89,7 +89,7 @@
             private _backpackClass = "";
 
             {
-                _x remoteExecCall [QFUNC(setCaptive), _x];
+                [QGVAR(executeFunction), [QFUNC(setCaptive), _x], _x] call CBA_fnc_targetEvent;
 
                 // Drop all weapons
                 _weaponHolder = createVehicle ["WeaponHolderSimulated", (getPosATL _x) vectorAdd [0, 0, 0.05], [], 0, "CAN_COLLIDE"];
@@ -146,7 +146,7 @@
                     // Wait until unit has dropped its backpack
                     backpack _this == ""
                 }, {
-                    _this remoteExecCall [QFUNC(dropInventory), _this];
+                    [QGVAR(executeFunction), [QFUNC(dropInventory), _this], _this] call CBA_fnc_targetEvent;
                 }, _x] call CBA_fnc_waitUntilAndExecute;
             } forEach (_units select {!captive _x});
         } else {
@@ -160,13 +160,13 @@
                     if (isNil "ace_captives") exitWith {};
 
                     [_this, false] call ace_captives_fnc_setHandcuffed;
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(releaseCaptive);
             };
 
             {
-                _x remoteExecCall [QFUNC(releaseCaptive), _x];
+                [QGVAR(executeFunction), [QFUNC(releaseCaptive), _x], _x] call CBA_fnc_targetEvent;
             } forEach (_units select {captive _x});
         };
 

@@ -31,16 +31,8 @@ if (_curatorObjects isEqualTo createHashMap) exitWith {
     };
 };
 
-private _addLines = {
-    if (!_addedLines) then {
-        _addedLines = true;
+private _logEntries = [];
 
-        diag_log text "";
-        INFO_ZA("Your curator stats:");
-    };
-};
-
-private _addedLines = false;
 private _objects = createHashMap;
 private _type = "";
 private _categories = [["CAManBase","Men"], ["Car","Cars"], ["Tank","Tanks"], ["StaticWeapon","Static Weapons"], ["Helicopter","Helicopters"], ["Plane","Planes"], ["All","Misc."]];
@@ -54,13 +46,11 @@ private _categories = [["CAManBase","Men"], ["Car","Cars"], ["Tank","Tanks"], ["
         _objects = _curatorObjects getOrDefault [format ["%1_%2", _type, _classname], createHashMap];
 
         if (_objects isNotEqualTo createHashMap) then {
-            call _addLines;
-
-            diag_log text format ["%1 %2:", _name, _type];
+            _logEntries pushBack format ["%1 %2:", _name, _type];
 
             // Log an item
             {
-                diag_log text format ["    %1x '%2'", _y, _x];
+                _logEntries pushBack format ["    %1x '%2'", _y, _x];
             } forEach _objects;
         };
     } forEach _categories;
@@ -68,33 +58,39 @@ private _categories = [["CAManBase","Men"], ["Car","Cars"], ["Tank","Tanks"], ["
 
 private _groups = _curatorObjects getOrDefault ["groups", 0];
 
+// Log groups placed
 if (_groups != 0) then {
-    call _addLines;
-
-    // Log groups placed
-    diag_log text format ["%1 group(s) placed", _groups];
+    _logEntries pushBack format ["%1 group(s) placed", _groups];
 };
 
 private _pings = _curatorObjects getOrDefault ["pings", createHashMap];
 
+// Log pings
 if (_pings isNotEqualTo createHashMap) then {
     call _addLines;
 
     private _unit = objNull;
 
-    diag_log text "Pings:";
+    _logEntries pushBack "Pings:";
 
     {
         _unit = _x call BIS_fnc_getUnitByUID;
 
-        diag_log text format ["    %1 pinged %2 time(s)", ["UID: " + _x, name _unit] select (!isNull _unit), _y];
+        _logEntries pushBack format ["    %1 pinged %2 time(s)", ["UID: " + _x, name _unit] select (!isNull _unit), _y];
     } forEach _pings;
 };
 
+private _addedLines = _logEntries isNotEqualTo [];
+
+// Print to RPT
 if (_addedLines) then {
-    diag_log text "";
+    // Add header
+    _logEntries insert [0, ["Your curator stats:"]];
+
+    INFO(_logEntries joinString endl);
 };
 
+// Put in Zeus banner if wanted
 if (_notify) then {
-    [[LSTRING(missionObjectCounterNothingToPrintMessage), LSTRING(missionObjectCounterSomethingToPrintMessage)] select (_addedLines)] call zen_common_fnc_showMessage;
+    [[LSTRING(missionObjectCounterNothingToPrintMessage), LSTRING(missionObjectCounterSomethingToPrintMessage)] select _addedLines] call zen_common_fnc_showMessage;
 };

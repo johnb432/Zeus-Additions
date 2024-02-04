@@ -31,8 +31,8 @@ _building addAction [
         if ([_building, _doorID] call zen_doors_fnc_getState != 1) exitWith {
             hint "You find the door to be unlocked.";
 
-            // Remove the action globally; actionIDs are not the same on all clients!!!
-            [_building, _door] remoteExecCall [QFUNC(breachingRemoveAction), 0];
+            // Remove the action globally; actionIDs are not the same on all clients
+            [QGVAR(executeFunction), [QFUNC(breachingRemoveAction), [_building, _door]]] call CBA_fnc_globalEvent;
         };
 
         private _explosives = GETMVAR(QGVAR(explosivesBreach),[]);
@@ -90,14 +90,15 @@ _building addAction [
 
             _timer = round _timer;
 
-            // Remove the action globally; actionIDs are not the same on all clients!!!
-            [_building, _door] remoteExecCall [QFUNC(breachingRemoveAction), 0];
+            // Remove the action globally; actionIDs are not the same on all clients
+            [QGVAR(executeFunction), [QFUNC(breachingRemoveAction), [_building, _door]]] call CBA_fnc_globalEvent;
 
             // Get rid of JIP handler
             private _jipID = _building getVariable (format [QGVAR(doorJIP_%1_%2), _door, _doorID]);
 
             if (!isNil "_jipID") then {
-                _jipID call CBA_fnc_removeGlobalEventJIP;
+                // FUNC(removeGlobalEventJIP) not guaranteed to exist on clients
+                [QGVAR(removeEventJIP), [_jipID, objNull]] call CBA_fnc_serverEvent;
 
                 _building setVariable [format [QGVAR(doorJIP_%1_%2), _door, _doorID], nil, true];
             };
@@ -134,7 +135,7 @@ _building addAction [
             }, nil, _timer] call CBA_fnc_waitAndExecute;
 
             // Run code on server, in case player disconnects
-            [_helperObject, _building, _doorID, _timer] remoteExecCall [QFUNC(breachingEffects), 2];
+            [QGVAR(executeFunction), [QFUNC(breachingEffects), [_helperObject, _building, _doorID, _timer]]] call CBA_fnc_serverEvent;
         }, {}, [_building, _caller, _explosives, _door, _doorID, _actionID]] call zen_dialog_fnc_create;
     },
     [_selectionName, _index],

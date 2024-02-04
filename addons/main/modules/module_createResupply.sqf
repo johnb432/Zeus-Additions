@@ -18,7 +18,7 @@
         _args params ["_pos", "_object"];
         _selected params ["_sides", "_groups", "_players"];
 
-        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {!(_object isKindOf "VirtualCurator_F")}) then {
+        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {getNumber ((configOf _object) >> "isPlayableLogic") == 0}) then {
             _players pushBackUnique _object;
         };
 
@@ -47,13 +47,13 @@
                     // Dragging & Carrying
                     [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                     [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(setResupplyDraggable);
             };
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-            [[QGVAR(setResupplyDraggable), [_object, configOf _object], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            [[QGVAR(executeFunction), [QFUNC(setResupplyDraggable), [_object, configOf _object]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
         };
 
         if (_numPrim == 0 && {_numHand == 0} && {_numSec == 0}) exitWith {
@@ -90,7 +90,7 @@
                     _object addItemCargoGlobal [_x, _numSec];
                 } forEach (compatibleMagazines (secondaryWeapon _x) - _blackList);
             };
-        } forEach ((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups || {_x in _players}}});
+        } forEach ((call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players});
 
         [LSTRING(ammoResupplyMessage)] call zen_common_fnc_showMessage;
     }, {}, _this] call zen_dialog_fnc_create;
@@ -114,7 +114,7 @@
         _args params ["_pos", "_object"];
         (_results deleteAt 0) params ["_sides", "_groups", "_players"];
 
-        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {!(_object isKindOf "VirtualCurator_F")}) then {
+        if (alive _object && {isPlayer _object} && {_object isKindOf "CAManBase"} && {getNumber ((configOf _object) >> "isPlayableLogic") == 0}) then {
             _players pushBackUnique _object;
         };
 
@@ -140,13 +140,13 @@
                     // Dragging & Carrying
                     [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
                     [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(setResupplyDraggable);
             };
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-            [[QGVAR(setResupplyDraggable), [_object, configOf _object], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            [[QGVAR(executeFunction), [QFUNC(setResupplyDraggable), [_object, configOf _object]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
         };
 
         // Clear all content of other types of inventories
@@ -174,9 +174,9 @@
         SETUVAR(QGVAR(magazineInventory),_object);
 
         // Get all weapons from all players (even from inventories)
-        private _weapons = flatten (((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups || {_x in _players}}}) apply {weapons _x});
+        private _weapons = flatten (((call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players}) apply {weapons _x});
 
         // Spawn ammo GUI
-        [_weapons arrayIntersect _weapons] spawn FUNC(createResupplyGUI);
+        [_weapons arrayIntersect _weapons] call FUNC(gui_createResupply);
     }, {}, _this] call zen_dialog_fnc_create;
 }, ICON_INVENTORY] call zen_custom_modules_fnc_register;

@@ -53,7 +53,7 @@
             if (_vehicle isKindOf "LandVehicle" || {_vehicle isKindOf "Ship"}) then {
                 _vehicleList pushBackUnique _vehicle;
             };
-        } forEach ((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups} || {_x in _players}});
+        } forEach ((call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players});
 
         // Add context menu selection of entities
         if (_includeContextMenu) then {
@@ -137,4 +137,4 @@
 
         [LSTRING(paradropUnitsMessage), _unitCount, _vicCount, _objectCount] call zen_common_fnc_showMessage;
     }, {}, _pos] call zen_dialog_fnc_create;
-}, ["x\zen\addons\modules\ui\heli_ca.paa", "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"] select (!isNil "ace_zeus")] call zen_custom_modules_fnc_register;
+}, ICON_PARADROP] call zen_custom_modules_fnc_register;

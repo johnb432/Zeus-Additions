@@ -90,7 +90,7 @@
             };
 
             // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-            [[QGVAR(setResupplyDraggable), [_object, configOf _object], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+            [[QGVAR(executeFunction), [QFUNC(setResupplyDraggable), [_object, configOf _object]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
         };
 
         // Clear all content of other types of inventories

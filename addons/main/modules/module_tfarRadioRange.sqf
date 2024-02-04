@@ -27,8 +27,12 @@
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
-                [_unit, ["tf_sendingDistanceMultiplicator", _txMultiplier]] remoteExecCall ["setVariable", _unit];
-                [_unit, ["tf_receivingDistanceMultiplicator", _rxMultiplier]] remoteExecCall ["setVariable", _unit];
+                ["zen_common_execute", [{
+                    params ["_unit", "_txMultiplier", "_rxMultiplier"];
+
+                    _unit setVariable ["tf_sendingDistanceMultiplicator", _txMultiplier];
+                    _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
+                }, [_unit, _txMultiplier, _rxMultiplier]], _unit] call CBA_fnc_targetEvent;
 
                 LSTRING(changedRangesOnPlayerMessage)
             } else {
@@ -45,18 +49,18 @@
 
         // Set multiplier on all selected units
         {
-            [_x, ["tf_sendingDistanceMultiplicator", _txMultiplier]] remoteExecCall ["setVariable", _x];
-            [_x, ["tf_receivingDistanceMultiplicator", _rxMultiplier]] remoteExecCall ["setVariable", _x];
-        } forEach ((call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups || {_x in _players}}});
+            ["zen_common_execute", [{
+                params ["_unit", "_txMultiplier", "_rxMultiplier"];
+
+                _unit setVariable ["tf_sendingDistanceMultiplicator", _txMultiplier];
+                _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
+            }, [_x, _txMultiplier, _rxMultiplier]], _x] call CBA_fnc_targetEvent;
+        } forEach ((call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players});
 
         // Handle JIP
         if (_doJIP) then {
-            if (!isNil QGVAR(handleServerJIPEhID)) then {
-                GVAR(radioSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _txMultiplier, _rxMultiplier];
-                publicVariableServer QGVAR(radioSettingsJIP);
-            } else {
-                hint LLSTRING(jipDisabledMessage);
-            };
+            GVAR(radioSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _txMultiplier, _rxMultiplier];
+            publicVariable QGVAR(radioSettingsJIP);
         };
 
         [LSTRING(changedRangesOnPlayersMessage)] call zen_common_fnc_showMessage;

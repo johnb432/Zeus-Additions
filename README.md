@@ -1,4 +1,4 @@
-**Zeus Additions** is a client side mod and adds a handful of modules to the Zeus interface, some of which can also be found in the context menu from ZEN (default keybind: 'V'). Requires ZEN on all clients.
+**Zeus Additions** is a client side mod and adds a handful of modules to the Zeus interface, some of which can also be found in the context menu from ZEN (default keybind: 'V'). Requires ZEN on all clients. ACE is optional.
 
 <h2>Modules</h2>
 
@@ -7,6 +7,7 @@
 * **ACE Medical Injuries:** Allows the Zeus to create ACE Medical injuries on AI or players, either dead or alive. Also can create random wounds, taking a damage value and type you are able to set. Random damage can only be applied to a living unit.
 * **ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **AI Crew Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized. Allows the Zeus to change if AI can turn out or not.
+* **AI Driver:** Allows the Zeus to spawn AI drivers for vehicles with player commanders.
 * **Ammo Resupply for Players:** Spawns a magazine resupply using the unit's or units weapons. A unit is either chosen by placing the module on the unit or the choosing a player from the menu. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted. It can use a blacklist which can be defined in the CBA settings. Supports the FK arsenal blacklist.
 * **Ammo Resupply for Players (Selection):** Spawns a magazine resupply using the list predefined in the CBA settings and another UI that is opened after the first window which allows the Zeus to pick magazines in a more precise fashion for resupplying given units. If no units are specified, it will show all groups of magazines. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **Attack Dog:** Spawns a dog that can attack specific sides. This module can also spawn a peaceful dog.
@@ -17,6 +18,7 @@
 * **Delete Object (Forced):** Allows the Zeus to delete an object when he gets the "insufficient resources" error when trying to delete an object.
 * **Dust Storm:** Allows the Zeus to apply a dust storm script to players.
 * **End Scenario:** Ends the mission with all players (except Zeuses) having the chosen modifier applied to them.
+* **Garrison Building:** Allows the Zeus to easily garrison buildings with units of their choosing.
 * **Grass Rendering:** Allows the Zeus to change grass rendering on players. Use Low (Off) to turn off grass completely, Standard is recommended if you wish to turn it on (The others are there in case you want to use them).
 * **Loadout: Apply to Group:** Applies predetermined loadouts to the entire group of unit that the module was placed on. It will try to apply various loadouts based on their roles (it will try at least, as there no good way of determining an exact role as it isn't very precise).
 * **Loadout: Apply to Single Unit:** Applies a predetermined loadout to a single unit. If that loadout isn't defined, it will fall back onto the group defined loadouts.
@@ -45,9 +47,10 @@ Inputs are arrays of strings.
 * **Blacklist:** Allows the user to set up a list of ammo that won't be put in the resupply using the "Spawn Ammo Resupply for unit" module.
 * **X Ammunition:** Allows the user to set up custom arrays of ammunition to give to users using the "Spawn Ammo Resupply" module.
 * **Enable automatic blacklist detection for FK servers:** FK is a gaming community.
-* **Enable leave unconscious unit:** Allows the user to leave an unconscious remote controlled unit when pressing the ESCAPE key. Handy for people who have their Zeus key bound to a double tap.
-* **Enable no curator found hint:** If enabled, it will hint if no curator was found for JIP and object counter features.
+* **Enable ACE Dragging missing addon hint:** If enabled, it will hint if ACE Dragging is missing.
+* **Enable ACE Medical missing addon hint:** If enabled, it will hint if ACE Medical is missing.
 * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
+* **Enable RHS missing addon hint:** If enabled, it will hint if RHS is missing.
 * **Enable JIP features:** If enabled, it will add JIP functionality to the server, if the player is a curator.
 * **Enable Building Destruction handling:** If enabled, it will make floating objects near a building upon destruction fall to the ground.
 * **Enable Mission Object Counter:** This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.
@@ -90,6 +93,7 @@ Only 1 client needs it to be enabled for it to be added to the server. If multip
 * Compiling functions script by commy2 (CBA), modified by johnb43
 * Sanitise functions script by BadGuy (CLib), modified by johnb43
 * Thanks to [sh4rdknight](https://gitlab.com/sh4rdknight) for enduring testing sessions
+* Thanks to the ZEN team for making ZEN!
 * Mod by johnb43
 
 <h2>License</h2>

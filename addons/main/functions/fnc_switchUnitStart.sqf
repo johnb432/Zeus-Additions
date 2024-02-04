@@ -35,7 +35,7 @@ if !((side group _unit) in [west, east, independent, civilian]) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorEmpty"] call zen_common_fnc_showMessage;
 };
 
-private _owner = _unit getVariable ["bis_fnc_moduleRemoteControl_owner", objNull];
+private _owner = _unit getVariable ["BIS_fnc_moduleRemoteControl_owner", objNull];
 
 if ((!isNull _owner && {_owner in allPlayers}) || {isUAVConnected vehicle _unit}) exitWith {
     ["str_a3_cfgvehicles_moduleremotecontrol_f_errorControl"] call zen_common_fnc_showMessage;
@@ -47,8 +47,8 @@ if (unitIsUAV _unit) exitWith {
 
 // Save old player object
 private _oldPlayer = player;
-bis_fnc_moduleRemoteControl_unit = _unit;
-_unit setvariable ["bis_fnc_moduleRemoteControl_owner", _oldPlayer, true];
+BIS_fnc_moduleRemoteControl_unit = _unit;
+_unit setVariable ["BIS_fnc_moduleRemoteControl_owner", _oldPlayer, true];
 
 GVAR(switchUnitArgs) = [_oldPlayer, _unit, isDamageAllowed _oldPlayer];
 
@@ -103,6 +103,8 @@ if (!local _unit) then {
         // Wait until the Zeus interface is closed
         isNull (findDisplay IDD_RSCDISPLAYCURATOR)
     }, {
+        params ["", "_unit"];
+
         // Check after we have taken over new unit whether it has been teleported; Randomly does that sometimes (could be locality issue)
         [{
             params ["_pos", "_unit"];
@@ -112,23 +114,59 @@ if (!local _unit) then {
             };
         }, _this, 0.25] call CBA_fnc_waitAndExecute;
 
-        // To exit the unit, the player must use the curator interface keybind or get killed
         GVAR(switchUnitArgs) append [
-            call FUNC(getRespawnTime),
-            BIS_selectRespawnTemplate_delay,
             addUserActionEventHandler ["curatorInterface", "Activate", FUNC(switchUnitStop)],
-            (_this select 1) addEventHandler ["Killed", FUNC(switchUnitStop)]
-        ];
+            // For getting out of unconscious units when ACE is loaded
+            [{
+                if (isNil "ace_common_keyboardInputMain") exitWith {};
 
-        // Prevents unit from respawning if killed
-        BIS_selectRespawnTemplate_delay = 0.1234;
+                {
+                    _x params ["_mainKeyArray", "_comboKeyArray", "_isDoubleTap"];
+                    _mainKeyArray params ["_mainDik", "_mainDevice"];
+
+                    // If keybind doesn't contain key combo, it returns empty array; Therefore, return true
+                    _comboDikPressed = if (_comboKeyArray isEqualTo []) then {
+                        true
+                    } else {
+                        _comboKeyArray params ["_comboDik", "_comboDevice"];
+
+                        _comboDevice == "KEYBOARD" && {ace_common_keyboardInputMain getOrDefault [_comboDik, false]}
+                    };
+
+                    // Check if the necessary keys were pressed for a keybind
+                    if (_comboDikPressed &&
+                        {_mainDevice == "KEYBOARD"} &&
+                        {((ace_common_keyboardInputMain getOrDefault [_mainDik, [false, 0]]) select 1) > ([0, 1] select _isDoubleTap)} // check how many times the main key was pressed
+                    ) exitWith {
+                        call FUNC(switchUnitStop);
+                    };
+                } forEach (actionKeysEx "CuratorInterface");
+            }, 0.1, []] call CBA_fnc_addPerFrameHandler,
+            if (!isNil "ace_medical_status") then {
+                ["ace_medical_death", {
+                    params ["_unit"];
+
+                    if (_unit != player) exitWith {};
+
+                    call FUNC(switchUnitStop);
+                }] call CBA_fnc_addEventHandler
+            } else {
+                _unit addEventHandler ["HandleDamage", {
+                    params ["", "", "_damage", "", "", "", "", "_hitPoint"];
+
+                    if (_damage >= 1 && {_hitPoint isEqualTo ""}) then {
+                        call FUNC(switchUnitStop);
+                    };
+                }]
+            }
+        ];
     }, [_pos, _unit]] call CBA_fnc_waitUntilAndExecute;
 }, [_unit, _oldPlayer, _group, _groupID, _teamColor], 5, {
     // If locality failed to be transferred after 5s, quit
-    (_this select 0) setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
+    (_this select 0) setVariable ["BIS_fnc_moduleRemoteControl_owner", nil, true];
 
     GVAR(switchUnitArgs) = nil;
-    bis_fnc_moduleRemoteControl_unit = nil;
+    BIS_fnc_moduleRemoteControl_unit = nil;
 
     [LSTRING(switchUnitFailed)] call zen_common_fnc_showMessage;
 }] call CBA_fnc_waitUntilAndExecute;

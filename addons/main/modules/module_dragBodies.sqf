@@ -24,7 +24,7 @@
             allDeadMen
         } else {
             [[], [_object]] select (!isNull _object && {!alive _object})
-        }) select {isNull objectParent _x && {_x isKindOf "CAManBase"} && {!(_x isKindOf "VirtualCurator_F")}};
+        }) select {isNull objectParent _x && {_x isKindOf "CAManBase"} && {getNumber ((configOf _x) >> "isPlayableLogic") == 0}};
 
         if (!_includePlayers) then {
             _bodies = _bodies select {!isPlayer _x};

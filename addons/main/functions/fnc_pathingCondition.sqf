@@ -25,7 +25,7 @@ private _condition = if (_type == "enableAI") then {
 };
 
 _objects findIf {
-    ((_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}) || {
+    ((_x isKindOf "CAManBase" && {getNumber ((configOf _x) >> "isPlayableLogic") == 0}) || {
         if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
             _x = driver _x;
             true

@@ -32,11 +32,13 @@
                             GVAR(setTimeAccPfhID) = nil;
                             publicVariable QGVAR(setTimeAccPfhID);
 
-                            ["[Zeus Additions]: Unpaused time because time acceleration has been changed."] remoteExecCall ["zen_common_fnc_showMessage", allCurators];
+                            ["zen_common_showMessage", ["[Zeus Additions]: Unpaused time because time acceleration has been changed."], allCurators] call CBA_fnc_targetEvent;
                         };
 
                         // Revert time
-                        -_deltaTime remoteExecCall ["skipTime", 0];
+                        ["zen_common_execute", [{
+                            skipTime _this;
+                        }, -_deltaTime]] call CBA_fnc_globalEvent;
                     }, 100, dayTime] call CBA_fnc_addPerFrameHandler;
 
                     publicVariable QGVAR(setTimeAccPfhID);

@@ -44,7 +44,7 @@ if (_filterMode == PARADROP_MISC) exitWith {
     [LSTRING(selectedParadropObjectsContextMenu), count _misc] call zen_common_fnc_showMessage;
 };
 
-private _units = _objects select {_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}};
+private _units = _objects select {_x isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}};
 
 [LSTRING(paradropContextMenu), [
     ["TOOLBOX:YESNO", [LSTRING(paradropContextMenuIncludeGroup), LSTRING(paradropContextMenuIncludeGroupDesc)], false, true],
@@ -75,7 +75,7 @@ private _units = _objects select {_x isKindOf "CAManBase" && {!(_x isKindOf "Vir
     };
 
     // Remove non-man entities
-    _units = _units select {alive _x && {_x isKindOf "CAManBase"} && {!(_x isKindOf "VirtualCurator_F")}};
+    _units = _units select {alive _x && {_x isKindOf "CAManBase"} && {getNumber ((configOf _x) >> "isPlayableLogic") == 0}};
 
     GVAR(selectedParadropUnits) = _units;
 

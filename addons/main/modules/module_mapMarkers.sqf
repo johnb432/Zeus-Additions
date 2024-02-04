@@ -42,10 +42,10 @@
         _helperUnit linkItem "ItemMap";
         _helperUnit linkItem "ItemWatch";
 
-        // Do not allow the unit to move or interact with other objects; Make invisible and invincible
+        // Do not allow the helper to move or interact with other objects; Make helper unit invincible and invisible
         _helperUnit enableSimulationGlobal false;
         _helperUnit allowDamage false;
-        [_helperUnit, false] remoteExecCall ["hideObjectGlobal", 2];
+        ["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
 
         // Save old player object
         private _oldPlayer = player;

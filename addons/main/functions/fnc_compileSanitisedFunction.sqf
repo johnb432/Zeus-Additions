@@ -23,11 +23,11 @@ params [["_funcFile", "", [""]], ["_funcName", "", [""]]];
 private _cachedFunc = uiNamespace getVariable _funcName;
 
 if (isNil "_cachedFunc") then {
-    uiNamespace setVariable [_funcName, [preprocessFileLineNumbers _funcFile, true, true] call FUNC(sanitiseFunction)];
+    uiNamespace setVariable [_funcName, [preprocessFileLineNumbers _funcFile, true] call FUNC(sanitiseFunction)];
     missionNamespace setVariable [_funcName, uiNamespace getVariable _funcName];
 } else {
     if (["compile"] call CBA_fnc_isRecompileEnabled) then {
-        missionNamespace setVariable [_funcName, [preprocessFileLineNumbers _funcFile, true, true] call FUNC(sanitiseFunction)];
+        missionNamespace setVariable [_funcName, [preprocessFileLineNumbers _funcFile, true] call FUNC(sanitiseFunction)];
     } else {
         missionNamespace setVariable [_funcName, _cachedFunc];
     };

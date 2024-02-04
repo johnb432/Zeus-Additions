@@ -32,14 +32,16 @@
         // If 2nd modifier isn't death, apply invincibility
         if (_invincible && {_setting != 3}) then {
             {
-                [_x, false] remoteExecCall ["allowDamage", _x];
+                ["zen_common_allowDamage", [_x, false], _x] call CBA_fnc_targetEvent;
             } forEach (_allPlayers + _vehicles);
         };
 
         switch (_setting) do {
             case 1: {
                 {
-                     _x remoteExecCall ["removeAllWeapons", _x];
+                     ["zen_common_execute", [{
+                         removeAllWeapons _this;
+                     }, _x], _x] call CBA_fnc_targetEvent;
                 } forEach _allPlayers;
 
                 // Remove all ammo from all vics
@@ -47,25 +49,25 @@
                     [_x, 0] call zen_common_fnc_setVehicleAmmo;
                 } forEach _vehicles;
             };
-
             case 2: {
                 // Stops the player from spinning if player was in the middle of turning
                 {
-                    [_x, false] remoteExecCall ["enableSimulationGlobal", _x];
-                    true remoteExecCall ["ace_common_fnc_disableUserInput", _x];
+                    ["zen_common_execute", [{
+                        [QGVAR(disableInput), true] call ace_common_fnc_setDisableUserInputStatus;
+
+                        _this enableSimulationGlobal false;
+                    }, _x], _x] call CBA_fnc_targetEvent;
                 } forEach _allPlayers;
             };
-
             case 3: {
                 {
                     _x setDamage 1;
                 } forEach _allPlayers;
             };
-
             default {};
         };
 
-        _endType remoteExecCall ["BIS_fnc_endMissionServer", 2];
+        [QGVAR(executeFunction), ["BIS_fnc_endMissionServer", _endType]] call CBA_fnc_serverEvent;
 
         RscDisplayDebriefing_params = _debriefText;
         publicVariable "RscDisplayDebriefing_params";

@@ -1,7 +1,5 @@
 [rapify]
-exclude = [
-    "/addons/main/config.cpp"
-]
+enabled = true
 
 [binarize]
 enabled = true

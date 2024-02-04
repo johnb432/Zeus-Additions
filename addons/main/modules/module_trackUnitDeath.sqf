@@ -31,7 +31,7 @@ GVAR(trackUnits) = [];
             [LSTRING_ZEN(modules,onlyAlive)] call zen_common_fnc_showMessage;
         };
 
-        if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+        if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
             [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
         };
 
@@ -81,7 +81,7 @@ GVAR(trackUnits) = [];
                 };
 
                 if (_notification select 3) then {
-                    INFO_ZA(FORMAT_3(LSTRING(unitDeathTrackingMessage),_nameUnit,_killer,_instigator));
+                    INFO_3(LSTRING(unitDeathTrackingMessage),_nameUnit,_killer,_instigator);
                 };
 
                 GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);

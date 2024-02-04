@@ -14,7 +14,7 @@
         [LSTRING_ZEN(modules,onlyAlive)] call zen_common_fnc_showMessage;
     };
 
-    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+    if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
         [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
     };
 
@@ -46,11 +46,11 @@
                 };
 
                 // Create explosives around player
-                _unit remoteExecCall [QFUNC(addExplosives), _unit];
+                [QGVAR(executeFunction), [QFUNC(addExplosives), _unit], _unit] call CBA_fnc_targetEvent;
 
                 // Add detonate scroll wheel action
-                private _jipID = [QGVAR(addDetonateAction), _unit] call CBA_fnc_globalEventJIP;
-                [_jipID, _unit] call CBA_fnc_removeGlobalEventJIP;
+                private _jipID = [QGVAR(executeFunction), [QFUNC(addDetonateAction), _unit]] call FUNC(globalEventJIP);
+                [_jipID, _unit] call FUNC(removeGlobalEventJIP);
 
                 _unit setVariable [QGVAR(suicideBomberActionJIP), _jipID, true];
             };
@@ -63,8 +63,8 @@
                     #include "module_suicideBomber_deadMan_init.sqf"
                 };
 
-                private _jipID = [QGVAR(addSuicideEh), _unit] call CBA_fnc_globalEventJIP;
-                [_jipID, _unit] call CBA_fnc_removeGlobalEventJIP;
+                private _jipID = [QGVAR(executeFunction), [QFUNC(addSuicideEh), _unit]] call FUNC(globalEventJIP);
+                [_jipID, _unit] call FUNC(removeGlobalEventJIP);
 
                 _unit setVariable [QGVAR(suicideBomberDeadManSwitchJIP), _jipID, true];
             } else {

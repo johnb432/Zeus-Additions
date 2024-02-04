@@ -58,7 +58,7 @@
                 _name = selectRandom ["Fluffy", "Doggo", "Cuddles", "Santa's Little Helper", "Biter", "Foxer", "Boxy", "Death", "Sir KillsALot"];
             };
 
-            [["zen_common_setName", [_dog, _name]] call CBA_fnc_globalEventJIP, _dog] call CBA_fnc_removeGlobalEventJIP;
+            [["zen_common_setName", [_dog, _name], QGVAR(dogName_) + hashValue _dog] call CBA_fnc_globalEventJIP, _dog] call CBA_fnc_removeGlobalEventJIP;
 
             // If no side to be attacked are provided, dog is peaceful
             if (_attackSides isEqualTo []) exitWith {
@@ -80,9 +80,9 @@
             _helperUnit call zen_common_fnc_updateEditableObjects;
             [["zen_common_setUnitIdentity", [_helperUnit, _name, "WhiteHead_01", ["NoVoice", "ACE_NoVoice"] select (!isNil "ace_common"), 1, ""]] call CBA_fnc_globalEventJIP, _helperUnit] call CBA_fnc_removeGlobalEventJIP;
 
-            // Make helper invisible and invincible
-            [_helperUnit, true] remoteExecCall ["hideObjectGlobal", 2];
+            // Make helper unit invincible and invisible
             _helperUnit allowDamage false;
+            ["zen_common_hideObjectGlobal", [_helperUnit, true]] call CBA_fnc_serverEvent;
 
             _dog attachTo [_helperUnit];
 
@@ -143,11 +143,12 @@
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
                     _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {
                         alive _x &&
+                        {isNull objectParent _x} &&
                         {(side _x) in _attackSides} &&
                         {_x != _helperUnit} &&
                         {(lifeState _x) != "INCAPACITATED"} &&
                         {!(_x getVariable [QGVAR(isHelperUnit), false])} &&
-                        {!(_x isKindOf "VirtualCurator_F")}
+                        {getNumber ((configOf _x) >> "isPlayableLogic") == 0}
                     }) param [0, objNull];
 
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -163,11 +164,12 @@
                         // Look for the closest enemy: Exclude invalid classes, helper units, dead or unconscious units
                         _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {
                             alive _x &&
+                            {isNull objectParent _x} &&
                             {(side _x) in _attackSides} &&
                             {_x != _helperUnit} &&
                             {(lifeState _x) != "INCAPACITATED"} &&
                             {!(_x getVariable [QGVAR(isHelperUnit), false])} &&
-                            {!(_x isKindOf "VirtualCurator_F")}
+                            {getNumber ((configOf _x) >> "isPlayableLogic") == 0}
                         }) param [0, objNull];
 
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
@@ -189,12 +191,18 @@
 
                         // Inflict damage if in range
                         if (_distance <= 3) then {
-                            if (zen_common_aceMedical) then {
-                                [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] remoteExecCall ["ace_medical_fnc_addDamageToUnit", _dogNearestEnemy];
-                            } else {
-                                private _hitPoint = selectRandom ["HitArms", "HitHands", "HitLegs"];
-                                [_dogNearestEnemy, [_hitPoint, (_dogNearestEnemy getHitPointDamage _hitPoint) + _damage, true, _dog, _dog]] remoteExecCall ["setHitPointDamage", _dogNearestEnemy];
-                            };
+                            ["zen_common_execute", [{
+                                params ["_dogNearestEnemy", "_dog", "_damage"];
+
+                                if !(isDamageAllowed _dogNearestEnemy && {_dogNearestEnemy getVariable ["ace_medical_allowDamage", true]}) exitWith {};
+
+                                if (zen_common_aceMedical) then {
+                                    [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] call ace_medical_fnc_addDamageToUnit;
+                                } else {
+                                    private _hitPoint = selectRandom ["HitArms", "HitHands", "HitLegs"];
+                                    _dogNearestEnemy setHitPointDamage [_hitPoint, (_dogNearestEnemy getHitPointDamage _hitPoint) + _damage, true, _dog, _dog];
+                                };
+                            } call FUNC(sanitiseFunction), [_dogNearestEnemy, _dog, _damage]], _dogNearestEnemy] call CBA_fnc_targetEvent;
                         };
 
                         // Prevents excessive barking

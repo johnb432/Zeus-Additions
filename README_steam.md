@@ -1,4 +1,4 @@
-[b]Zeus Additions[/b] is a client side mod and adds a handful of modules to the Zeus interface, some of which can also be found in the context menu from ZEN (default keybind: 'V'). Requires ZEN on all clients.
+[b]Zeus Additions[/b] is a client side mod and adds a handful of modules to the Zeus interface, some of which can also be found in the context menu from ZEN (default keybind: 'V'). Requires ZEN on all clients. ACE is optional.
 
 [h2]Modules[/h2]
 [list]
@@ -7,6 +7,7 @@
 [*] ACE Medical Injuries
 [*] ACE Medical Resupply
 [*] AI Crew Behaviour (does not work fully with ACE Vehicle Damage enabled)
+[*] AI Driver
 [*] Ammo Resupply for Players
 [*] Ammo Resupply for Players (Selection)
 [*] Attack Dog
@@ -17,6 +18,7 @@
 [*] Delete Object (Forced)
 [*] Dust Storm
 [*] End Scenario
+[*] Garrison Building
 [*] Grass Rendering
 [*] Loadout: Apply to Group
 [*] Loadout: Apply to Single Unit
@@ -66,6 +68,7 @@ This mod also adds:
 [*] Compiling functions script by commy2 (CBA), modified by johnb43
 [*] Sanitise functions script by BadGuy (CLib), modified by johnb43
 [*] Thanks to [url=https://gitlab.com/sh4rdknight]sh4rdknight[/url] for enduring testing sessions
+[*] Thanks to the ZEN team for making ZEN!
 [*] Mod by johnb43
 [/list]
 

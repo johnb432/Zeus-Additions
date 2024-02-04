@@ -15,17 +15,22 @@
  * Public: No
  */
 
+params ["_add"];
+
 // Have server call it on every client (make it JIP compatible)
 if (isServer) then {
-    _this remoteExecCall [QFUNC(handleBuildingDestruction), -2, QGVAR(handleBuildingDestructionJIPId)];
+    [QGVAR(executeFunction), [QFUNC(handleBuildingDestruction), _add]] call CBA_fnc_remoteEvent;
+
+    // FUNC(globalEventJIP) not guaranteed to exist on server
+    [QGVAR(addEventJIP), [QGVAR(executeFunction), [QFUNC(handleBuildingDestruction), _add], QGVAR(handleBuildingDestructionJipID)]] call CBA_fnc_localEvent;
 };
 
-if (_this) then {
+if (_add) then {
     if (!isNil QGVAR(handleBuildingDestructionEhID)) exitWith {};
 
     // When building model changes into ruined, turn on gravity on objects on/in building
     GVAR(handleBuildingDestructionEhID) = addMissionEventHandler ["BuildingChanged", {
-        _this remoteExecCall [QFUNC(onBuildingDestroyed), 2];
+        [QGVAR(executeFunction), [QFUNC(onBuildingDestroyed), _this]] call CBA_fnc_serverEvent;
     }];
 
     if (!isServer || {!isNil QGVAR(simulationHashmap)}) exitWith {};
@@ -47,18 +52,14 @@ if (_this) then {
         GVAR(destroyedBuildingCache) set [_key, nil];
 
         {
-            // Buildings or dead objects are not subject to gravity
+            // Buildings or dead non-PhysX objects are not subject to gravity
             if (_x isKindOf "Building" || {!alive _x && {!(_x isKindOf "AllVehicles")}}) then {
                 _x call FUNC(simulateGravity);
             } else {
                 // Update floating objects so that they fall
-                if (!isAwake _x) then {
-                    [_x, true] remoteExecCall ["awake", 0];
-                };
+                _x enableSimulationGlobal true;
 
-                if (!simulationEnabled _x) then {
-                    _x enableSimulationGlobal true;
-                };
+                [QGVAR(awake), [_x, true]] call CBA_fnc_globalEvent;
             };
         } forEach (((_from nearObjects ((boundingBoxReal _from) select 2)) - [_from, _to]) select {!(alive _x && {_x isKindOf "CAManBase"})});
 
@@ -77,7 +78,7 @@ if (_this) then {
         if (!isNil QGVAR(simulationPfHID)) exitWith {};
 
         GVAR(simulationPfHID) = [{
-            if (GVAR(simulationHashmap) isEqualTo (_this select 0)) exitWith {
+            if (GVAR(simulationHashmap) isEqualTo createHashMap) exitWith {
                 (_this select 1) call CBA_fnc_removePerFrameHandler;
 
                 GVAR(simulationPfHID) = nil;
@@ -102,10 +103,10 @@ if (_this) then {
                 };
 
                 if ((_newPos select 2) < 0.1) then {
-                    [_object, surfaceNormal _newPos] remoteExecCall ["setVectorUp", _object];
+                    ["zen_common_setVectorUp", [_object, surfaceNormal _newPos], _object] call CBA_fnc_targetEvent;
                 };
             } forEach GVAR(simulationHashmap);
-        }, 1/30, createHashMap] call CBA_fnc_addPerFrameHandler;
+        }, 1/30] call CBA_fnc_addPerFrameHandler;
     };
 } else {
     if (isNil QGVAR(handleBuildingDestructionEhID)) exitWith {};

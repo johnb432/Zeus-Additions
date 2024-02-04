@@ -25,7 +25,9 @@
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
-                _setting remoteExecCall ["setTerrainGrid", _unit];
+                ["zen_common_execute", [{
+                    setTerrainGrid _this;
+                }, _setting], _unit] call CBA_fnc_targetEvent;
 
                 LSTRING(changedGrassRenderingOnPlayerMessage)
             } else {
@@ -42,19 +44,13 @@
 
         // Handle JIP
         if (_doJIP) then {
-            if (!isNil QGVAR(handleServerJIPEhID)) then {
-                GVAR(grassSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _setting];
-                publicVariableServer QGVAR(grassSettingsJIP);
-            } else {
-                hint LLSTRING(jipDisabledMessage);
-            };
+            GVAR(grassSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _setting];
+            publicVariable QGVAR(grassSettingsJIP);
         };
 
-        // Add all sides, groups and units into one array, to apply settings more easily
-        _players append _groups;
-        _players append _sides;
-
-        _setting remoteExecCall ["setTerrainGrid", _players];
+        ["zen_common_execute", [{
+            setTerrainGrid _this;
+        }, _setting], (call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players}] call CBA_fnc_targetEvent;
 
         [LSTRING(changedGrassRenderingOnPlayersMessage)] call zen_common_fnc_showMessage;
     }, {}, _unit] call zen_dialog_fnc_create;

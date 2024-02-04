@@ -5,8 +5,7 @@
  *
  * Arguments:
  * 0: Code <CODE> <STRING> (default: "")
- * 1: Return as code <BOOL> (default: true)
- * 2: If returned code is final <BOOL> (default: false)
+ * 1: If returned code is final <BOOL> (default: false)
  *
  * Return Value:
  * Sanitised function <CODE> <STRING>
@@ -17,7 +16,7 @@
  * Public: No
  */
 
-params [["_function", "", ["", {}]], ["_returnAsCode", true], ["_isFinal", false]];
+params [["_function", "", ["", {}]], ["_isFinal", false]];
 
 if (_function isEqualType {}) then {
     _function = toString _function;
@@ -101,12 +100,8 @@ _outArray pushBack toString _token;
 _function = _outArray joinString "";
 
 // Return
-if (_returnAsCode) then {
-    if (_isFinal) then {
-        compile _function
-    } else {
-        compileFinal _function
-    };
+if (_isFinal) then {
+    compile _function
 } else {
-    _function
+    compileFinal _function
 };

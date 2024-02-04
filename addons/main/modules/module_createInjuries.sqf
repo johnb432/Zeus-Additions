@@ -16,7 +16,7 @@
     };
 
     // Can be applied to dead units too!
-    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+    if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
         [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
     };
 
@@ -79,7 +79,7 @@
         };
 
         // Apply wounds using function
-        [_unit, _formattedResults, _results select -4] remoteExecCall [QFUNC(createInjuriesHandler), _unit];
+        [QGVAR(executeFunction), [QFUNC(createInjuriesHandler), [_unit, _formattedResults, _results select -4]], _unit] call CBA_fnc_targetEvent;
 
         // Apply random damage
         private _randomDamage = _results select -3;

@@ -25,7 +25,7 @@ params ["_helperObject", "_building", "_doorID", "_timer"];
     params ["_helperObject", "_building", "_doorID"];
 
     // Visual effects
-    [getPosATL _helperObject] remoteExecCall [QFUNC(breachingEffectsVisual), 0];
+    [QGVAR(executeFunction), [QFUNC(breachingEffectsVisual), [getPosATL _helperObject]]] call CBA_fnc_globalEvent;
 
     // Play explosion sound
     playSound3D [format ["A3\Sounds_F\arsenal\explosives\grenades\%1_0%2.wss", selectRandom ["Explosion_gng_grenades", "Explosion_HE_grenade", "Explosion_mini_grenade"], floor (random 4) + 1], objNull, round insideBuilding _helperObject == 1, getPosASL _helperObject];

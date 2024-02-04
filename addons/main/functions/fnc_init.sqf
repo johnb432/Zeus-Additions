@@ -20,24 +20,18 @@ if (!isNil QGVAR(init)) exitWith {};
 
 GVAR(init) = true;
 
-// Macros don't like commas in strings
-INFO_ZA(FORMAT_5(QUOTE(Init: Net mode: ARR_2(%1,%2) loaded: ARR_2(%3,remoteExecutedOwner): ARR_2(%4,clientOwner): %5),call BIS_fnc_getNetMode,toUpperANSI QUOTE(PREFIX),!isNil QUOTE(ADDON),remoteExecutedOwner,clientOwner));
+INFO_4("Init: Net mode: %1 - %2 loaded: %3 - clientOwner %4",call BIS_fnc_getNetMode,toUpperANSI QUOTE(PREFIX),!isNil QUOTE(ADDON),clientOwner);
 
-// By wrapping the FUNC with 'call' we can send the FUNC only when we need them
-[QGVAR(addBehaviourEh), LINKFUNC(addBehaviourEh)] call CBA_fnc_addEventHandler;
-[QGVAR(addCarBombEh), LINKFUNC(addCarBombEh)] call CBA_fnc_addEventHandler;
-[QGVAR(addDetonateAction), LINKFUNC(addDetonateAction)] call CBA_fnc_addEventHandler;
-[QGVAR(addExplosionPreventionEh), LINKFUNC(addExplosionPreventionEh)] call CBA_fnc_addEventHandler;
-[QGVAR(addSuicideEh), LINKFUNC(addSuicideEh)] call CBA_fnc_addEventHandler;
-[QGVAR(addParachuteAction), LINKFUNC(addParachuteAction)] call CBA_fnc_addEventHandler;
-[QGVAR(breachingAddAction), LINKFUNC(breachingAddAction)] call CBA_fnc_addEventHandler;
-[QGVAR(setDraggableAndCarryable), LINKFUNC(setDraggableAndCarryable)] call CBA_fnc_addEventHandler;
-[QGVAR(setResupplyDraggable), LINKFUNC(setResupplyDraggable)] call CBA_fnc_addEventHandler;
+[QGVAR(executeFunction), {
+    (_this select 1) call (missionNamespace getVariable [_this select 0, {}]);
+}] call CBA_fnc_addEventHandler;
 
 [QGVAR(setUnloadInCombat), {
-    params ["_object", "_dismountPassengers", "_dismountCrew"];
+    (_this select 0) setUnloadInCombat [_this select 1, _this select 2];
+}] call CBA_fnc_addEventHandler;
 
-    _object setUnloadInCombat [_dismountPassengers, _dismountCrew];
+[QGVAR(awake), {
+    (_this select 0) awake (_this select 1);
 }] call CBA_fnc_addEventHandler;
 
 // If single player, finish here
@@ -45,19 +39,100 @@ if (!isMultiplayer) exitWith {
     GVAR(functionsSent) = true;
 };
 
-// Whenever a player disconnects, reset his reasons
 if (isServer) then {
-    if (!isNil QGVAR(playerDisconnectedEh)) exitWith {};
-
-    GVAR(playerDisconnectedEh) = true;
-    publicVariable QGVAR(playerDisconnectedEh);
-
+    // Whenever a player disconnects, reset his reasons
     addMissionEventHandler ["PlayerDisconnected", {
-        params ["", "_uid"];
-
-        [QGVAR(JIP), _uid, false, QFUNC(handleJIP)] call FUNC(changeReason);
-        [QGVAR(buildingDestruction), _uid, false, QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
+        [QGVAR(buildingDestruction), _this select 1, false, QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
     }];
+
+    // JIP event handling
+    GVAR(jipEventQueue) = createHashMap;
+
+    [QGVAR(addEventJIP), {
+        params ["_eventName", "_params", "_jipID"];
+
+        GVAR(jipEventQueue) set [_jipID, [_eventName, _params]];
+    }] call CBA_fnc_addEventHandler;
+
+    [QGVAR(removeEventJIP), {
+        params ["_jipID", "_object"];
+
+        if (isNull _object) then {
+            GVAR(jipEventQueue) deleteAt _jipID;
+        } else {
+            [_object, "Deleted", {
+                GVAR(jipEventQueue) deleteAt _thisArgs;
+            }, _jipID] call CBA_fnc_addBISEventHandler;
+        };
+    }] call CBA_fnc_addEventHandler;
+
+    [QGVAR(requestEventsJip), {
+        {
+            [_x select 0, _x select 1, _this] call CBA_fnc_ownerEvent;
+        } forEach (values GVAR(jipEventQueue));
+    }] call CBA_fnc_addEventHandler;
+} else {
+    // Headless clients
+    if (!hasInterface) exitWith {
+        [QGVAR(requestEventsJip), clientOwner] call CBA_fnc_serverEvent;
+    };
+
+    [{
+        // Wait for player to exist and be local
+        local player
+    }, {
+        [QGVAR(requestEventsJip), clientOwner] call CBA_fnc_serverEvent;
+
+        private _unit = player;
+        private _uid = getPlayerUID _unit;
+        private _group = group _unit;
+        private _side = side _unit;
+
+        // For chat channels
+        if (!isNil QGVAR(channelSettingsJIP)) then {
+            GVAR(channelSettingsJIP) params ["_players", "_groups", "_sides", "_enableArray"];
+
+            if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
+                {
+                    (_x select 0) enableChannel (_x select 1);
+                } forEach _enableArray;
+
+                hint "Zeus has changed channel visibility for you.";
+            };
+        };
+
+        // For grass rendering
+        if (!isNil QGVAR(grassSettingsJIP)) then {
+            GVAR(grassSettingsJIP) params ["_players", "_groups", "_sides", "_setting"];
+
+            if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
+                setTerrainGrid _setting;
+            };
+        };
+
+        // For TFAR radio range
+        if (!isNil QGVAR(radioSettingsJIP)) then {
+            GVAR(radioSettingsJIP) params ["_players", "_groups", "_sides", "_txMultiplier", "_rxMultiplier"];
+
+            if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
+                _unit setVariable ["tf_sendingDistanceMultiplicator", _txMultiplier];
+                _unit setVariable ["tf_receivingDistanceMultiplicator", _rxMultiplier];
+            };
+        };
+
+        // For snow script
+        if (!isNil QGVAR(stormSettingsJIP)) then {
+            GVAR(stormSettingsJIP) params ["_players", "_groups", "_sides", "_stormIntensity"];
+
+            if (_stormIntensity == 0) exitWith {};
+
+            if (_uid in _players || {_group in _groups} || {_side in _sides}) then {
+                _unit setVariable [QGVAR(stormIntensity), _stormIntensity, true];
+
+                call FUNC(dustStormPFH);
+            };
+        };
+    }, [], 60] call CBA_fnc_waitUntilAndExecute;
 };
 
 // Send functions to server once (if necessary)
@@ -65,7 +140,6 @@ if (!isNil QUOTE(ADDON) && {isNil QGVAR(functionsSent)}) then {
     if (!isServer) then {
         SEND_SERVER(changeReason);
         SEND_MP(handleBuildingDestruction);
-        SEND_SERVER(handleJIP);
     };
 
     GVAR(functionsSent) = true;
