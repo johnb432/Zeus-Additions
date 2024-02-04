@@ -1,8 +1,4 @@
-#if __has_include("\z\ace\addons\zeus\script_component.hpp")
-    #define ICON_PARADROP "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
-#else
-    #define ICON_PARADROP "x\zen\addons\modules\ui\heli_ca.paa"
-#endif
+#pragma hemtt flag pe23_ignore_has_include
 
 class zen_context_menu_actions {
     class GVAR(disablePathingContextMenu) {
@@ -23,11 +19,11 @@ class zen_context_menu_actions {
 
     #if __has_include("\z\ace\addons\medical_gui\script_component.hpp")
         class GVAR(openMedicalMenuContextMenu) {
-            condition = QUOTE(zen_common_aceMedical && {_hoveredEntity isEqualType objNull} && {([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)) isKindOf 'CAManBase'});
+            condition = QUOTE(_hoveredEntity isEqualType objNull && {_hoveredEntity = ([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)); _hoveredEntity isKindOf 'CAManBase'} && {[ARR_2(objNull,_hoveredEntity)] call ace_medical_gui_fnc_canOpenMenu});
             displayName = CSTRING_ACE(medical_GUI,openMedicalMenu);
             icon = ICON_MEDICAL;
             priority = 50;
-            statement = QUOTE([ARR_2([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity),MEDICAL_MENU)] call FUNC(openACEMenu));
+            statement = QUOTE(([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)) call ace_medical_gui_fnc_openMenu);
         };
     #endif
 
@@ -38,7 +34,7 @@ class zen_context_menu_actions {
         priority = 10;
 
         class GVAR(selectParadropUnitsContextMenu) {
-            condition = QUOTE(_objects findIf {alive _x && {_x isKindOf 'CAManBase'} && {!(_x isKindOf 'VirtualCurator_F')}} != -1);
+            condition = QUOTE(_objects findIf {alive _x && {_x isKindOf 'CAManBase'} && {getNumber ((configOf _x) >> 'isPlayableLogic') == 0}} != -1);
             displayName = CSTRING(selectParadropUnitsContextMenu);
             icon = ICON_PARADROP;
             statement = QUOTE([ARR_2(_objects,PARADROP_UNITS)] call FUNC(unitParadropContextMenu));

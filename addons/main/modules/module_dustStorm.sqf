@@ -35,7 +35,7 @@
                 _unit setVariable [QGVAR(stormIntensity), _stormIntensity, true];
 
                 if (_enabledStormScript) then {
-                    remoteExecCall [QFUNC(dustStormPFH), _unit];
+                    [QGVAR(executeFunction), [QFUNC(dustStormPFH), []], _unit] call CBA_fnc_targetEvent;
 
                     LSTRING(dustStormTurnOnPlayerMessage)
                 } else {
@@ -53,18 +53,14 @@
 
         // Handle JIP
         if (_doJIP) then {
-            if (!isNil QGVAR(handleServerJIPEhID)) then {
-                GVAR(stormSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _stormIntensity];
-                publicVariableServer QGVAR(stormSettingsJIP);
+            GVAR(stormSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _stormIntensity];
+            publicVariable QGVAR(stormSettingsJIP);
 
-                _string = LSTRING(dustStormJipSettingsChangedMessage);
-            } else {
-                hint LLSTRING(jipDisabledMessage);
-            };
+            _string = LSTRING(dustStormJipSettingsChangedMessage);
         };
 
         // Get all players that fit the criteria
-        private _playerList = (call CBA_fnc_players) select {(side _x) in _sides || {(group _x) in _groups} || {_x in _players}};
+        private _playerList = (call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players};
 
         // Don't execute if no players are valid
         if (_playerList isNotEqualTo []) then {
@@ -73,7 +69,7 @@
             } forEach _playerList;
 
             _string = if (_enabledStormScript) then {
-                remoteExecCall [QFUNC(dustStormPFH), _playerList];
+                [QGVAR(executeFunction), [QFUNC(dustStormPFH), []], _playerList] call CBA_fnc_targetEvent;
 
                 LSTRING(dustStormTurnOnPlayersMessage)
             } else {

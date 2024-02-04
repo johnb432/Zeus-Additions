@@ -3,7 +3,7 @@
  * Init for suicide bomber module.
  */
 
-INFO_ZA(FORMAT_1("Running %1",__FILE__));
+INFO_1("Running %1",__FILE__);
 
 DFUNC(addDetonateAction) = [{
     if (!isNil {_this getVariable QGVAR(suicideBomberActionID)}) exitWith {};
@@ -31,7 +31,7 @@ DFUNC(addDetonateAction) = [{
             1
         ]
     ];
-}, true, true] call FUNC(sanitiseFunction);
+}, true] call FUNC(sanitiseFunction);
 
 DFUNC(addExplosives) = [{
     private _pos = getPosATL _this;
@@ -52,7 +52,7 @@ DFUNC(addExplosives) = [{
     [["zen_common_setVectorDirAndUp", [_expl3, [[0.5, -0.5, 0], [0.5, 0.5, 0]]]] call CBA_fnc_globalEventJIP, _expl3] call CBA_fnc_removeGlobalEventJIP;
 
     _this setVariable [QGVAR(suicideBomberExplosives), [_expl1, _expl2, _expl3], true];
-}, true, true] call FUNC(sanitiseFunction);
+}, true] call FUNC(sanitiseFunction);
 
 DFUNC(removeSuicideBomberEh) = [{
     params ["_unit", "_removeAction"];
@@ -72,7 +72,7 @@ DFUNC(removeSuicideBomberEh) = [{
 
     if (isNil "_damageEhID") exitWith {};
 
-    if (zen_common_aceMedical) then {
+    if (!isNil "ace_medical_status") then {
         ["ace_unconscious", _damageEhID] call CBA_fnc_removeEventHandler;
     } else {
         _unit removeEventHandler ["HandleDamage", _damageEhID];
@@ -81,7 +81,7 @@ DFUNC(removeSuicideBomberEh) = [{
     _unit removeEventHandler ["Killed", _killedEhID];
 
     _unit setVariable [QGVAR(suicideBomberDeadManSwitchEhIDs), nil];
-}, true, true] call FUNC(sanitiseFunction);
+}, true] call FUNC(sanitiseFunction);
 
 SEND_MP(addDetonateAction);
 SEND_MP(addExplosives);

@@ -2,9 +2,6 @@
 <Project name="zeus_additions">
     <Package name="main">
         <!-- Missing addons -->
-        <Key ID="STR_zeus_additions_main_aceCargoMissing">
-            <English>The ACE unload cargo module isn't available because ACE cargo isn't loaded.</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_aceDraggingMissing">
             <English>The ACE drag and carry modules aren't available because ACE dragging isn't loaded.</English>
         </Key>
@@ -21,13 +18,6 @@
         <!-- Functions -->
         <Key ID="STR_zeus_additions_main_ammoResupplyCreated">
             <English>Ammo resupply created</English>
-        </Key>
-
-        <Key ID="STR_zeus_additions_main_medicalMenuHint">
-            <English>To quit, exit the medical menu.</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_cargoMenuHint">
-            <English>To quit, exit the cargo menu.</English>
         </Key>
 
         <Key ID="STR_zeus_additions_main_switchUnitUAVError">
@@ -108,9 +98,6 @@
         <Key ID="STR_zeus_additions_main_insertInventory">
             <English>Insert in inventory</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_jipDisabledMessage">
-            <English>JIP disabled. Turn on in CBA Settings to enable it.</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_objectHasNoInventory">
             <English>Object has no valid inventory</English>
         </Key>
@@ -156,6 +143,40 @@
         </Key>
         <Key ID="STR_zeus_additions_main_changedAiBehaviourMessage">
             <English>Changed crew behaviour on vehicle</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_aiDriverModuleName">
+            <English>[WIP] AI Driver</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_driverAlreadyPresentMessage">
+            <English>A non-AI driver is already present</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableAiDriverDesc">
+            <English>Spawns an AI driver that is controlled by the commander of the vehicle.\nRequires a player commander.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableInvulnerability">
+            <English>Make AI Driver invulnerable</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_enableInvulnerabilityDesc">
+            <English>If you want to apply invulnerability to an already existing driver, you must remove the driver and make a new one.</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_requirePlayersMessage">
+            <English>Requires players in the vehicle</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_requirePlayerCommanderMessage">
+            <English>Requires a player commander</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_addedAiDriverMessage">
+            <English>Added AI driver</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aiDriverAlreadyPresentMessage">
+            <English>AI driver already present</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_removedAiDriverMessage">
+            <English>Removed AI driver</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_aiDriverAlreadyRemovedMessage">
+            <English>AI driver already removed</English>
         </Key>
 
         <Key ID="STR_zeus_additions_main_ammoResupplyModuleName">
@@ -485,6 +506,10 @@
         </Key>
         <Key ID="STR_zeus_additions_main_dustStormTurnOffPlayersMessage">
             <English>Turned Dust Storm Script off for selected players</English>
+        </Key>
+
+        <Key ID="STR_zeus_additions_main_garrisonBuildingModuleName">
+            <English>Garrison Building</English>
         </Key>
 
         <Key ID="STR_zeus_additions_main_grassRenderModuleName">
@@ -954,16 +979,6 @@
             <English>%1 was killed by %2 (instigator: %3)</English>
         </Key>
 
-        <Key ID="STR_zeus_additions_main_unloadACECargoModuleName">
-            <English>Unload ACE Cargo</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_aceCargoDisabled">
-            <English>ACE Cargo isn't enabled</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_unloadACECargoNoCargo">
-            <English>This vehicle doesn't have ACE Cargo</English>
-        </Key>
-
         <!-- GUI -->
         <Key ID="STR_zeus_additions_main_selectMagazines">
             <English>SELECT MAGAZINES</English>
@@ -1020,12 +1035,6 @@
         <Key ID="STR_zeus_additions_main_enableUnconsciousLeavingSettingDesc">
             <English>Allows Zeuses to leave an unconscious remote controlled unit by pressing the ESCAPE key.</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_enableJipFeaturesSetting">
-            <English>Enable JIP features</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_enableJipFeaturesSettingDesc">
-            <English>Allows join-in-progress (JIP) functionality for some modules.</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_enableBuildingDestructionSetting">
             <English>Enable Building Destruction handling</English>
         </Key>
@@ -1055,11 +1064,8 @@
             <English>Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings.</English>
         </Key>
 
-        <Key ID="STR_zeus_additions_main_aceCargoHintSetting">
-            <English>Enable ACE Cargo missing addon hint</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_aceDraggingHintSetting">
-            <English>Enable ACE Cargo missing addon hint</English>
+            <English>Enable ACE Dragging missing addon hint</English>
         </Key>
         <Key ID="STR_zeus_additions_main_aceMedicalHintSetting">
             <English>Enable ACE Medical missing addon hint</English>

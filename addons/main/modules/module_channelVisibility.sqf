@@ -71,11 +71,13 @@
         if (_sides isEqualTo [] && {_groups isEqualTo []} && {_players isEqualTo []}) exitWith {
             // If unit is player, apply setting
             private _string = if (isPlayer _unit) then {
-                {
-                    _x remoteExecCall ["enableChannel", _unit];
-                } forEach _enableArray;
+                ["zen_common_execute", [{
+                    {
+                        (_x select 0) enableChannel (_x select 1);
+                    } forEach _this;
 
-                "Zeus has changed channel visibility for you." remoteExecCall ["hint", _unit];
+                    hint "Zeus has changed channel visibility for you.";
+                } call FUNC(sanitiseFunction), _enableArray], _unit] call CBA_fnc_targetEvent;
 
                 LSTRING(changedChanneLVisibilityOnPlayerMessage)
             } else {
@@ -92,23 +94,17 @@
 
         // Handle JIP
         if (_doJIP) then {
-            if (!isNil QGVAR(handleServerJIPEhID)) then {
-                GVAR(channelSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _enableArray];
-                publicVariableServer QGVAR(channelSettingsJIP);
-            } else {
-                hint LLSTRING(jipDisabledMessage);
-            };
+            GVAR(channelSettingsJIP) = [_players apply {getPlayerUID _x}, _groups, _sides, _enableArray];
+            publicVariable QGVAR(channelSettingsJIP);
         };
 
-        // Add all sides, groups and units into one array, to apply settings more easily
-        _players append _groups;
-        _players append _sides;
+        ["zen_common_execute", [{
+            {
+                (_x select 0) enableChannel (_x select 1);
+            } forEach _this;
 
-        {
-            _x remoteExecCall ["enableChannel", _players];
-        } forEach _enableArray;
-
-        "Zeus has changed channel visibility for you." remoteExecCall ["hint", _players];
+            hint "Zeus has changed channel visibility for you.";
+        } call FUNC(sanitiseFunction), _enableArray], (call CBA_fnc_players) select {_group = group _x; (side _group) in _sides || _group in _groups || _x in _players}] call CBA_fnc_targetEvent;
 
         [LSTRING(changedChanneLVisibilityOnPlayersMessage)] call zen_common_fnc_showMessage;
     }, {}, [_unit, _channelIDs]] call zen_dialog_fnc_create;

@@ -5,7 +5,7 @@
  *
  * Arguments:
  * 0: Unit <OBJECT>
- * 1: Position <ARRAY>
+ * 1: Position ATL <ARRAY>
  * 2: Give unit parachute <BOOL> (default: true)
  *
  * Return Value:
@@ -21,14 +21,14 @@ params ["_unit", "_posATL", ["_giveUnitParachute", true]];
 
 // Execute where unit is local
 if (!local _unit) exitWith {
-    _this remoteExecCall [QFUNC(addParachute), _unit];
+    [QGVAR(executeFunction), [QFUNC(addParachute), _this], _unit] call CBA_fnc_targetEvent;
 };
 
 // Hide unit during preparation
 private _isObjectHidden = isObjectHidden _unit;
 
 if (!_isObjectHidden) then {
-    [_unit, true] remoteExecCall ["hideObjectGlobal", 2];
+    ["zen_common_hideObjectGlobal", [_unit, true]] call CBA_fnc_serverEvent;
 };
 
 private _showTransition = _unit == call CBA_fnc_currentUnit;
@@ -62,7 +62,7 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
     params ["", "", "", "", "_packHolder"];
 
     // Remove temp magazine
-    clearMagazineCargo _packHolder;
+    _packHolder addMagazineCargo ["30Rnd_556x45_Stanag", -1];
 
     [{
         params ["_unit", "_posATL", "_giveUnitParachute", "_backpackClass", "_packHolder", "_isObjectHidden", "_showTransition"];
@@ -75,7 +75,7 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
 
         // Unhide unit
         if (!_isObjectHidden) then {
-            [_unit, false] remoteExecCall ["hideObjectGlobal", 2];
+            ["zen_common_hideObjectGlobal", [_unit, false]] call CBA_fnc_serverEvent;
         };
 
         [{
@@ -134,7 +134,7 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
             _packHolder attachTo [_unit, [-0.12, -0.02, -0.74], "pelvis"];
 
             // Remove from JIP if object is deleted
-            [["zen_common_setVectorDirAndUp", [_packHolder, [[0, -1, -0.05], [0, 0, -1]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP, _packHolder] call CBA_fnc_removeGlobalEventJIP;
+            [["zen_common_setVectorDirAndUp", [_packHolder, [[0, -1, -0.05], [0, 0, -1]]], QGVAR(parachute_) + hashValue _packHolder] call CBA_fnc_globalEventJIP, _packHolder] call CBA_fnc_removeGlobalEventJIP;
 
             [{
                 // Wait until unit has deployed parachute or crashed or is dead
@@ -147,7 +147,7 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
 
                 // Change attaching position of the backpack
                 _packHolder attachTo [vehicle _unit, [-0.07, 0.67, -0.13]];
-                ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP;
+                ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + hashValue _packHolder] call CBA_fnc_globalEventJIP;
 
                 [{
                     // Wait until unit has landed or is dead
@@ -159,7 +159,7 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
 
                     // Reattach to fix buggy behaviour
                     _packHolder attachTo [_unit, [-0.07, 0.67, -0.13], "pelvis", true];
-                    ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + netId _packHolder] call CBA_fnc_globalEventJIP;
+                    ["zen_common_setVectorDirAndUp", [_packHolder, [[0, -0.2, -1], [0, 1, 0]]], QGVAR(parachute_) + hashValue _packHolder] call CBA_fnc_globalEventJIP;
 
                     // Unit is no longer paradropping
                     _unit setVariable [QGVAR(isParadropping), nil, true];

@@ -50,7 +50,7 @@
 
             // Turn off engine
             if (isEngineOn _object) then {
-                [_object, false] remoteExecCall ["engineOn", _object];
+                ["zen_common_engineOn", [_object, false], _object] call CBA_fnc_targetEvent;
             };
 
             // Only send function to all clients if script is enabled
@@ -71,7 +71,7 @@
 
                                 // Apply damage to crew; If they don't die, make sure they do
                                 {
-                                    _x remoteExecCall [QFUNC(killUnit), _x];
+                                    [QGVAR(executeFunction), [QFUNC(killUnit), _x], _x] call CBA_fnc_targetEvent;
                                 } forEach (crew _this);
 
                                 _this setVariable [QGVAR(IEDSize), nil, true];
@@ -79,13 +79,13 @@
                             }, _object, random 2] call CBA_fnc_waitAndExecute;
                         }]
                     ];
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 DFUNC(killUnit) = [{
                     // 'isDamageAllowed' needs to be checked locally
                     if !(isDamageAllowed _this && {_this getVariable ["ace_medical_allowDamage", true]}) exitWith {};
 
-                    if (zen_common_aceMedical) then {
+                    if (!isNil "ace_medical_status") then {
                         ["ace_medical_woundReceived", [_this, ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"] apply {[(random [0.5, 0.75, 1]) * 10, _x, 0]}, objNull, "explosive"]] call CBA_fnc_localEvent;
 
                         // If unit still alive, kill
@@ -102,14 +102,14 @@
                             _this setHitPointDamage ["HitHead", 1, true];
                         };
                     };
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(addCarBombEh);
                 SEND_MP(killUnit);
             };
 
-            private _jipID = [QGVAR(addCarBombEh), _object, QGVAR(addCarBomb_) + netId _object] call CBA_fnc_globalEventJIP;
-            [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
+            private _jipID = [QGVAR(executeFunction), [QFUNC(addCarBombEh), _object], QGVAR(addCarBomb_) + hashValue _object] call FUNC(globalEventJIP);
+            [_jipID, _object] call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(detonateJIP), _jipID, true];
 
@@ -119,7 +119,7 @@
 
             if (isNil "_jipID") exitWith {};
 
-            _jipID call CBA_fnc_removeGlobalEventJIP;
+            _jipID call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(detonateJIP), nil, true];
             _object setVariable [QGVAR(IEDSize), nil, true];

@@ -17,17 +17,17 @@
         [LSTRING_ZEN(modules,onlyAlive)] call zen_common_fnc_showMessage;
     };
 
-    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+    if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
         [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
     };
 
     // Toggle consciousness
-    if (zen_common_aceMedical) then {
+    if (!isNil "ace_medical_statemachine") then {
         ["zen_common_execute", [{
-            params ["_curator", "_unit"];
+            params ["_owner", "_unit"];
 
             if (!isPlayer _unit || {[_unit, ace_medical_STATE_MACHINE] call CBA_statemachine_fnc_getCurrentState != "CardiacArrest"}) then {
-                [_unit, !(_unit getVariable ["ACE_isUnconscious", false])] call ace_medical_status_fnc_setUnconsciousState;
+                [_unit, lifeState _unit != "INCAPACITATED"] call ace_medical_status_fnc_setUnconsciousState;
             } else {
                 // Make this be called on the curator's PC
                 ["zen_common_execute", [{
@@ -35,14 +35,16 @@
                         // Wait for confirmation for player to be force toggled if they are in cardiac arrest, as it causes numerous issues
                         if ([format [LLSTRING(toggleConsciousnessConfirmation), name _this], localize "str_a3_a_hub_misc_mission_selection_box_title", LLSTRING_ZEN(common,yes), LLSTRING_ZEN(common,no), findDisplay IDD_RSCDISPLAYCURATOR] call BIS_fnc_guiMessage) then {
                             ["zen_common_execute", [{
-                                [_this, !(_this getVariable ["ACE_isUnconscious", false])] call ace_medical_status_fnc_setUnconsciousState;
+                                [_this, lifeState _this != "INCAPACITATED"] call ace_medical_status_fnc_setUnconsciousState;
                             }, _this], _this] call CBA_fnc_targetEvent;
                         };
                     };
-                }, _unit], _curator] call CBA_fnc_targetEvent;
+                }, _unit], _owner] call CBA_fnc_ownerEvent;
             };
-        } call FUNC(sanitiseFunction), [player, _unit]], _unit] call CBA_fnc_targetEvent;
+        } call FUNC(sanitiseFunction), [clientOwner, _unit]], _unit] call CBA_fnc_targetEvent;
     } else {
-        [_unit, lifeState _unit != "INCAPACITATED"] remoteExecCall ["setUnconscious", _unit];
+        ["zen_common_execute", [{
+            _this setUnconscious (lifeState _this != "INCAPACITATED");
+        }, _unit], _unit] call CBA_fnc_targetEvent;
     };
 }, [ICON_PERSON, "\z\ace\addons\zeus\ui\Icon_Module_Zeus_Unconscious_ca.paa"] select (!isNil "ace_zeus")] call zen_custom_modules_fnc_register;

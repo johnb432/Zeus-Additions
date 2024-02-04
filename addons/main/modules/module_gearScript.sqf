@@ -172,7 +172,7 @@ GVAR(loadoutTypes) = ["Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer"
     };
 
     // Can be applied to dead units too!
-    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+    if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
         [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
     };
 
@@ -200,7 +200,7 @@ GVAR(loadoutTypes) = ["Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer"
     };
 
     // Can be applied to dead units too!
-    if !(_unit isKindOf "CAManBase" && {!(_unit isKindOf "VirtualCurator_F")}) exitWith {
+    if !(_unit isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}) exitWith {
         [LSTRING_ZEN(modules,onlyInfantry)] call zen_common_fnc_showMessage;
     };
 

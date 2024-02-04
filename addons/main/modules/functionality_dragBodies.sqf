@@ -15,22 +15,10 @@
 
             if (alive _entity || {!(_entity isKindOf "CAManBase")}) exitWith {};
 
-            // Turn on PhysX so that unit is not desynced when moving
-            [_entity, true] remoteExecCall ["awake", 0];
-
-            private _posASL = getPosASL _entity;
-
-            if (round insideBuilding _entity == 1) then {
-                _posASL = _posASL vectorAdd [0, 0, 0.05];
-            };
-
-            [{
-                // Turn on PhysX so that unit does not desync when moving
-                [_this select 0, true] remoteExecCall ["awake", 0];
-
-                // Bring unit back to clone's position
-                (_this select 0) setPosASL (_this select 1);
-            }, [_target, _posASL], 0.25] call CBA_fnc_waitAndExecute;
+            // Sync the corpse
+            [QGVAR(awake), [_entity, true]] call CBA_fnc_globalEvent;
+            [QGVAR(awake), [_entity, false]] call CBA_fnc_globalEvent;
+            [QGVAR(awake), [_entity, true]] call CBA_fnc_globalEvent;
         }]
     ];
 }] call CBA_fnc_addEventHandler;

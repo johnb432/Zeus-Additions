@@ -160,7 +160,9 @@ if (_createdWounds) then {
     _unit setVariable ["ace_medical_openWounds", _openWounds, true];
     _unit setVariable ["ace_medical_bodyPartDamage", _bodyPartDamage, true];
 
-    _unit call ace_medical_status_fnc_updateWoundBloodLoss;
+    if (!isNil "ace_medical_status") then {
+        _unit call ace_medical_status_fnc_updateWoundBloodLoss;
+    };
 
     _bodyPartVisParams call ace_medical_engine_fnc_updateBodyPartVisuals;
 

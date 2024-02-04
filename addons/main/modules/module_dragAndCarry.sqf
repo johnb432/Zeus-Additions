@@ -62,7 +62,7 @@
         };
 
         // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-        [[QGVAR(setDraggableAndCarryable), [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger], QGVAR(dragging_) + netId _object] call CBA_fnc_globalEventJIP, _object] call CBA_fnc_removeGlobalEventJIP;
+        [[QGVAR(executeFunction), [QFUNC(setDraggableAndCarryable), [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
 
         [LSTRING(changedDragAndCarryMessage)] call zen_common_fnc_showMessage;
     }, {}, _object] call zen_dialog_fnc_create;

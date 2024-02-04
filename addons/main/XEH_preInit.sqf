@@ -4,15 +4,6 @@ ADDON = false;
 
 #include "XEH_PREP.hpp"
 
-// Macros don't like commas in strings
-INFO_ZA(FORMAT_2(QUOTE(PreInit: Net mode: ARR_2(%1,Functions) sent: %2),call BIS_fnc_getNetMode,!isNil QGVAR(functionsSent)));
-
-// Execute init for everyone and JIP if init hasn't been run yet
-if (isServer && {isNil QGVAR(functionsSent)}) then {
-    SEND_MP(init);
-    remoteExecCall [QFUNC(init), 0, QGVAR(initJIPId)];
-};
-
 // Default arrays for ammunition choice
 GVAR(LATBLU) = ["UK3CB_BAF_AT4_CS_AP_Launcher","UK3CB_BAF_AT4_CS_AT_Launcher","rhs_weap_M136","rhs_weap_M136_hedp","rhs_weap_M136_hp","rhs_weap_m72a7"];
 GVAR(LATRED) = ["rhs_weap_rpg18","rhs_weap_rpg26","rhs_weap_rshg2","rhs_weap_m80","rhs_weap_rpg75"];
@@ -29,6 +20,6 @@ GVAR(AARED) = ["rhs_mag_9k38_rocket","Titan_AA"];
 GVAR(magsTotal) = [];
 
 // CBA Settings
-#include "initSettings.sqf"
+#include "initSettings.inc.sqf"
 
 ADDON = true;

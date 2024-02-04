@@ -57,21 +57,22 @@
                                 // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
                                 _object setHitPointDamage ["HitHull", (_object getHitPointDamage "HitHull") min 0.75, true, _killer, _instigator];
 
-                                ([0.75, 0.95] select (_hitPoint != "" && {_hitPoint != "HitHull"})) min _damage
+                                ([0.75, 0.89] select (_hitPoint != "" && {_hitPoint != "HitHull"})) min _damage
                             };
                         }]
                     ];
-                }, true, true] call FUNC(sanitiseFunction);
+                }, true] call FUNC(sanitiseFunction);
 
                 SEND_MP(addExplosionPreventionEh);
             };
 
             // "HandleDamage" only fires where the vehicle is local, therefore we need to add it to every client & JIP
-            private _jipID = [QGVAR(addExplosionPreventionEh), _object, QGVAR(addExplosionPrevention_) + netId _object] call CBA_fnc_globalEventJIP;
-            [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
+            private _jipID = [QGVAR(executeFunction), [QFUNC(addExplosionPreventionEh), _object], QGVAR(addExplosionPrevention_) + hashValue _object] call FUNC(globalEventJIP);
+            [_jipID, _object] call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(explodingJIP), _jipID, true];
-            _object setVariable ["ace_cookoff_enable", 0, true];
+            _object setVariable ["ace_cookoff_enable", false, true];
+            _object setVariable ["ace_cookoff_enableAmmoCookoff", false, true];
 
             LSTRING(enableVehicleExplosionPreventionMessage)
         } else {
@@ -83,17 +84,14 @@
             };
 
             // Remove JIP event
-            _jipID call CBA_fnc_removeGlobalEventJIP;
+            _jipID call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(explodingJIP), nil, true];
             _object setVariable ["ace_cookoff_enable", nil, true];
+            _object setVariable ["ace_cookoff_enableAmmoCookoff", nil, true];
 
             ["zen_common_execute", [{
-                private _ehID = _this getVariable QGVAR(explodingEhID);
-
-                if (isNil "_ehID") exitWith {};
-
-                _this removeEventHandler ["HandleDamage", _ehID];
+                _this removeEventHandler ["HandleDamage", _this getVariable [QGVAR(explodingEhID), -1]];
                 _this setVariable [QGVAR(explodingEhID), nil];
             } call FUNC(sanitiseFunction), _object]] call CBA_fnc_globalEvent;
 

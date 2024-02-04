@@ -7,10 +7,7 @@ class CfgPatches {
         weapons[] = {};
         requiredVersion = REQUIRED_VERSION;
         requiredAddons[] = {
-            "A3_Data_F_AoW_Loadorder",
-            "cba_main",
-            "cba_xeh",
-            "zen_main",
+            "zen_context_actions",
             "zen_modules"
         };
         author = "johnb43";

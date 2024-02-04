@@ -29,9 +29,9 @@ private _condition = if (_type == "enableAI") then {
         _x = driver _x;
     };
 
-    [_x, "PATH"] remoteExecCall [_type, _x];
+    [["zen_common_" + _type, [_x, "PATH"], QGVAR(path_) + hashValue _x] call CBA_fnc_globalEventJIP, _x] call CBA_fnc_removeGlobalEventJIP;
 } forEach (_objects select {
-    ((_x isKindOf "CAManBase" && {!(_x isKindOf "VirtualCurator_F")}) || {
+    ((_x isKindOf "CAManBase" && {getNumber ((configOf _x) >> "isPlayableLogic") == 0}) || {
         if (fullCrew [_x, "driver", true] isNotEqualTo []) then {
             _x = driver _x;
             true

@@ -3,10 +3,10 @@
  * Init for suicide bomber module.
  */
 
-INFO_ZA(FORMAT_1("Running %1",__FILE__));
+INFO_1("Running %1",__FILE__);
 
 DFUNC(addSuicideEh) = [{
-    private _unconEhID = if (zen_common_aceMedical) then {
+    private _unconEhID = if (!isNil "ace_medical_status") then {
         // ACE Medical
         ["ace_unconscious", {
             params ["_unit", "_unconscious"];
@@ -68,6 +68,6 @@ DFUNC(addSuicideEh) = [{
             }, _this, random 2] call CBA_fnc_waitAndExecute;
         }]
     ]];
-}, true, true] call FUNC(sanitiseFunction);
+}, true] call FUNC(sanitiseFunction);
 
 SEND_MP(addSuicideEh);

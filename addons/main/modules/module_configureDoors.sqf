@@ -32,14 +32,15 @@
         // Convert to config case and remove non-existent items
         _explosives = (_explosives apply {configName (_x call CBA_fnc_getItemConfig)}) - [""];
 
-        if (_apply) then {
+        if (_apply || {isNil QGVAR(explosivesBreach)}) then {
             SETMVAR(QGVAR(explosivesBreach),_explosives,true);
         };
 
         // Use passed object if valid
         if (isNull _building || {!(_building isKindOf "Building")}) then {
-            // Position has to be AGL/ATL, ZEN gives ASL
-            _building = nearestObject [ASLToATL _pos, "Building"];
+            private _buildings = nearestObjects [ASLToAGL _pos, ["Building"], 50, true];
+
+            _building = _buildings param [_buildings findIf {alive _x && {!isObjectHidden _x} && {(_x buildingPos -1) isNotEqualTo []}}, objNull];
         };
 
         if (isNull _building) exitWith {
@@ -72,7 +73,7 @@
 
             // Remove action from JIP
             if (!isNil "_jipID") then {
-                _jipID call CBA_fnc_removeGlobalEventJIP;
+                _jipID call FUNC(removeGlobalEventJIP);
 
                 _building setVariable [format [QGVAR(doorJIP_%1_%2), _x, _forEachIndex + 1], nil, true];
             };
@@ -99,13 +100,13 @@
                         _building removeAction _x;
                     };
                 } forEach (actionIDs _building);
-            }, true, true] call FUNC(sanitiseFunction);
+            }, true] call FUNC(sanitiseFunction);
 
             SEND_MP(breachingRemoveAction);
         };
 
         // Remove all previous breaching actions from building
-        _building remoteExecCall [QFUNC(breachingRemoveAction), 0];
+        [QGVAR(executeFunction), [QFUNC(breachingRemoveAction), _building]] call CBA_fnc_globalEvent;
 
         [([LSTRING(configureDoorsUnbreachableMessage), LSTRING(configureDoorsBreachableMessage), LSTRING(configureDoorsUnlockedMessage), LSTRING(configureDoorsOpenedMessage)] select _mode)] call zen_common_fnc_showMessage;
 
@@ -120,8 +121,8 @@
         };
 
         {
-            _jipID = [QGVAR(breachingAddAction), [_building, _x, _forEachIndex + 1]] call CBA_fnc_globalEventJIP;
-            [_jipID, _building] call CBA_fnc_removeGlobalEventJIP;
+            _jipID = [QGVAR(executeFunction), [QFUNC(breachingAddAction), [_building, _x, _forEachIndex + 1]]] call FUNC(globalEventJIP);
+            [_jipID, _building] call FUNC(removeGlobalEventJIP);
 
             _building setVariable [format [QGVAR(doorJIP_%1_%2), _x, _forEachIndex + 1], _jipID, true];
         } forEach _selectionNames;

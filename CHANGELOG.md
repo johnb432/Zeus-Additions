@@ -1,3 +1,13 @@
+# Changelog for Zeus Additions 4.2.2024
+
+1.6.5.0
+- Added "Garrison Building" module that allows Zeuses to easily garrison buildings with units of their choosing.
+- Added "AI Driver" module that allows Zeuses to spawn AI drivers for vehicles with player commanders.
+- Removed ACE Medical Menu and Cargo Menu modules, as they are now part of ACE 3.16.2.
+- Removed "Enable leave unconscious unit" feature, as it's no longer needed.
+- Removed "Enable JIP feature" CBA setting, it's now enabled by default.
+- Fixed several bugs.
+
 # Changelog for Zeus Additions 30.10.2023
 
 1.6.4.0

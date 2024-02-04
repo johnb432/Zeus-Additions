@@ -2,7 +2,6 @@
 /*
  * Author: johnb43
  * Creates a GUI to spawn in all available magazines in the game.
- * Must be called with 'spawn' (see example)
  *
  * Arguments:
  * 0: Weapons <STRING> <ARRAY of STRINGS> (default: [])
@@ -11,7 +10,7 @@
  * None
  *
  * Example:
- * [] spawn zeus_additions_main_fnc_createResupplyGUI;
+ * call zeus_additions_main_fnc_gui_createResupply;
  *
  * Public: No
  */
@@ -33,14 +32,16 @@ if (_weapons isNotEqualTo []) then {
     };
 
     // Get magazines compatible with weapons
+    private _weapon = "";
     private _keys = [];
     private _muzzles = [];
     private _magazineWells = [];
     private _cfgWeapons = configFile >> "CfgWeapons";
+    private _cfgMagazineWells = configFile >> "CfgMagazineWells";
 
     {
         _magazineWells = getArray (_cfgWeapons >> _x >> "magazineWell");
-        _muzzles = ((getArray (configFile >> "CfgWeapons" >> _x >> "muzzles")) apply {toLowerANSI _x}) - ["this"];
+        _muzzles = ((getArray (_cfgWeapons >> _x >> "muzzles")) apply {toLowerANSI _x}) - ["this"];
 
         if (_muzzles isNotEqualTo []) then {
             _weapon = _x;
@@ -50,12 +51,12 @@ if (_weapons isNotEqualTo []) then {
             } forEach _muzzles;
         };
 
-        _keys insert [-1, (_magazineWells apply {toLowerANSI _x}) arrayIntersect GETUVAR(QGVAR(sortedKeys),[]), true];
+        _keys insert [-1, (_magazineWells apply {configName (_cfgMagazineWells >> _x)}) arrayIntersect GETUVAR(QGVAR(sortedKeysMagazinesCache),[]), true];
     } forEach _weapons;
 
     SETUVAR(QGVAR(sortedKeysMagazines),_keys);
 } else {
-    SETUVAR(QGVAR(sortedKeysMagazines),GETUVAR(QGVAR(sortedKeys),[]));
+    SETUVAR(QGVAR(sortedKeysMagazines),GETUVAR(QGVAR(sortedKeysMagazinesCache),[]));
 };
 
 // Lists and their background

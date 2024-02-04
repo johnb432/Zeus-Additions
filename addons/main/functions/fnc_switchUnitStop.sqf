@@ -17,75 +17,35 @@
 
 if (isNil QGVAR(switchUnitArgs)) exitWith {};
 
-GVAR(switchUnitArgs) params ["", "_unit", "", "", "", "_userActionEH", "_killedEH"];
+GVAR(switchUnitArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed", "_userActionEH", "_pfhID", "_deathEH"];
+
+// Switch back to old player
+selectPlayer _oldPlayer;
+
+_oldPlayer enableAI "ALL";
+_oldPlayer allowDamage _isDamageAllowed;
+
+objNull remoteControl _unit;
+
+_unit setVariable ["BIS_fnc_moduleRemoteControl_owner", nil, true];
+
+GVAR(switchUnitArgs) = nil;
+BIS_fnc_moduleRemoteControl_unit = nil;
+
+// Call event for AI behaviour module
+["zen_remoteControlStopped", _unit] call CBA_fnc_localEvent;
 
 removeUserActionEventHandler ["curatorInterface", "Activate", _userActionEH];
-_unit removeEventHandler ["Killed", _killedEH];
 
-// Check if unit has been respawned
-private _respawned = false;
+_pfhID call CBA_fnc_removePerFrameHandler;
 
-if (!alive player) then {
-    if (playerRespawnTime > 0) then {
-        setPlayerRespawnTime 0;
-    };
-
-    _respawned = true;
+if (!isNil "ace_medical_status") then {
+    ["ace_medical_death", _deathEH] call CBA_fnc_removeEventHandler;
+} else {
+    _oldPlayer removeEventHandler ["HandleDamage", _deathEH];
 };
 
+// Open curator interface, with a delay
 [{
-    alive player
-}, {
-    params ["_respawned"];
-
-    private _respawnedUnit = objNull;
-
-    // If unit has respawned, hide new unit
-    if (_respawned) then {
-        _respawnedUnit = player;
-
-        [_respawnedUnit, true] remoteExecCall ["hideObjectGlobal", 2];
-        _respawnedUnit enableSimulationGlobal false;
-    };
-
-    [{
-        params ["_respawned"];
-        GVAR(switchUnitArgs) params ["_oldPlayer", "_unit", "_isDamageAllowed", "_respawnTime", "_respawnTemplateDelay"];
-
-        // Switch back to old player
-        selectPlayer _oldPlayer;
-
-        _oldPlayer enableAI "ALL";
-        _oldPlayer allowDamage _isDamageAllowed;
-
-        objNull remoteControl _unit;
-
-        _unit setVariable ["bis_fnc_moduleRemoteControl_owner", nil, true];
-
-        GVAR(switchUnitArgs) = nil;
-        bis_fnc_moduleRemoteControl_unit = nil;
-
-        // Call event for AI behaviour module
-        ["zen_remoteControlStopped", _unit] call CBA_fnc_localEvent;
-
-        // Reset respawn time
-        if (_respawned) then {
-            setPlayerRespawnTime _respawnTime;
-        };
-
-        if (BIS_selectRespawnTemplate_delay == 0.1234) then {
-            BIS_selectRespawnTemplate_delay = _respawnTemplateDelay;
-        };
-
-        // Open curator interface, with a delay
-        [{
-            openCuratorInterface;
-
-            params ["_respawned", "_respawnedUnit"];
-
-            if (_respawned) then {
-                deleteVehicle _respawnedUnit;
-            };
-        }, _this, 2] call CBA_fnc_execAfterNFrames;
-    }, [_respawned, _respawnedUnit], 0.1] call CBA_fnc_waitAndExecute;
-}, _respawned] call CBA_fnc_waitUntilAndExecute;
+    openCuratorInterface;
+}, _this, 2] call CBA_fnc_execAfterNFrames;

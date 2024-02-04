@@ -24,7 +24,9 @@ if (isNull _unit) exitWith {};
 private _jipID = _unit getVariable QGVAR(suicideBomberDeadManSwitchJIP);
 
 if (!isNil "_jipID") then {
-    _jipID call CBA_fnc_removeGlobalEventJIP;
+    // FUNC(removeGlobalEventJIP) not guaranteed to exist on clients
+    [QGVAR(removeEventJIP), [_jipID, objNull]] call CBA_fnc_serverEvent;
+
     _unit setVariable [QGVAR(suicideBomberDeadManSwitchJIP), nil, true];
 };
 
@@ -32,7 +34,8 @@ if (_removeAction) then {
     _jipID = _unit getVariable QGVAR(suicideBomberActionJIP);
 
     if (!isNil "_jipID") then {
-        _jipID call CBA_fnc_removeGlobalEventJIP;
+        [QGVAR(removeEventJIP), [_jipID, objNull]] call CBA_fnc_serverEvent;
+
         _unit setVariable [QGVAR(suicideBomberActionJIP), nil, true];
     };
 
@@ -41,4 +44,4 @@ if (_removeAction) then {
 };
 
 // Remove actions and EHs
-[_unit, _removeAction] remoteExecCall [QFUNC(removeSuicideBomberEh), 0];
+[QGVAR(executeFunction), [QFUNC(removeSuicideBomberEh), [_unit, _removeAction]]] call CBA_fnc_globalEvent;

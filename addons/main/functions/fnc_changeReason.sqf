@@ -14,7 +14,7 @@
  * None
  *
  * Example:
- * ["zeus_additions_main_JIP", getPlayerUID player, true, "zeus_additions_main_fnc_handleJIP"] call zeus_additions_main_fnc_changeReason;
+ * ["zeus_additions_main_buildingDestruction", getPlayerUID player, true, "zeus_additions_main_fnc_handleBuildingDestruction"] call zeus_additions_main_fnc_changeReason;
  *
  * Public: No
  */
@@ -26,7 +26,7 @@ if ("" in [_subject, _source]) exitWith {};
 // If single player, it will never go into this
 if (!isServer) exitWith {
     if (!isNil QGVAR(functionsSent)) exitWith {
-        _this remoteExecCall [QFUNC(changeReason), 2];
+        [QGVAR(executeFunction), [QFUNC(changeReason), _this]] call CBA_fnc_serverEvent;
     };
 
     // If function isn't available on server yet
@@ -43,7 +43,7 @@ if (!isServer) exitWith {
             if !(!isNil "_value" && {_value isEqualType true} && {_value}) exitWith {};
 
             {
-                _x remoteExecCall [QFUNC(changeReason), 2];
+                [QGVAR(executeFunction), [QFUNC(changeReason), _x]] call CBA_fnc_serverEvent;
             } forEach GVAR(subjectReasonsDelayed);
 
             GVAR(subjectReasonsDelayed) = nil;

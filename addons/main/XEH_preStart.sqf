@@ -18,11 +18,11 @@ if (hasInterface) then {
 
         // Add magazinewells and magazines themselves to hashmap only if it has items
         if (_magazinesList isNotEqualTo createHashMap) then {
-            _magazinesHashmap set [toLowerANSI configName _x, keys _magazinesList];
+            _magazinesHashmap set [configName _x, keys _magazinesList];
         };
     } forEach configProperties [configFile >> "CfgMagazineWells", "isClass _x", true];
 
-    // Store hashmap with all info necessary
+    // Store hashmap with all necessary info
     SETUVAR(QGVAR(magazinesHashmap),_magazinesHashmap);
 
     private _keys = keys _magazinesHashmap;
@@ -30,5 +30,5 @@ if (hasInterface) then {
     // Sort alphabetically
     _keys sort true;
 
-    SETUVAR(QGVAR(sortedKeys),_keys);
+    SETUVAR(QGVAR(sortedKeysMagazinesCache),_keys);
 };

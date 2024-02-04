@@ -4,9 +4,9 @@
  */
 
 [LSTRING(moduleCategoryUtility), LSTRING(deleteZeusModuleName), {
-    private _isLoggedInAdmin = call BIS_fnc_admin == 2;
+    private _isLoggedInAdmin = call BIS_fnc_admin == 2 || isServer;
 
-    if (isMultiplayer && {!_isLoggedInAdmin}) exitWith {
+    if (isMultiplayer && !_isLoggedInAdmin) exitWith {
         [LSTRING(deleteZeusNoAdminAccessMessage)] call zen_common_fnc_showMessage;
     };
 

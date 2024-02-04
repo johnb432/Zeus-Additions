@@ -21,31 +21,6 @@
 ] call CBA_fnc_addSetting
 
 [
-    QGVAR(enableExitUnconsciousUnit),
-    "CHECKBOX",
-    [LSTRING(enableUnconsciousLeavingSetting), LSTRING(enableUnconsciousLeavingSettingDesc)],
-    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modeunits_tooltip"],
-    false,
-    0,
-    {
-        call FUNC(exitUnconsciousUnit);
-    }
-] call CBA_fnc_addSetting;
-
-[
-    QGVAR(enableJIP),
-    "CHECKBOX",
-    [LSTRING(enableJipFeaturesSetting), LSTRING(enableJipFeaturesSettingDesc)],
-    [COMPONENT_NAME, "str_a3_rscdisplaycurator_modemodules_tooltip"],
-    false,
-    0,
-    {
-        // Let the server handle turning on & off
-        [QGVAR(JIP), getPlayerUID player, _this && {!isNull (getAssignedCuratorLogic player)}, QFUNC(handleJIP)] call FUNC(changeReason);
-    }
-] call CBA_fnc_addSetting;
-
-[
     QGVAR(enableBuildingDestructionHandling),
     "CHECKBOX",
     [LSTRING(enableBuildingDestructionSetting), LSTRING(enableBuildingDestructionSettingDesc)],
@@ -54,7 +29,7 @@
     0,
     {
         // Let the server handle turning on & off
-        [QGVAR(buildingDestruction), getPlayerUID player, _this && {!isNull (getAssignedCuratorLogic player)}, QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
+        [QGVAR(buildingDestruction), getPlayerUID player, _this && {!isNull curatorCamera}, QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
     }
 ] call CBA_fnc_addSetting;
 
@@ -123,7 +98,6 @@ MAGAZINES_SETTINGS(HATRED,5);
 MAGAZINES_SETTINGS(AABLU,6);
 MAGAZINES_SETTINGS(AARED,7);
 
-HINT_SETTINGS(enableACECargoHint,LSTRING(aceCargoHintSetting));
 HINT_SETTINGS(enableACEDragHint,LSTRING(aceDraggingHintSetting));
 HINT_SETTINGS(enableACEMedicalHint,LSTRING(aceMedicalHintSetting));
 HINT_SETTINGS(enableTFARHint,LSTRING(radioRangeHintSetting));

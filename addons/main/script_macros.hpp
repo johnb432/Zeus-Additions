@@ -1,3 +1,5 @@
+#pragma hemtt flag pe23_ignore_has_include
+
 #include "\x\cba\addons\main\script_macros_common.hpp"
 
 // This part includes parts of the CBA and ACE3 macro libraries
@@ -30,48 +32,53 @@
 #define ICON_REMOTECONTROL "\a3\modules_f_curator\data\portraitremotecontrol_ca.paa"
 #define ICON_TRUCK "x\zen\addons\modules\ui\truck_ca.paa"
 
+#if __has_include("\z\ace\addons\zeus\script_component.hpp")
+    #define ICON_PARADROP "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"
+#else
+    #define ICON_PARADROP "x\zen\addons\modules\ui\heli_ca.paa"
+#endif
+
 #define GRAVITY 9.8066
-
-#define ST_CENTER 2
-
-#define IDC_OK 1 // emulate "OK" button
-#define IDC_CANCEL 2 // emulate "Cancel" button
 
 #define IDC_BUTTON_CLR 311010
 #define IDC_BUTTON_INC 311011
 #define IDC_BUTTON_DEC 311012
 #define IDC_BUTTON_INTO 311013
 #define IDC_BUTTON_OUTOF 311014
-
 #define IDC_LIST_CATEGORIES 311020
 #define IDC_LIST_MAGAZINES 311021
 #define IDC_LIST_SELECTED 311022
 
-#define IDD_MISSION 46
-#define IDD_INTERRUPT 49
+#define IDC_SPAWNGARRISON 311030
+#define IDC_SPAWNGARRISON_SIDE 311031
+#define IDC_SPAWNGARRISON_TREE_MODE 311040
+#define IDC_SPAWNGARRISON_TREE_GROUPS 311041
+#define IDC_SPAWNGARRISON_TREE_UNITS 311042
+#define IDC_SPAWNGARRISON_UNIT_LIST 311050
+#define IDC_SPAWNGARRISON_UNIT_COUNT 311051
+#define IDC_SPAWNGARRISON_UNIT_CLEAR 311052
+#define IDC_SPAWNGARRISON_DYNAMIC_SIMULATION 311060
+#define IDC_SPAWNGARRISON_TRIGGER 311061
+#define IDC_SPAWNGARRISON_TRIGGER_RADIUS 311062
+#define IDC_SPAWNGARRISON_UNIT_BEHAVIOUR 311063
+
 #define IDD_RSCDISPLAYCURATOR 312
 
-#define POS_CALC ((safezoneW / safezoneH) min 1.2)
-#define X_OFF (safezoneX + (safezoneW - POS_CALC) / 2)
-#define Y_OFF (safezoneY + (safezoneH - (POS_CALC / 1.2)) / 2)
-#define W_OFF (POS_CALC / 40)
-#define H_OFF (POS_CALC / 30) // (POS_CALC / 1.2) / 25
+#define POS_X(N) QUOTE(N * GUI_GRID_W + GUI_GRID_CENTER_X)
+#define POS_Y(N) QUOTE(N * GUI_GRID_H + GUI_GRID_CENTER_Y)
+#define POS_W(N) QUOTE(N * GUI_GRID_W)
+#define POS_H(N) QUOTE(N * GUI_GRID_H)
 
-#define POS_W(var1) QUOTE(var1 * W_OFF)
-#define POS_H(var1) QUOTE(var1 * H_OFF)
-#define POS_X(var1) QUOTE(var1 * W_OFF + X_OFF)
-#define POS_Y(var1) QUOTE(var1 * H_OFF + Y_OFF)
-
-#define SINGLE_QUOTE    34 // '
-#define DOUBLE_QUOTE    39 // "
-#define LINE_FEED       10 //
-#define NUMBER_SIGN     35 // #
-#define REVERSE_SOLIDUS 92 // \
+#define SINGLE_QUOTE 34// '
+#define DOUBLE_QUOTE 39// "
+#define LINE_FEED 10//
+#define NUMBER_SIGN 35// #
+#define REVERSE_SOLIDUS 92// \
 
 #define CARRIAGE_RETURN 13
-#define TAB             9
-#define SPACE           32
-#define WHITESPACE [LINE_FEED, CARRIAGE_RETURN, TAB, SPACE]
+#define TAB 9
+#define SPACE 32
+#define WHITESPACE [ARR_4(LINE_FEED,CARRIAGE_RETURN,TAB,SPACE)]
 
 #define LSTRING_BASE(prefix,var1,var2) QUOTE(TRIPLES(prefix,var1,var2))
 
@@ -86,31 +93,30 @@
 #define CSTRING_ACE(var1,var2) LSTRING_BASE($STR_ACE,var1,var2)
 
 #define DFUNC(var1) TRIPLES(ADDON,fnc,var1)
-#define LINKFUNC(x) {_this call FUNC(x)}
+
+#undef PREP
+#undef PREP_MP
 
 #ifdef DISABLE_COMPILE_CACHE
-    #undef PREP
-    #undef PREP_MP
     #define PREP(fncName) DFUNC(fncName) = compile preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)
     #define PREP_MP(fncName) DFUNC(fncName) = [preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)] call FUNC(sanitiseFunction)
 #else
-    #undef PREP
-    #undef PREP_MP
     #define PREP(fncName) [QPATHTOF(functions\DOUBLES(fnc,fncName).sqf), QFUNC(fncName)] call CBA_fnc_compileFunction
     #define PREP_MP(fncName) [QPATHTOF(functions\DOUBLES(fnc,fncName).sqf), QFUNC(fncName)] call FUNC(compileSanitisedFunction)
 #endif
 
-// INFO macro fails sometimes
-#define INFO_ZA(message) diag_log text FORMAT_4("[%1] (%2) %3: %4",toUpper QUOTE(PREFIX),QUOTE(COMPONENT),"INFO",message)
-
 #define SEND_MP(fncName)\
 SETMVAR(QFUNC(fncName),FUNC(fncName),true);\
-INFO_ZA(FORMAT_1("Sent function to all: %1",QFUNC(fncName)))
+INFO_1("Sent function to all: %1",QFUNC(fncName))
 
 #define SEND_SERVER(fncName)\
 SETMVAR(QFUNC(fncName),FUNC(fncName),2);\
-INFO_ZA(FORMAT_1("Sent function to server: %1",QFUNC(fncName)))
+INFO_1("Sent function to server: %1",QFUNC(fncName))
 
 #define PREP_SEND_MP(fncName)\
 PREP_MP(fncName);\
 SEND_MP(fncName)
+
+#define PREP_SEND_SERVER(fncName)\
+PREP_MP(fncName);\
+SEND_SERVER(fncName)

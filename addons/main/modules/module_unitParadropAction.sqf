@@ -32,8 +32,8 @@
                 PREP_SEND_MP(addParachuteAction);
             };
 
-            private _jipID = [QGVAR(addParachuteAction), _object] call CBA_fnc_globalEventJIP;
-            [_jipID, _object] call CBA_fnc_removeGlobalEventJIP;
+            private _jipID = [QGVAR(executeFunction), [QFUNC(addParachuteAction), _object]] call FUNC(globalEventJIP);
+            [_jipID, _object] call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(paradropActionJIP), _jipID, true];
 
@@ -45,19 +45,14 @@
                 LSTRING(paradropActionAlreadyRemoved)
             };
 
-            _jipID call CBA_fnc_removeGlobalEventJIP;
+            _jipID call FUNC(removeGlobalEventJIP);
 
             _object setVariable [QGVAR(paradropActionJIP), nil, true];
 
-            // Remove action from object; actionIDs are not the same on all clients!!!
+            // Remove action from object; actionIDs are not the same on all clients
             ["zen_common_execute", [{
-                if (!hasInterface) exitWith {};
-
-                private _actionID = _this getVariable QGVAR(paradropActionID);
-
-                if (isNil "_actionID") exitWith {};
-
-                _this removeAction _actionID;
+                _this removeAction (_this getVariable [QGVAR(paradropActionID), -1]);
+                _this setVariable [QGVAR(paradropActionID), nil];
             } call FUNC(sanitiseFunction), _object]] call CBA_fnc_globalEvent;
 
             LSTRING(paradropActionRemoved)
@@ -65,4 +60,4 @@
 
         [_string] call zen_common_fnc_showMessage;
     }, {}, _this] call zen_dialog_fnc_create;
-}, ["x\zen\addons\modules\ui\heli_ca.paa", "\z\ace\addons\zeus\ui\Icon_Module_Zeus_ParadropCargo_ca.paa"] select (!isNil "ace_zeus")] call zen_custom_modules_fnc_register;
+}, ICON_PARADROP] call zen_custom_modules_fnc_register;
