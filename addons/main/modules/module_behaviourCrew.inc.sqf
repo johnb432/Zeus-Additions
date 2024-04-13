@@ -37,8 +37,10 @@
         };
 
         if (isNil QFUNC(addBehaviourEh)) then {
-            #include "module_behaviourCrew_init.sqf"
+            #include "module_behaviourCrew_init.inc.sqf"
         };
+
+        /////////////////////////_object setVariable ["ace_vehicle_damage_allowCrewInImmobile", _stayCrew, true];
 
         ["zen_common_execute", [{
             (_this select 0) allowCrewInImmobile (_this select 1);
@@ -129,7 +131,7 @@
         };
 
         if (isNil QFUNC(addBehaviourEh)) then {
-            #include "module_behaviourCrew_init.sqf"
+            #include "module_behaviourCrew_init.inc.sqf"
         };
 
         if (_addAiDriver) then {

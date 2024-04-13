@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 13.4.2024
+
+1.6.6.0
+- Added latest HEMTT support.
+
 # Changelog for Zeus Additions 4.2.2024
 
 1.6.5.0
@@ -177,7 +182,7 @@
 # Changelog for Zeus Additions 14.7.2021
 
 1.6.2.0
-- Added hemtt support.
+- Added HEMTT support.
 - Changed signature (due to thing above).
 - Updated to support ZEN 1.11.0.
 - Added "Add ACE Drag and Carry Options" module which allows any object apart units to be draggable and carriable.

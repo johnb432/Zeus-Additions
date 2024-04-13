@@ -69,6 +69,21 @@
              } forEach (_magazines arrayIntersect _magazines);
          } forEach _units;
 
+        /*
+        2.18
+        private _throwables = [];
+
+        // Remove grenades from all AI units
+        {
+            _unit = _x;
+            _throwables = (throwables _unit) apply {_x select 0};
+
+            {
+                _unit removeMagazines _x;
+            } forEach (_throwables arrayIntersect _throwables);
+        } forEach _units;
+        */
+
          [_string] call zen_common_fnc_showMessage;
      }, {}, _unit] call zen_dialog_fnc_create;
  }, "x\zen\addons\context_actions\ui\grenade_ca.paa"] call zen_custom_modules_fnc_register;

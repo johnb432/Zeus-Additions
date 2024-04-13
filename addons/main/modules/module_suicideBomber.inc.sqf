@@ -42,7 +42,7 @@
         if (_makeIntoSuicideBomber) then {
             if (isNil {_unit getVariable QGVAR(suicideBomberActionJIP)}) then {
                 if (isNil QFUNC(addDetonateAction)) then {
-                    #include "module_suicideBomber_init.sqf"
+                    #include "module_suicideBomber_init.inc.sqf"
                 };
 
                 // Create explosives around player
@@ -60,7 +60,7 @@
                 if (!isNil {_unit getVariable QGVAR(suicideBomberDeadManSwitchJIP)}) exitWith {};
 
                 if (isNil QFUNC(addSuicideEh)) then {
-                    #include "module_suicideBomber_deadMan_init.sqf"
+                    #include "module_suicideBomber_deadMan_init.inc.sqf"
                 };
 
                 private _jipID = [QGVAR(executeFunction), [QFUNC(addSuicideEh), _unit]] call FUNC(globalEventJIP);

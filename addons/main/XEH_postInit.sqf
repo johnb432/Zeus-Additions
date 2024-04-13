@@ -27,39 +27,39 @@ if (!hasInterface) exitWith {};
 
     // Add Drag Bodies module
     if (!isNil "ace_dragging") then {
-        #include "modules\module_dragBodies.sqf"
+        #include "modules\module_dragBodies.inc.sqf"
     };
 }] call CBA_fnc_addEventHandlerArgs;
 
 // Add functionality
-#include "modules\functionality_dragBodies.sqf"
+#include "modules\functionality_dragBodies.inc.sqf"
 
 // Add modules
-#include "modules\module_behaviourCrew.sqf"
-#include "modules\module_captive.sqf"
-#include "modules\module_carBomb.sqf"
-#include "modules\module_channelVisibility.sqf"
-#include "modules\module_configureDoors.sqf"
-#include "modules\module_createResupply.sqf"
-#include "modules\module_deleteObjectForced.sqf"
-#include "modules\module_deleteZeus.sqf"
-#include "modules\module_dogAttack.sqf"
-#include "modules\module_dustStorm.sqf"
-#include "modules\module_garrisonBuilding.sqf"
-#include "modules\module_gearScript.sqf"
-#include "modules\module_grassRender.sqf"
-#include "modules\module_mapMarkers.sqf"
-#include "modules\module_missionEndModifier.sqf"
-#include "modules\module_missionObjectCounter.sqf"
-#include "modules\module_pauseTime.sqf"
-#include "modules\module_removeGrenades.sqf"
-#include "modules\module_suicideBomber.sqf"
-#include "modules\module_switchUnit.sqf"
-#include "modules\module_toggleConsciousnessForced.sqf"
-#include "modules\module_trackUnitDeath.sqf"
-#include "modules\module_unitParadrop.sqf"
-#include "modules\module_unitParadropAction.sqf"
-#include "modules\module_vehicleExplosionPrevention.sqf"
+#include "modules\module_behaviourCrew.inc.sqf"
+#include "modules\module_captive.inc.sqf"
+#include "modules\module_carBomb.inc.sqf"
+#include "modules\module_channelVisibility.inc.sqf"
+#include "modules\module_configureDoors.inc.sqf"
+#include "modules\module_createResupply.inc.sqf"
+#include "modules\module_deleteObjectForced.inc.sqf"
+#include "modules\module_deleteZeus.inc.sqf"
+#include "modules\module_dogAttack.inc.sqf"
+#include "modules\module_dustStorm.inc.sqf"
+#include "modules\module_garrisonBuilding.inc.sqf"
+#include "modules\module_gearScript.inc.sqf"
+#include "modules\module_grassRender.inc.sqf"
+#include "modules\module_mapMarkers.inc.sqf"
+#include "modules\module_missionEndModifier.inc.sqf"
+#include "modules\module_missionObjectCounter.inc.sqf"
+#include "modules\module_pauseTime.inc.sqf"
+#include "modules\module_removeGrenades.inc.sqf"
+#include "modules\module_suicideBomber.inc.sqf"
+#include "modules\module_switchUnit.inc.sqf"
+#include "modules\module_toggleConsciousnessForced.inc.sqf"
+#include "modules\module_trackUnitDeath.inc.sqf"
+#include "modules\module_unitParadrop.inc.sqf"
+#include "modules\module_unitParadropAction.inc.sqf"
+#include "modules\module_vehicleExplosionPrevention.inc.sqf"
 
 // Optionals
 private _cfgPatches = configFile >> "CfgPatches";
@@ -67,26 +67,26 @@ GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipb
 
 // Check if ACE Dragging is loaded
 if (!isNil "ace_dragging") then {
-    #include "modules\module_dragAndCarry.sqf"
+    #include "modules\module_dragAndCarry.inc.sqf"
 };
 
 // Check if ACE Medical components are loaded
 if (!isNil "ace_medical_damage") then {
-    #include "modules\module_createInjuries.sqf"
+    #include "modules\module_createInjuries.inc.sqf"
 };
 
 if (zen_common_aceMedicalTreatment) then {
-    #include "modules\module_createResupplyMedical.sqf"
+    #include "modules\module_createResupplyMedical.inc.sqf"
 };
 
 // Check if TFAR is loaded
 if (isClass (_cfgPatches >> "tfar_core") || {isClass (_cfgPatches >> "task_force_radio")}) then {
-    #include "modules\module_tfarRadioRange.sqf"
+    #include "modules\module_tfarRadioRange.inc.sqf"
 };
 
 // Check if RHS AFRF is loaded
 if (isClass (_cfgPatches >> "rhs_main_loadorder")) then {
-    #include "modules\module_rhsAps.sqf"
+    #include "modules\module_rhsAps.inc.sqf"
 };
 // Optionals finished
 
