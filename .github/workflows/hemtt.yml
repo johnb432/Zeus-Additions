@@ -1,0 +1,32 @@
+# From https://github.com/acemod/ACE3/blob/master/.github/workflows/hemtt.yml
+name: HEMTT
+
+on:
+  push:
+    branches:
+    - main
+  pull_request_target:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout the source code
+      uses: actions/checkout@v4
+    - name: Setup HEMTT
+      uses: arma-actions/hemtt@v1
+    - name: Checkout pull request
+      uses: actions/checkout@v4
+      if: ${{ github.event_name == 'pull_request_target' }}
+      with:
+        path: pullrequest
+        ref: 'refs/pull/${{ github.event.number }}/merge'
+    - name: Replace addons with pull request addons
+      if: ${{ github.event_name == 'pull_request_target' }}
+      run: |
+        rm -r addons\
+        rm -r include\
+        xcopy /e /h /q pullrequest\addons addons\
+        xcopy /e /h /q pullrequest\include include\
+    - name: Run HEMTT build
+      run: hemtt build
