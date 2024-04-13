@@ -4,7 +4,7 @@
  * Cobbled together out of ACE3 code.
  */
 
-#include "module_dragBodies_init.sqf"
+#include "module_dragBodies_init.inc.sqf"
 
 [LSTRING(moduleCategoryUtility), LSTRING(dragBodiesModuleName), {
     params ["", "_object"];
@@ -35,7 +35,7 @@
             GVAR(dragBodyActions) = true;
             publicVariable QGVAR(dragBodyActions);
 
-            #include "module_dragBodies_aceAction.sqf"
+            #include "module_dragBodies_aceAction.inc.sqf"
         };
 
         private _string = if (_bodies isNotEqualTo []) then {

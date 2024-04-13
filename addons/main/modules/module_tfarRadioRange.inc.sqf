@@ -37,11 +37,7 @@
                 LSTRING(changedRangesOnPlayerMessage)
             } else {
                 // If unit is AI, null or otherwise invalid, display error if not something done to self
-                if (_self) then {
-                    LSTRING(changedRangesOnYourselfMessage)
-                } else {
-                    LSTRING_ZEN(modules,noUnitSelected)
-                };
+                [LSTRING_ZEN(modules,noUnitSelected), LSTRING(changedRangesOnYourselfMessage)] select _self
             };
 
             [_string] call zen_common_fnc_showMessage;

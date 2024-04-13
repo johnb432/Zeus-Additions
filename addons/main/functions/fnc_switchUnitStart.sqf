@@ -136,7 +136,7 @@ if (!local _unit) then {
                     // Check if the necessary keys were pressed for a keybind
                     if (_comboDikPressed &&
                         {_mainDevice == "KEYBOARD"} &&
-                        {((ace_common_keyboardInputMain getOrDefault [_mainDik, [false, 0]]) select 1) > ([0, 1] select _isDoubleTap)} // check how many times the main key was pressed
+                        {((ace_common_keyboardInputMain getOrDefault [_mainDik, [false, 0]]) select 1) > (parseNumber _isDoubleTap)} // check how many times the main key was pressed
                     ) exitWith {
                         call FUNC(switchUnitStop);
                     };

@@ -49,7 +49,7 @@
             [_string] call zen_common_fnc_showMessage;
         };
 
-        private _string = LSTRING(dustStormNothingChangedMessage),
+        private _string = LSTRING(dustStormNothingChangedMessage);
 
         // Handle JIP
         if (_doJIP) then {
