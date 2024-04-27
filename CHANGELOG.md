@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 27.4.2024
+
+1.6.7.0
+- Fixed bug where vehicle inventory and appearance couldn't be edited via the context menu.
+
 # Changelog for Zeus Additions 13.4.2024
 
 1.6.6.0

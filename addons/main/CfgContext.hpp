@@ -19,7 +19,7 @@ class zen_context_menu_actions {
 
     #if __has_include("\z\ace\addons\medical_gui\script_component.hpp")
         class GVAR(openMedicalMenuContextMenu) {
-            condition = QUOTE(_hoveredEntity isEqualType objNull && {_hoveredEntity = ([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)); _hoveredEntity isKindOf 'CAManBase'} && {[ARR_2(objNull,_hoveredEntity)] call ace_medical_gui_fnc_canOpenMenu});
+            condition = QUOTE(_hoveredEntity isEqualType objNull && {private _object = ([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)); _object isKindOf 'CAManBase' && {[ARR_2(objNull,_object)] call ace_medical_gui_fnc_canOpenMenu}});
             displayName = CSTRING_ACE(medical_GUI,openMedicalMenu);
             icon = ICON_MEDICAL;
             priority = 50;
