@@ -18,11 +18,19 @@
         [LSTRING_ZEN(modules,onlyVehicles)] call zen_common_fnc_showMessage;
     };
 
+    private _getUnloadInCombat = getUnloadInCombat _object;
+
     [LSTRING(aiBehaviourModuleName), [
-        ["TOOLBOX:ENABLED", [LSTRING(enablePassengerDismount), LSTRING(enablePassengerDismountDesc)], (getUnloadInCombat _object) select 0, true],
-        ["TOOLBOX:ENABLED", [LSTRING(enableCrewDismount), LSTRING(enableCrewDismountDesc)], (getUnloadInCombat _object) select 1, true],
+        ["TOOLBOX:ENABLED", [LSTRING(enablePassengerDismount), LSTRING(enablePassengerDismountDesc)], _getUnloadInCombat select 0, true],
+        ["TOOLBOX:ENABLED", [LSTRING(enableCrewDismount), LSTRING(enableCrewDismountDesc)], _getUnloadInCombat select 1, true],
         ["TOOLBOX:ENABLED", [LSTRING(enableCrewStayImmobile), LSTRING(enableCrewStayImmobileDesc)], isAllowedCrewInImmobile _object, true],
-        ["TOOLBOX:YESNO", [LSTRING(enableAiTurnOut), LSTRING(enableAiTurnOutDesc)], isNil {_object getVariable QGVAR(turnOutJIP)}, true]
+        ["TOOLBOX:YESNO", [LSTRING(enableAiTurnOut), LSTRING(enableAiTurnOutDesc)],
+        #ifdef ARMA_216
+            isNil {_object getVariable QGVAR(turnOutJIP)},
+        #else
+            _object isNil QGVAR(turnOutJIP),
+        #endif
+        true]
     ], {
         params ["_results", "_object"];
         _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew", "_allowTurnOut"];
@@ -40,7 +48,8 @@
             #include "module_behaviourCrew_init.inc.sqf"
         };
 
-        /////////////////////////_object setVariable ["ace_vehicle_damage_allowCrewInImmobile", _stayCrew, true];
+        // Prevent/allow crew from dismounting when ACE vehicle damage is enabled
+        _object setVariable ["ace_vehicle_damage_allowCrewInImmobile", _stayCrew, true];
 
         ["zen_common_execute", [{
             (_this select 0) allowCrewInImmobile (_this select 1);
@@ -49,7 +58,11 @@
         [[QGVAR(setUnloadInCombat), [_object, _dismountPassengers, _dismountCrew], QGVAR(setUnload_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
 
         if (!_allowTurnOut) then {
-            if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
+            #ifdef ARMA_216
+                if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
+            #else
+                if !(_object isNil QGVAR(turnOutJIP)) exitWith {};
+            #endif
 
             private _jipID = [QGVAR(executeFunction), [QFUNC(addBehaviourEh), _object]] call FUNC(globalEventJIP);
             [_jipID, _object] call FUNC(removeGlobalEventJIP);
@@ -93,13 +106,13 @@
 
     private _driver = driver _object;
 
-    if (!isNull _driver && {!(_driver getVariable [QGVAR(aiCrew), false])}) exitWith {
+    if (!isNull _driver && {!(_driver getVariable [QGVAR(aiDriver), false])}) exitWith {
         [LSTRING(driverAlreadyPresentMessage)] call zen_common_fnc_showMessage;
     };
 
     // Players must be in vehicle for this
     [LSTRING(aiDriverModuleName), [
-        ["TOOLBOX:ENABLED", [LSTRING(aiDriverModuleName), LSTRING(enableAiDriverDesc)], _driver getVariable [QGVAR(aiCrew), false], true],
+        ["TOOLBOX:ENABLED", [LSTRING(aiDriverModuleName), LSTRING(enableAiDriverDesc)], _driver getVariable [QGVAR(aiDriver), false], true],
         ["TOOLBOX:YESNO", [LSTRING(enableInvulnerability), LSTRING(enableInvulnerabilityDesc)], false]
     ], {
         params ["_results", "_object"];
@@ -116,7 +129,7 @@
 
         private _driver = driver _object;
 
-        if (!isNull _driver && {!(_driver getVariable [QGVAR(aiCrew), false])}) exitWith {
+        if (!isNull _driver && {!(_driver getVariable [QGVAR(aiDriver), false])}) exitWith {
             [LSTRING(driverAlreadyPresentMessage)] call zen_common_fnc_showMessage;
         };
 
@@ -136,7 +149,7 @@
 
         if (_addAiDriver) then {
             // Driver is already AI
-            if (_driver getVariable [QGVAR(aiCrew), false]) exitWith {
+            if (_driver getVariable [QGVAR(aiDriver), false]) exitWith {
                 [LSTRING(aiDriverAlreadyPresentMessage)] call zen_common_fnc_showMessage;
             };
 
@@ -150,32 +163,34 @@
                     default {"C_man_1"};
                 };
 
-                private _unit = createAgent [_unitType, ASLToAGL getPosASL _commander, [], 0, "CAN_COLLIDE"];
+                private _driver = createAgent [_unitType, ASLToAGL getPosASL _commander, [], 0, "CAN_COLLIDE"];
 
-                _unit setVariable [QGVAR(aiCrew), true, true];
+                _driver setVariable [QGVAR(aiDriver), true, true];
 
                 // Give unit basic gear
-                removeAllWeapons _unit;
-                removeGoggles _unit;
+                removeAllWeapons _driver;
+                removeGoggles _driver;
 
-                _unit forceAddUniform uniform _commander;
-                _unit addVest vest _commander;
-                _unit addHeadgear headgear _commander;
+                _driver forceAddUniform uniform _commander;
+                _driver addVest vest _commander;
+                _driver addHeadgear headgear _commander;
 
                 // Move unit into vehicle
-                _unit assignAsDriver _object;
-                _unit moveInDriver _object;
+                _driver assignAsDriver _object;
+                _driver moveInDriver _object;
 
-                doStop _unit;
+                doStop _driver;
 
-                _unit allowDamage _invulnerable;
+                _driver allowDamage !_invulnerable;
 
-                // ACE Vehicle Damage forces AI crew to dismount if critical hit; Can't be fixed until ACE adds something
-                [_object, _unit, false, false, "COMBAT"] call FUNC(setBehaviourVehicleCrew);
+                // Prevent crew from dismounting when ACE vehicle damage is enabled
+                _object setVariable ["ace_vehicle_damage_allowCrewInImmobile", true, true];
+
+                [_object, _driver, false, false, "COMBAT"] call FUNC(setBehaviourVehicleCrew);
 
                 ["zen_common_execute", [{
                     (_this select 0) setOwner owner (_this select 1);
-                }, [_object, _unit]]] call CBA_fnc_serverEvent;
+                }, [_object, _commander]]] call CBA_fnc_serverEvent;
 
                 ["zen_common_execute", [{
                     (_this select 0) setEffectiveCommander (_this select 1);
@@ -186,18 +201,22 @@
                     (_this select 1) in (_this select 0)
                 }, {
                     ["zen_common_execute", [{
-                        (_this select 0) lockDriver (_this select 1);
-                    }, [_this select 0, true]], _this select 0] call CBA_fnc_targetEvent;
-                }, [_object, _unit], 5] call CBA_fnc_waitUntilAndExecute;
+                        _this lockDriver true;
+                    }, _this select 0], _this select 0] call CBA_fnc_targetEvent;
+                }, [_object, _driver], 5] call CBA_fnc_waitUntilAndExecute;
 
                 // Monitor the driver
-                [QGVAR(executeFunction), [QFUNC(addAiDriverEh), _unit]] call CBA_fnc_serverEvent;
+                [QGVAR(executeFunction), [QFUNC(addAiDriverEh), [_object, _driver]]] call CBA_fnc_serverEvent;
             } call FUNC(sanitiseFunction), [_commander, _object, _invulnerable]], _commander] call CBA_fnc_targetEvent;
 
             [LSTRING(addedAiDriverMessage)] call zen_common_fnc_showMessage;
 
             // Prevent unit from turning out
-            if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
+            #ifdef ARMA_216
+                if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
+            #else
+                if !(_object isNil QGVAR(turnOutJIP)) exitWith {};
+            #endif
 
             private _jipID = [QGVAR(executeFunction), [QFUNC(addBehaviourEh), _object]] call FUNC(globalEventJIP);
             [_jipID, _object] call FUNC(removeGlobalEventJIP);
@@ -208,9 +227,12 @@
             [QGVAR(executeFunction), [QFUNC(addGetInOutEh), _object]] call CBA_fnc_serverEvent;
         } else {
             // Driver is already not AI
-            if !(_driver getVariable [QGVAR(aiCrew), false]) exitWith {
+            if !(_driver getVariable [QGVAR(aiDriver), false]) exitWith {
                 [LSTRING(aiDriverAlreadyRemovedMessage)] call zen_common_fnc_showMessage;
             };
+
+            // Allow crew to dismount when ACE vehicle damage is enabled
+            _object setVariable ["ace_vehicle_damage_allowCrewInImmobile", nil, true];
 
             // Remove the driver
             [QGVAR(executeFunction), [QFUNC(removeAiDriverEh), [_object, _driver]]] call CBA_fnc_serverEvent;

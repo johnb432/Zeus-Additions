@@ -8,7 +8,11 @@ INFO_1("Running %1",__FILE__);
 DFUNC(addBehaviourEh) = [{
     params ["_vehicle"];
 
-    if (!isNil {_vehicle getVariable QGVAR(turnOutEhIDs)}) exitWith {};
+    #ifdef ARMA_216
+        if (!isNil {_vehicle getVariable QGVAR(turnOutEhIDs)}) exitWith {};
+    #else
+        if !(_vehicle isNil QGVAR(turnOutEhIDs)) exitWith {};
+    #endif
 
     _vehicle setVariable [QGVAR(turnOutEhIDs), [
         _vehicle addEventHandler ["TurnOut", {
@@ -96,7 +100,11 @@ DFUNC(setBehaviourVehicleCrew) = [{
 DFUNC(addGetInOutEh) = [{
     params ["_vehicle"];
 
-    if (!isNil {_vehicle getVariable QGVAR(getInOutEhIDs)}) exitWith {};
+    #ifdef ARMA_216
+        if (!isNil {_vehicle getVariable QGVAR(getInOutEhIDs)}) exitWith {};
+    #else
+        if !(_vehicle isNil QGVAR(getInOutEhIDs)) exitWith {};
+    #endif
 
     _vehicle setVariable [QGVAR(getInOutEhIDs), [
         _vehicle addEventHandler ["GetIn", {
@@ -132,9 +140,13 @@ DFUNC(removeGetInOutEh) = [{
 }, true] call FUNC(sanitiseFunction);
 
 DFUNC(addAiDriverEh) = [{
-    params ["_unit"];
+    params ["_vehicle", "_unit"];
 
-    if (!isNil {_unit getVariable QGVAR(aiDriverEhIDs)}) exitWith {};
+    #ifdef ARMA_216
+        if (!isNil {_vehicle getVariable QGVAR(aiDriverEhIDs)}) exitWith {};
+    #else
+        if !(_vehicle isNil QGVAR(aiDriverEhIDs)) exitWith {};
+    #endif
 
     // Don't need to save these, as unit will be deleted
     _unit addEventHandler ["GetOutMan", {
@@ -156,16 +168,24 @@ DFUNC(addAiDriverEh) = [{
     }];
 
     // Unit is not guaranteed to be local to the server
-    _unit setVariable [QGVAR(aiDriverEhID),
+    _vehicle setVariable [QGVAR(aiDriverEhIDs), [
         addMissionEventHandler ["EntityKilled", {
             params ["_entity"];
-            _thisArgs params ["_unit"];
 
-            if (_entity isNotEqualTo _unit) exitWith {};
+            if !(_entity in _thisArgs) exitWith {};
 
-            [objectParent _unit, _unit] call FUNC(removeAiDriverEh);
-        }, [_unit]]
-    ];
+            _thisArgs call FUNC(removeAiDriverEh);
+        }, [_vehicle, _unit]],
+        _vehicle addEventHandler ["Deleted", {
+            params ["_vehicle"];
+
+            private _unit = driver _vehicle;
+
+            if !(_unit getVariable [QGVAR(aiDriver), false]) exitWith {};
+
+            [_vehicle, _unit] call FUNC(removeAiDriverEh);
+        }]
+    ]];
 }, true] call FUNC(sanitiseFunction);
 
 DFUNC(removeAiDriverEh) = [{
@@ -180,18 +200,23 @@ DFUNC(removeAiDriverEh) = [{
         _vehicle lockDriver false;
 
         // Delete the unit (prevent recursiveness)
-        if (!_isDeletedEH) then {
+        if (_isDeletedEH) exitWith {};
+
+        if (isNull objectParent _unit) then {
+            deleteVehicle _unit;
+        } else {
             _vehicle deleteVehicleCrew _unit;
         };
     }, [_vehicle, _unit, _isDeletedEH]], _vehicle] call CBA_fnc_targetEvent;
 
-    private _ehID = _vehicle getVariable QGVAR(aiDriverEhID);
+    private _ehIDs = _vehicle getVariable QGVAR(aiDriverEhIDs);
 
-    if (isNil "_ehID") exitWith {};
+    if (isNil "_ehIDs") exitWith {};
 
-    removeMissionEventHandler ["EntityKilled", _ehID];
+    removeMissionEventHandler ["EntityKilled", _ehIDs select 0];
+    _vehicle removeEventHandler ["Deleted", _ehIDs select 1];
 
-    _vehicle setVariable [QGVAR(aiDriverEhID), nil];
+    _vehicle setVariable [QGVAR(aiDriverEhIDs), nil];
 }, true] call FUNC(sanitiseFunction);
 
 SEND_MP(addBehaviourEh);

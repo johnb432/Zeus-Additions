@@ -51,9 +51,13 @@ _light setLightAttenuation [0, 0, 0, 2.2, 500, 1000];
 
 // Delete helpers after 100ms/1s
 [{
-    {
-        deleteVehicle _x;
-    } forEach _this;
+    #ifdef ARMA_216
+        {
+            deleteVehicle _x;
+        } forEach _this;
+    #else
+        deleteVehicle _this;
+    #endif
 }, [_source1, _light], 0.1] call CBA_fnc_waitAndExecute;
 
 [{
