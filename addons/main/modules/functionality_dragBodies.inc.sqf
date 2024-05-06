@@ -7,7 +7,11 @@
 ["zen_curatorDisplayLoaded", {
     private _curator = getAssignedCuratorLogic player;
 
-    if (isNull _curator || {!isNil {_curator getVariable QGVAR(curatorEhID)}}) exitWith {};
+    #ifdef ARMA_216
+        if (!isNil {_curator getVariable QGVAR(curatorEhID)}) exitWith {};
+    #else
+        if !(_curator isNil QGVAR(curatorEhID)) exitWith {};
+    #endif
 
     _curator setVariable [QGVAR(curatorEhID),
         _curator addEventHandler ["CuratorObjectEdited", {

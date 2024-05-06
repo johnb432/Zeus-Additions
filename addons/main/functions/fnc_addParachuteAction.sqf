@@ -31,7 +31,11 @@ _object setVariable [QGVAR(paradropActionID),
 
             openMap true;
 
-            if (!isNil {_caller getVariable QGVAR(handleMapParadrop)}) exitWith {};
+            #ifdef ARMA_216
+                if (!isNil {_caller getVariable QGVAR(handleMapParadrop)}) exitWith {};
+            #else
+                if !(_caller isNil QGVAR(handleMapParadrop)) exitWith {};
+            #endif
 
             _caller setVariable [QGVAR(handleMapParadrop), true];
 

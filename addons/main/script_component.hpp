@@ -20,3 +20,9 @@
 #include "\a3\ui_f\hpp\defineDIKCodes.inc"
 #include "\a3\ui_f\hpp\defineCommonGrids.inc"
 #include "\a3\ui_f\hpp\defineResincl.inc"
+
+#if __GAME_VER_MAJ__ == 2
+#if __GAME_VER_MIN__ <= 16
+#define ARMA_216 1
+#endif
+#endif

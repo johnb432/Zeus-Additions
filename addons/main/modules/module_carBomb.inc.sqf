@@ -23,7 +23,13 @@
     };
 
     ["str_a3_systems_commondescription.inccfgomphonecontacts_detonation0", [
-        ["TOOLBOX:YESNO", [LSTRING(enableCarBomb), LSTRING(enableCarBombDesc)], !isNil {_object getVariable QGVAR(detonateJIP)}, true],
+        ["TOOLBOX:YESNO", [LSTRING(enableCarBomb), LSTRING(enableCarBombDesc)],
+        #ifdef ARMA_216
+            !isNil {_object getVariable QGVAR(detonateJIP)},
+        #else
+            !(_object isNil QGVAR(detonateJIP)),
+        #endif
+        true],
         ["TOOLBOX", [LSTRING_ZEN(modules,explosionSize), LSTRING(explosionSizeDesc)], [0, 1, 2, ["str_small", "str_large"]]]
     ], {
         params ["_results", "_object"];
@@ -46,7 +52,11 @@
             _object setVariable [QGVAR(IEDSize), _IEDSize, true];
             _object setVariable ["zen_modules_isIED", true, true];
 
-            if (!isNil {_object getVariable QGVAR(detonateJIP)}) exitWith {};
+            #ifdef ARMA_216
+                if (!isNil {_object getVariable QGVAR(detonateJIP)}) exitWith {};
+            #else
+                if !(_object isNil QGVAR(detonateJIP)) exitWith {};
+            #endif
 
             // Turn off engine
             if (isEngineOn _object) then {

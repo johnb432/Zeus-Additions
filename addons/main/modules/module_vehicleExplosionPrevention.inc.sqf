@@ -19,7 +19,13 @@
     };
 
     [LSTRING(vehicleExplosionPreventionModuleName), [
-        ["TOOLBOX:YESNO", [LSTRING(enableVehicleExplosionPrevention), LSTRING(enableVehicleExplosionPreventionDesc)], !isNil {_object getVariable QGVAR(explodingJIP)}, true]
+        ["TOOLBOX:YESNO", [LSTRING(enableVehicleExplosionPrevention), LSTRING(enableVehicleExplosionPreventionDesc)],
+        #ifdef ARMA_216
+            !isNil {_object getVariable QGVAR(explodingJIP)},
+        #else
+            !(_object isNil QGVAR(explodingJIP)),
+        #endif
+        true]
     ], {
         params ["_results", "_object"];
 
@@ -34,7 +40,13 @@
 
         // If prevention is turned on
         private _string = if (_results select 0) then {
-            if (!isNil {_object getVariable QGVAR(explodingJIP)}) exitWith {
+            if
+            #ifdef ARMA_216
+                (!isNil {_object getVariable QGVAR(explodingJIP)})
+            #else
+                !(_object isNil QGVAR(explodingJIP))
+            #endif
+            exitWith {
                 LSTRING(enableVehicleExplosionPreventionAlreadyMessage)
             };
 

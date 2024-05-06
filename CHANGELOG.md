@@ -1,3 +1,8 @@
+# Changelog for Zeus Additions 6.5.2024
+
+1.6.8.0
+- Fixed bugs in "AI Driver" module.
+
 # Changelog for Zeus Additions 27.4.2024
 
 1.6.7.0
