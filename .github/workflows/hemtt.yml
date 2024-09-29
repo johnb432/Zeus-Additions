@@ -8,7 +8,8 @@ on:
   pull_request_target:
 
 jobs:
-  windows:
+  hemtt:
+    name: HEMTT
     runs-on: windows-latest
     steps:
     - name: Checkout the source code
