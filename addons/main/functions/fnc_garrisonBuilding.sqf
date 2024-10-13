@@ -35,7 +35,7 @@ private _fnc_moveUnit = {
     private _unit = _group createUnit [_unitType, [-10000, -10000, 0], [], 0, "CAN_COLLIDE"];
 
     if (surfaceIsWater _pos) then {
-        _unit setPosASL AGLtoASL _pos;
+        _unit setPosASL AGLToASL _pos;
     } else {
         _unit setPosATL _pos;
     };

@@ -24,8 +24,6 @@ if (_function isEqualType {}) then {
 
 if (_function == "") exitWith {};
 
-private _index = -1;
-
 // Remove headers (#line)
 while {_function regexFind ["#line"] isNotEqualTo []} do {
     _function = _function regexReplace ["#line[^\n\r]*(\n|\r)", ""];

@@ -23,7 +23,7 @@ GVAR(init) = true;
 INFO_4("Init: Net mode: %1 - %2 loaded: %3 - clientOwner %4",call BIS_fnc_getNetMode,toUpperANSI QUOTE(PREFIX),!isNil QUOTE(ADDON),clientOwner);
 
 [QGVAR(executeFunction), {
-    (_this select 1) call (missionNamespace getVariable [_this select 0, {}]);
+    (_this select 1) call (GETMVAR(_this select 0,{}));
 }] call CBA_fnc_addEventHandler;
 
 [QGVAR(setUnloadInCombat), {

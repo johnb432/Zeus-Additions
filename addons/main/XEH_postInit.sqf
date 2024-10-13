@@ -26,7 +26,7 @@ if (!hasInterface) exitWith {};
     };
 
     // Add Drag Bodies module
-    if (!isNil "ace_dragging") then {
+    if (!isNil "ace_dragging" && {getNumber (_cfgPatches >> "ace_main" >> "version") < 3.18}) then {
         #include "modules\module_dragBodies.inc.sqf"
     };
 }] call CBA_fnc_addEventHandlerArgs;
@@ -63,7 +63,11 @@ if (!hasInterface) exitWith {};
 
 // Optionals
 private _cfgPatches = configFile >> "CfgPatches";
-GVAR(ACEClipboardLoaded) = isClass (configFile >> "ACE_Extensions" >> "ace_clipboard");
+GVAR(ACEClipboardLoaded) = if (getNumber (_cfgPatches >> "ace_main" >> "version") >= 3.18) then {
+    [0, 2] select (("ace" callExtension ["version", []]) params [["_versionEx", "", [""]], ["_returnCode", -1, [-1]]])
+} else {
+    parseNumber (isClass (configFile >> "ACE_Extensions" >> "ace_clipboard"))
+};
 
 // Check if ACE Dragging is loaded
 if (!isNil "ace_dragging") then {
@@ -106,7 +110,7 @@ if (isClass (_cfgPatches >> "rhs_main_loadorder")) then {
     };
 
     // Check if ACE Medical is loaded
-    if (!zen_common_aceMedical) then {
+    if !(GETMVAR("ace_medical_enabled",zen_common_aceMedical)) then {
         private _string = LLSTRING(aceMedicalMissing);
         INFO(_string);
 

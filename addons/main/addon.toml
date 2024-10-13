@@ -1,8 +1,2 @@
 [rapify]
 enabled = true
-
-[binarize]
-enabled = true
-
-[asc]
-enabled = true

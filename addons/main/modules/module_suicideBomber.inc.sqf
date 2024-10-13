@@ -19,20 +19,8 @@
     };
 
     [LSTRING_ZEN(modules,moduleSuicideBomber), [
-        ["TOOLBOX:YESNO", [LSTRING_ZEN(modules,moduleSuicideBomber), LSTRING(enableSuicideBomberDesc)],
-        #ifdef ARMA_216
-            !isNil {_unit getVariable QGVAR(suicideBomberActionJIP)},
-        #else
-            !(_unit isNil QGVAR(suicideBomberActionJIP)),
-        #endif
-        true],
-        ["TOOLBOX:YESNO", [LSTRING_ZEN(modules,moduleSuicideBomber_DeadManSwitch), LSTRING(enableDeadmanSwitchDesc)],
-        #ifdef ARMA_216
-            !isNil {_unit getVariable QGVAR(suicideBomberDeadManSwitchJIP)},
-        #else
-            !(_unit isNil QGVAR(suicideBomberDeadManSwitchJIP)),
-        #endif
-        true]
+        ["TOOLBOX:YESNO", [LSTRING_ZEN(modules,moduleSuicideBomber), LSTRING(enableSuicideBomberDesc)], !(_unit isNil QGVAR(suicideBomberActionJIP)), true],
+        ["TOOLBOX:YESNO", [LSTRING_ZEN(modules,moduleSuicideBomber_DeadManSwitch), LSTRING(enableDeadmanSwitchDesc)], !(_unit isNil QGVAR(suicideBomberDeadManSwitchJIP)), true]
     ], {
         params ["_results", "_unit"];
         _results params ["_makeIntoSuicideBomber", "_deadManSwitchEnabled"];
@@ -52,14 +40,7 @@
         };
 
         if (_makeIntoSuicideBomber) then {
-            if
-            #ifdef ARMA_216
-                (isNil {_unit getVariable QGVAR(suicideBomberActionJIP)})
-            #else
-                (_unit isNil QGVAR(suicideBomberActionJIP))
-            #endif
-            then {
-
+            if (_unit isNil QGVAR(suicideBomberActionJIP)) then {
                 if (isNil QFUNC(addDetonateAction)) then {
                     #include "module_suicideBomber_init.inc.sqf"
                 };
@@ -76,11 +57,7 @@
 
             // Dead man switch abilities
             if (_deadManSwitchEnabled) then {
-                #ifdef ARMA_216
-                    if (!isNil {_unit getVariable QGVAR(suicideBomberDeadManSwitchJIP)}) exitWith {};
-                #else
-                    if !(_unit isNil QGVAR(suicideBomberDeadManSwitchJIP)) exitWith {};
-                #endif
+                if !(_unit isNil QGVAR(suicideBomberDeadManSwitchJIP)) exitWith {};
 
                 if (isNil QFUNC(addSuicideEh)) then {
                     #include "module_suicideBomber_deadMan_init.inc.sqf"
@@ -98,13 +75,7 @@
             [LSTRING(enableSuicideBomberMessage)] call zen_common_fnc_showMessage;
         } else {
             // Remove explosives
-            #ifdef ARMA_216
-                {
-                    deleteVehicle _x;
-                } forEach (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
-            #else
-                deleteVehicle (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
-            #endif
+            deleteVehicle (_unit getVariable [QGVAR(suicideBomberExplosives), []]);
 
             // Remove JIP, action and EHs
             _unit call FUNC(removeSuicideBomberIDs);

@@ -23,13 +23,7 @@
     };
 
     ["str_a3_systems_commondescription.inccfgomphonecontacts_detonation0", [
-        ["TOOLBOX:YESNO", [LSTRING(enableCarBomb), LSTRING(enableCarBombDesc)],
-        #ifdef ARMA_216
-            !isNil {_object getVariable QGVAR(detonateJIP)},
-        #else
-            !(_object isNil QGVAR(detonateJIP)),
-        #endif
-        true],
+        ["TOOLBOX:YESNO", [LSTRING(enableCarBomb), LSTRING(enableCarBombDesc)], !(_object isNil QGVAR(detonateJIP)), true],
         ["TOOLBOX", [LSTRING_ZEN(modules,explosionSize), LSTRING(explosionSizeDesc)], [0, 1, 2, ["str_small", "str_large"]]]
     ], {
         params ["_results", "_object"];
@@ -52,11 +46,7 @@
             _object setVariable [QGVAR(IEDSize), _IEDSize, true];
             _object setVariable ["zen_modules_isIED", true, true];
 
-            #ifdef ARMA_216
-                if (!isNil {_object getVariable QGVAR(detonateJIP)}) exitWith {};
-            #else
-                if !(_object isNil QGVAR(detonateJIP)) exitWith {};
-            #endif
+            if !(_object isNil QGVAR(detonateJIP)) exitWith {};
 
             // Turn off engine
             if (isEngineOn _object) then {
@@ -71,6 +61,16 @@
                             params ["_object", "_engineState"];
 
                             if (!local _object || {!_engineState}) exitWith {};
+
+                            // Once triggered, remove EH, otherwise it spams explosions
+                            ["zen_common_execute", [{
+                                private _ehID = _this getVariable QGVAR(detonateEhID);
+
+                                if (isNil "_ehID") exitWith {};
+
+                                _this removeEventHandler ["Engine", _ehID];
+                                _this setVariable [QGVAR(detonateEhID), nil];
+                            }, _object]] call CBA_fnc_globalEvent;
 
                             [{
                                 // Create IED and trigger it

@@ -19,13 +19,7 @@
     };
 
     [LSTRING(vehicleExplosionPreventionModuleName), [
-        ["TOOLBOX:YESNO", [LSTRING(enableVehicleExplosionPrevention), LSTRING(enableVehicleExplosionPreventionDesc)],
-        #ifdef ARMA_216
-            !isNil {_object getVariable QGVAR(explodingJIP)},
-        #else
-            !(_object isNil QGVAR(explodingJIP)),
-        #endif
-        true]
+        ["TOOLBOX:YESNO", [LSTRING(enableVehicleExplosionPrevention), LSTRING(enableVehicleExplosionPreventionDesc)], !(_object isNil QGVAR(explodingJIP)), true]
     ], {
         params ["_results", "_object"];
 
@@ -40,13 +34,7 @@
 
         // If prevention is turned on
         private _string = if (_results select 0) then {
-            if
-            #ifdef ARMA_216
-                (!isNil {_object getVariable QGVAR(explodingJIP)})
-            #else
-                !(_object isNil QGVAR(explodingJIP))
-            #endif
-            exitWith {
+            if !(_object isNil QGVAR(explodingJIP)) exitWith {
                 LSTRING(enableVehicleExplosionPreventionAlreadyMessage)
             };
 
@@ -55,9 +43,12 @@
                     // Add handle damage EH to every client and JIP
                     _this setVariable [QGVAR(explodingEhID),
                         _this addEventHandler ["HandleDamage", {
-                            params ["_object", "", "_damage", "_killer", "", "", "_instigator", "_hitPoint"];
+                            params ["_object", "", "_damage", "_source", "_projectile", "", "_instigator", "_hitPoint", "", "_context"];
 
                             if (!local _object) exitWith {};
+
+                            // Killing units via End key is an edge case (see ACE #10375)
+                            if (_context == 0 && {_damage >= 1 && _projectile == "" && isNull _source && isNull _instigator}) exitWith {_damage};
 
                             // Convert to lower case string for string comparison
                             _hitPoint = toLowerANSI _hitPoint;
@@ -67,7 +58,7 @@
                                 _damage
                             } else {
                                 // Above 75% hull damage a vehicle can blow up; Must reset hull damage every time because it goes too high otherwise
-                                _object setHitPointDamage ["HitHull", (_object getHitPointDamage "HitHull") min 0.75, true, _killer, _instigator];
+                                _object setHitPointDamage ["HitHull", (_object getHitPointDamage "HitHull") min 0.75, true, _source, _instigator];
 
                                 ([0.75, 0.89] select (_hitPoint != "" && {_hitPoint != "HitHull"})) min _damage
                             };

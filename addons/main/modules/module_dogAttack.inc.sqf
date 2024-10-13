@@ -13,7 +13,7 @@
         ["SIDES", ["str_a3_cfgvehicles_modulechat_f_arguments_channel_values_side_0", LSTRING(dogAttackSideDesc)], []],
         ["SIDES", ["str_a3_smartmarkers_smartmarker_t_distraction_f_sections_markertext0", LSTRING(dogAttackDesc)], []],
         ["SLIDER", [LSTRING_CBA(modules,searchRadius), LSTRING(dogAttackSearchDesc)], [0, 1000, 100, 0]],
-        [["SLIDER:PERCENT", ["str_a3_normaldamage1", LSTRING(dogAttackDamageDesc)], [0, 1, 0.1]], ["SLIDER", ["str_a3_normaldamage1", LSTRING(dogAttackDamageDesc)], [0, 50, 3, 2]]] select zen_common_aceMedical,
+        [["SLIDER:PERCENT", ["str_a3_normaldamage1", LSTRING(dogAttackDamageDesc)], [0, 1, 0.1]], ["SLIDER", ["str_a3_normaldamage1", LSTRING(dogAttackDamageDesc)], [0, 50, 3, 2]]] select (GETMVAR("ace_medical_enabled",zen_common_aceMedical)),
         ["TOOLBOX:YESNO", [LSTRING(dogAttackLightning), LSTRING(dogAttackLightningDesc)], false],
         ["TOOLBOX:YESNO", ["str_3den_trigger_attribute_sound_displayname", LSTRING(dogAttackThunderDesc)], false],
         ["TOOLBOX:YESNO", [LSTRING(disablePathingContextMenu), LSTRING(dogAttackPathingDesc)], false],
@@ -30,11 +30,42 @@
 
         // Make lightning bolt
         if (_spawnLightning) then {
+            // Only send function to all clients if script is enabled
+            if (isNil QFUNC(spawnLight)) then {
+                DFUNC(spawnLight) = [{
+                    if (!hasInterface) exitWith {};
+
+                    private _light = createVehicleLocal ["#lightpoint", _this vectorAdd [0, 0, 10], [], 0, "CAN_COLLIDE"];
+                    _light setLightDayLight true;
+                    _light setLightBrightness 300;
+                    _light setLightAmbient [0.05, 0.05, 0.1];
+                    _light setLightColor [1, 1, 2];
+
+                    [{
+                        _this setLightBrightness (100 + random 100);
+
+                        [{
+                            _this setLightBrightness (100 + random 100);
+
+                            [{
+                                deleteVehicle _this;
+                            }, _this, 0.15] call CBA_fnc_waitAndExecute;
+                        }, _this, 0.15] call CBA_fnc_waitAndExecute;
+                    }, _light, 0.15] call CBA_fnc_waitAndExecute;
+                }, true] call FUNC(sanitiseFunction);
+
+                SEND_MP(spawnLight);
+            };
+
             _lightning = createVehicle [format ["Lightning%1_F", floor (random 2) + 1], _pos, [], 0, "CAN_COLLIDE"];
+            _lightning setDir random 360;
+            _lightning setVehiclePosition [_pos, [], 0, "CAN_COLLIDE"];
+
+            [QGVAR(executeFunction), [QFUNC(spawnLight), _pos]] call CBA_fnc_globalEvent;
 
             [{
                 deleteVehicle _this;
-            }, _lightning, 1] call CBA_fnc_waitAndExecute;
+            }, _lightning, 0.4 + random [0, 0.1, 0.2]] call CBA_fnc_waitAndExecute; // https://en.wikipedia.org/wiki/Lightning#Distribution,_frequency_and_extent
         };
 
         // Make sound for lightning bolt
@@ -130,7 +161,7 @@
                     case (_speed > 22): {"Dog_Sprint"};
                     case (_speed > 14): {"Dog_Run"};
                     case (_speed > 0): {"Dog_Walk"};
-                    default {"Dog_Sit"};
+                    default {"Dog_Stop"};
                 });
 
                 private _dogNearestEnemy = _helperUnit getVariable [QGVAR(dogNearestEnemy), objNull];
@@ -141,15 +172,16 @@
 
                 // Get waypoint as soon as possible, as waypoint sometimes delete themselves very quickly
                 if (waypointType _currentWaypoint in ["DESTROY", "SAD"]  && {(_helperUnit getVariable QGVAR(currentPosWP)) isNotEqualTo _posWaypoint}) then {
-                    _dogNearestEnemy = ((_posWaypoint nearEntities ["CAManBase", 5]) select {
-                        alive _x &&
+                    private _dogNearestEnemies = _posWaypoint nearEntities ["CAManBase", 5];
+
+                    _dogNearestEnemy = _dogNearestEnemies param [_dogNearestEnemies findIf {
+                        (lifeState _x) in ["HEALTHY", "INJURED"] &&
                         {isNull objectParent _x} &&
                         {(side _x) in _attackSides} &&
                         {_x != _helperUnit} &&
-                        {(lifeState _x) != "INCAPACITATED"} &&
                         {!(_x getVariable [QGVAR(isHelperUnit), false])} &&
                         {getNumber ((configOf _x) >> "isPlayableLogic") == 0}
-                    }) param [0, objNull];
+                    }, objNull];
 
                     _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     _helperUnit setVariable [QGVAR(currentPosWP), _posWaypoint];
@@ -160,17 +192,18 @@
                     _helperUnit setVariable [QGVAR(timeDog), _time];
 
                     // If no valid target, find one
-                    if (!alive _dogNearestEnemy || {(lifeState _dogNearestEnemy) == "INCAPACITATED"}) then {
+                    if !((lifeState _dogNearestEnemy) in ["HEALTHY", "INJURED"]) then {
                         // Look for the closest enemy: Exclude invalid classes, helper units, dead or unconscious units
-                        _dogNearestEnemy = (((getPosATL _helperUnit) nearEntities ["CAManBase", _radius]) select {
-                            alive _x &&
+                        private _dogNearestEnemies = (getPosATL _helperUnit) nearEntities ["CAManBase", _radius];
+
+                        _dogNearestEnemy = _dogNearestEnemies param [_dogNearestEnemies findIf {
+                            (lifeState _x) in ["HEALTHY", "INJURED"] &&
                             {isNull objectParent _x} &&
                             {(side _x) in _attackSides} &&
                             {_x != _helperUnit} &&
-                            {(lifeState _x) != "INCAPACITATED"} &&
                             {!(_x getVariable [QGVAR(isHelperUnit), false])} &&
                             {getNumber ((configOf _x) >> "isPlayableLogic") == 0}
-                        }) param [0, objNull];
+                        }, objNull];
 
                         _helperUnit setVariable [QGVAR(dogNearestEnemy), _dogNearestEnemy];
                     };
@@ -196,7 +229,7 @@
 
                                 if !(isDamageAllowed _dogNearestEnemy && {_dogNearestEnemy getVariable ["ace_medical_allowDamage", true]}) exitWith {};
 
-                                if (zen_common_aceMedical) then {
+                                if (GETMVAR("ace_medical_enabled",zen_common_aceMedical)) then {
                                     [_dogNearestEnemy, _damage, selectRandom ["LeftArm", "RightArm", "LeftLeg", "RightLeg"], "stab", _dog, [], false] call ace_medical_fnc_addDamageToUnit;
                                 } else {
                                     private _hitPoint = selectRandom ["HitArms", "HitHands", "HitLegs"];

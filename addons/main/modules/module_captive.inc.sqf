@@ -62,6 +62,7 @@
         };
 
         if (_setCaptive) then {
+            // Only send function to all clients if script is enabled
             if (isNil QFUNC(setCaptive)) then {
                 DFUNC(setCaptive) = [{
                     _this stop true;
@@ -150,6 +151,7 @@
                 }, _x] call CBA_fnc_waitUntilAndExecute;
             } forEach (_units select {!captive _x});
         } else {
+            // Only send function to all clients if script is enabled
             if (isNil QFUNC(releaseCaptive)) then {
                 DFUNC(releaseCaptive) = [{
                     _this setCaptive false;
