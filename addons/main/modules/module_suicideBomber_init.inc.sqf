@@ -6,11 +6,7 @@
 INFO_1("Running %1",__FILE__);
 
 DFUNC(addDetonateAction) = [{
-    #ifdef ARMA_216
-        if (!isNil {_this getVariable QGVAR(suicideBomberActionID)}) exitWith {};
-    #else
-        if !(_this isNil QGVAR(suicideBomberActionID)) exitWith {};
-    #endif
+    if !(_this isNil QGVAR(suicideBomberActionID)) exitWith {};
 
     _this setVariable [QGVAR(suicideBomberActionID),
         _this addAction [

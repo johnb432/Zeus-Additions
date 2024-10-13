@@ -55,51 +55,17 @@
             [LSTRING(removeGrenadesNoUnitsFoundMessage)] call zen_common_fnc_showMessage;
         };
 
-        #ifdef ARMA_216
-            private _magazines = [];
+        private _throwables = [];
 
-            // Remove grenades from all AI units
+        // Remove grenades from all AI units
+        {
+            _unit = _x;
+            _throwables = (throwables _unit) apply {_x select 0};
+
             {
-                _unit = _x;
-                _magazines = magazines _unit;
-
-                {
-                    if (_x call BIS_fnc_isThrowable) then {
-                        _unit removeMagazines _x;
-                    };
-                } forEach (_magazines arrayIntersect _magazines);
-            } forEach _units;
-        #else
-            /*
-            // 'throwables' doesn't return all throwables atm ("B_Soldier_A_F", "NATO Ammo Bearer", missing 2x "MiniGrenade")
-
-            private _throwables = [];
-
-            // Remove grenades from all AI units
-            {
-                _unit = _x;
-                _throwables = (throwables _unit) apply {_x select 0};
-
-                {
-                    _unit removeMagazines _x;
-                } forEach (_throwables arrayIntersect _throwables);
-            } forEach _units;
-            */
-
-            private _magazines = [];
-
-            // Remove grenades from all AI units
-            {
-                _unit = _x;
-                _magazines = magazines _unit;
-
-                {
-                    if (isThrowable _x) then {
-                        _unit removeMagazines _x;
-                    };
-                } forEach (_magazines arrayIntersect _magazines);
-            } forEach _units;
-        #endif
+                _unit removeMagazines _x;
+            } forEach (_throwables arrayIntersect _throwables);
+        } forEach _units;
 
         [_string] call zen_common_fnc_showMessage;
     }, {}, _unit] call zen_dialog_fnc_create;

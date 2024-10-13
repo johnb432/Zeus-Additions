@@ -135,11 +135,22 @@ _ctrlListMagazines ctrlAddEventHandler ["LBDblClick", {
 _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListMagazines", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
+    if !(_key == DIK_C && _control) exitWith {};
+    if (GVAR(ACEClipboardLoaded) == 0 && !isServer) exitWith {};
 
-    // Copy to clipboard
-    "ace_clipboard" callExtension (str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";");
-    "ace_clipboard" callExtension "--COMPLETE--";
+    private _export = str (_ctrlListMagazines lbTooltip (lbCurSel _ctrlListMagazines)) + ";";
+
+    if (GVAR(ACEClipboardLoaded) != 0) then {
+        if (GVAR(ACEClipboardLoaded) == 1) then {
+            "ace_clipboard" callExtension (_export + ";");
+            "ace_clipboard" callExtension "--COMPLETE--";
+        } else {
+            "ace" callExtension ["clipboard:append", [_export]];
+            "ace" callExtension ["clipboard:complete", []];
+        };
+    } else {
+        copyToClipboard _export
+    };
 
     true
 }];
@@ -171,11 +182,22 @@ _ctrlListSelected ctrlAddEventHandler ["LBDblClick", {
 _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
     params ["_ctrlListSelected", "_key", "", "_control"];
 
-    if !(_key == DIK_C && {_control} && {GVAR(ACEClipboardLoaded)}) exitWith {};
+    if !(_key == DIK_C && _control) exitWith {};
+    if (GVAR(ACEClipboardLoaded) == 0 && !isServer) exitWith {};
 
-    // Copy to clipboard
-    "ace_clipboard" callExtension (str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";");
-    "ace_clipboard" callExtension "--COMPLETE--";
+    private _export = str (_ctrlListSelected lbTooltip (lbCurSel _ctrlListSelected)) + ";";
+
+    if (GVAR(ACEClipboardLoaded) != 0) then {
+        if (GVAR(ACEClipboardLoaded) == 1) then {
+            "ace_clipboard" callExtension (_export + ";");
+            "ace_clipboard" callExtension "--COMPLETE--";
+        } else {
+            "ace" callExtension ["clipboard:append", [_export]];
+            "ace" callExtension ["clipboard:complete", []];
+        };
+    } else {
+        copyToClipboard _export
+    };
 
     true
 }];

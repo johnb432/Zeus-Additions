@@ -26,7 +26,7 @@ GVAR(loadoutTypes) = ["Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer"
 
         // If preset is supposed to be exported
         if (_exportPreset) exitWith {
-            if (!GVAR(ACEClipboardLoaded)) exitWith {
+            if (GVAR(ACEClipboardLoaded) == 0 && !isServer) exitWith {
                 [LSTRING(aceClipboardDisabledMessage)] call zen_common_fnc_showMessage;
             };
 
@@ -34,8 +34,19 @@ GVAR(loadoutTypes) = ["Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer"
                 [LSTRING(loadoutNoPresetSelectedMessage)] call zen_common_fnc_showMessage;
             };
 
-            "ace_clipboard" callExtension ((str (GVAR(loadoutTypes) apply {parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),"[]"))})) + ";");
-            "ace_clipboard" callExtension "--COMPLETE--";
+            private _export = str (GVAR(loadoutTypes) apply {parseSimpleArray (GETPRVAR(FORMAT_2(QGVAR(gear%1_%2),_x,_selectedPreset),"[]"))});
+
+            if (GVAR(ACEClipboardLoaded) != 0) then {
+                if (GVAR(ACEClipboardLoaded) == 1) then {
+                    "ace_clipboard" callExtension (_export + ";");
+                    "ace_clipboard" callExtension "--COMPLETE--";
+                } else {
+                    "ace" callExtension ["clipboard:append", [_export]];
+                    "ace" callExtension ["clipboard:complete", []];
+                };
+            } else {
+                copyToClipboard _export
+            };
 
             [LSTRING(loadoutPresetExportedMessage), _selectedPreset] call zen_common_fnc_showMessage;
         };

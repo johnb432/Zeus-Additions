@@ -111,7 +111,7 @@
         [([LSTRING(configureDoorsUnbreachableMessage), LSTRING(configureDoorsBreachableMessage), LSTRING(configureDoorsUnlockedMessage), LSTRING(configureDoorsOpenedMessage)] select _mode)] call zen_common_fnc_showMessage;
 
         // 0 unbreachable, 1 breachable, 2 closed, 3 open
-        if (_mode != 1) exitwith {};
+        if (_mode != 1) exitWith {};
 
         // Only send function to all clients if script is enabled
         if (isNil QFUNC(breachingAddAction)) then {

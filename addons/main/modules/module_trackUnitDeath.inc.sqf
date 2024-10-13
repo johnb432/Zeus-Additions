@@ -81,7 +81,7 @@ GVAR(trackUnits) = [];
                 };
 
                 if (_notification select 3) then {
-                    INFO_3(LSTRING(unitDeathTrackingMessage),_nameUnit,_killer,_instigator);
+                    INFO_3(LLSTRING(unitDeathTrackingMessage),_nameUnit,_killer,_instigator);
                 };
 
                 GVAR(trackUnits) deleteAt (GVAR(trackUnits) find _unit);

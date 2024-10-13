@@ -12,5 +12,13 @@ include = [
     "meta.cpp",
     "mod.cpp",
     "LICENSE",
-    "README.md"
+    "README.md",
+]
+
+[lints.sqf.banned_commands]
+options.banned = [
+    "execVM",
+]
+options.ignore = [
+    "addPublicVariableEventHandler",
 ]

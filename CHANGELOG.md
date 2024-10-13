@@ -1,3 +1,11 @@
+# Changelog for Zeus Additions 31.10.2024
+
+1.6.9.0
+- Updated to use 2.18 commands.
+- Raised limit for automatic parachute deployment from 100 m to 150 m.
+- Updated to support ACE 3.18.0
+- Fixed bug with VBIED where vehicle could blow up numerous time in rapid succession.
+
 # Changelog for Zeus Additions 6.5.2024
 
 1.6.8.0

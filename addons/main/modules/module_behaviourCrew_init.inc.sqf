@@ -8,11 +8,7 @@ INFO_1("Running %1",__FILE__);
 DFUNC(addBehaviourEh) = [{
     params ["_vehicle"];
 
-    #ifdef ARMA_216
-        if (!isNil {_vehicle getVariable QGVAR(turnOutEhIDs)}) exitWith {};
-    #else
-        if !(_vehicle isNil QGVAR(turnOutEhIDs)) exitWith {};
-    #endif
+    if !(_vehicle isNil QGVAR(turnOutEhIDs)) exitWith {};
 
     _vehicle setVariable [QGVAR(turnOutEhIDs), [
         _vehicle addEventHandler ["TurnOut", {
@@ -100,11 +96,7 @@ DFUNC(setBehaviourVehicleCrew) = [{
 DFUNC(addGetInOutEh) = [{
     params ["_vehicle"];
 
-    #ifdef ARMA_216
-        if (!isNil {_vehicle getVariable QGVAR(getInOutEhIDs)}) exitWith {};
-    #else
-        if !(_vehicle isNil QGVAR(getInOutEhIDs)) exitWith {};
-    #endif
+    if !(_vehicle isNil QGVAR(getInOutEhIDs)) exitWith {};
 
     _vehicle setVariable [QGVAR(getInOutEhIDs), [
         _vehicle addEventHandler ["GetIn", {
@@ -142,11 +134,7 @@ DFUNC(removeGetInOutEh) = [{
 DFUNC(addAiDriverEh) = [{
     params ["_vehicle", "_unit"];
 
-    #ifdef ARMA_216
-        if (!isNil {_vehicle getVariable QGVAR(aiDriverEhIDs)}) exitWith {};
-    #else
-        if !(_vehicle isNil QGVAR(aiDriverEhIDs)) exitWith {};
-    #endif
+    if !(_vehicle isNil QGVAR(aiDriverEhIDs)) exitWith {};
 
     // Don't need to save these, as unit will be deleted
     _unit addEventHandler ["GetOutMan", {

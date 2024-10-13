@@ -133,7 +133,7 @@
             <English>Crew stay in immobile vehicles</English>
         </Key>
         <Key ID="STR_zeus_additions_main_enableCrewStayImmobileDesc">
-            <English>Allow crews to stay in immobile vehicles. THIS DOES NOT WORK IF ACE VEHICLE DAMAGE IS ENABLED.</English>
+            <English>Allow crews to stay in immobile vehicles.</English>
         </Key>
         <Key ID="STR_zeus_additions_main_enableAiTurnOut">
             <English>Allow AI to Turn Out</English>

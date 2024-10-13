@@ -56,6 +56,10 @@ private _group = group _unit;
 private _groupID = groupId _unit;
 private _teamColor = assignedTeam _unit;
 
+if (_teamColor == "") then {
+    _teamColor = "MAIN";
+};
+
 // Make unit local
 if (!local _unit) then {
     ["zen_common_execute", [{

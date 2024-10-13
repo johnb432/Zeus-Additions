@@ -36,7 +36,7 @@ private _showTransition = _unit == call CBA_fnc_currentUnit;
 // If not player controlled, don't do transition screen or inform about paradrop
 if (_showTransition) then {
     cutText ["You are being paradropped...", "BLACK OUT", 2, true];
-    hint "The parachute will automatically deploy if you haven't deployed it before reaching 100m above ground level. Your backpack will be returned upon landing.";
+    hint "The parachute will automatically deploy if you haven't deployed it before reaching 150m above ground level. Your backpack will be returned upon landing.";
 };
 
 private _backpackClass = backpack _unit;
@@ -79,11 +79,11 @@ if (_backpackClass != "" && {_giveUnitParachute}) then {
         };
 
         [{
-            // Wait until the unit is <100m AGL or dead
-            (getPos _this) select 2 < 100 || {!alive _this}
+            // Wait until the unit is <150m AGL or dead
+            (getPos _this) select 2 < 150 || {!alive _this}
         }, {
             // If parachute is already open or unit is unconscious or dead, don't deploy parachute
-            if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {!alive _this} || {(lifeState _this) == "INCAPACITATED"}) exitWith {};
+            if ((((objectParent _this) call BIS_fnc_objectType) select 1) == "Parachute" || {!((lifeState _this) in ["HEALTHY", "INJURED"])}) exitWith {};
 
             _this action ["OpenParachute", _this];
         }, _unit] call CBA_fnc_waitUntilAndExecute;

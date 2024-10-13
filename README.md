@@ -39,7 +39,7 @@
 * **Toggle Consciousness (Forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals, except if the unit is a player and they are in cardiac arrest.
 * **Unit Death Tracking:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 * **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.
-* **Vehicle Explosion Prevention:** This module makes vehicles not able to blow up, but still allows them to take damage.
+* **Vehicle Explosion Prevention:** This module makes vehicles not able to blow up, but still allows them to take damage. **This module is incompatible with ACE Advanced Vehicle Damage.**
 
 <h2>CBA Settings</h2>
 

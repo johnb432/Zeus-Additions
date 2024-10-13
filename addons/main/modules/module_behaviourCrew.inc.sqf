@@ -24,13 +24,7 @@
         ["TOOLBOX:ENABLED", [LSTRING(enablePassengerDismount), LSTRING(enablePassengerDismountDesc)], _getUnloadInCombat select 0, true],
         ["TOOLBOX:ENABLED", [LSTRING(enableCrewDismount), LSTRING(enableCrewDismountDesc)], _getUnloadInCombat select 1, true],
         ["TOOLBOX:ENABLED", [LSTRING(enableCrewStayImmobile), LSTRING(enableCrewStayImmobileDesc)], isAllowedCrewInImmobile _object, true],
-        ["TOOLBOX:YESNO", [LSTRING(enableAiTurnOut), LSTRING(enableAiTurnOutDesc)],
-        #ifdef ARMA_216
-            isNil {_object getVariable QGVAR(turnOutJIP)},
-        #else
-            _object isNil QGVAR(turnOutJIP),
-        #endif
-        true]
+        ["TOOLBOX:YESNO", [LSTRING(enableAiTurnOut), LSTRING(enableAiTurnOutDesc)], _object isNil QGVAR(turnOutJIP), true]
     ], {
         params ["_results", "_object"];
         _results params ["_dismountPassengers", "_dismountCrew", "_stayCrew", "_allowTurnOut"];
@@ -58,11 +52,7 @@
         [[QGVAR(setUnloadInCombat), [_object, _dismountPassengers, _dismountCrew], QGVAR(setUnload_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
 
         if (!_allowTurnOut) then {
-            #ifdef ARMA_216
-                if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
-            #else
-                if !(_object isNil QGVAR(turnOutJIP)) exitWith {};
-            #endif
+            if !(_object isNil QGVAR(turnOutJIP)) exitWith {};
 
             private _jipID = [QGVAR(executeFunction), [QFUNC(addBehaviourEh), _object]] call FUNC(globalEventJIP);
             [_jipID, _object] call FUNC(removeGlobalEventJIP);
@@ -212,11 +202,7 @@
             [LSTRING(addedAiDriverMessage)] call zen_common_fnc_showMessage;
 
             // Prevent unit from turning out
-            #ifdef ARMA_216
-                if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
-            #else
-                if !(_object isNil QGVAR(turnOutJIP)) exitWith {};
-            #endif
+            if (!isNil {_object getVariable QGVAR(turnOutJIP)}) exitWith {};
 
             private _jipID = [QGVAR(executeFunction), [QFUNC(addBehaviourEh), _object]] call FUNC(globalEventJIP);
             [_jipID, _object] call FUNC(removeGlobalEventJIP);
