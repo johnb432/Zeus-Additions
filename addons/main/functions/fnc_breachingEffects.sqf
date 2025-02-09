@@ -33,6 +33,8 @@ params ["_helperObject", "_building", "_doorID", "_timer"];
     // Delete demo block
     deleteVehicle _helperObject;
 
-    // Open door
-    [_building, _doorID, 2] call zen_doors_fnc_setState;
+    // Open door (from zen_doors_fnc_setState)
+    _building setVariable [format ["bis_disabled_door_%1", _doorID], 0, true];
+    _building animateSource [format ["door_%1_sound_source", _doorID], 1, 4];
+    _building animateSource [format ["door_%1_noSound_source", _doorID], 1, 4];
 }, [_helperObject, _building, _doorID], _timer] call CBA_fnc_waitAndExecute;

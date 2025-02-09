@@ -1,4 +1,9 @@
-# Changelog for Zeus Additions 31.10.2024
+# Changelog for Zeus Additions 9.2.2025
+
+1.6.10.0
+- Minor optimisations.
+
+# Changelog for Zeus Additions 13.10.2024
 
 1.6.9.0
 - Updated to use 2.18 commands.

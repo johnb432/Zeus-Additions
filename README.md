@@ -3,7 +3,7 @@
 <h2>Modules</h2>
 
 * **ACE Drag and Carry:** Allows the Zeus to set object to be ACE draggable and carriable. The module can also set whether weight limits should be respected when trying to drag or carry the selected object.
-* **ACE Drag Bodies:** Allows the Zeus to give players the option to drag corpses.
+* **ACE Drag Bodies:** Hidden if you have ACE 3.18.0 loaded, as it's part of ACE 3.18.0. Allows the Zeus to give players the option to drag corpses. 
 * **ACE Medical Injuries:** Allows the Zeus to create ACE Medical injuries on AI or players, either dead or alive. Also can create random wounds, taking a damage value and type you are able to set. Random damage can only be applied to a living unit.
 * **ACE Medical Resupply:** Spawns an ACE medical resupply. If the module is placed on an object, it can put the resupply in the inventory of the object and clear out the inventory prior to that if wanted.
 * **AI Crew Behaviour:** Can prevent AI from dismounting in combat and also when their vehicle is immobilized. Allows the Zeus to change if AI can turn out or not.
@@ -39,7 +39,7 @@
 * **Toggle Consciousness (Forced):** Allows the Zeus to toggle a unit's consciousness state. This disregards any wake up conditions such as stable vitals, except if the unit is a player and they are in cardiac arrest.
 * **Unit Death Tracking:** Allows the Zeus to select units to track. When a selected unit dies, the Zeus will be notified the way he set it.
 * **Unload ACE Cargo:** Allows the Zeus to unload ACE Cargo items from a vehicle.
-* **Vehicle Explosion Prevention:** This module makes vehicles not able to blow up, but still allows them to take damage. **This module is incompatible with ACE Advanced Vehicle Damage.**
+* **Vehicle Explosion Prevention:** This module makes vehicles not able to blow up, but still allows them to take damage. **This module is incompatible with ACE Advanced Vehicle Damage enabled.**
 
 <h2>CBA Settings</h2>
 
