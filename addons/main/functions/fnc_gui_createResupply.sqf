@@ -31,20 +31,17 @@ if (_weapons isNotEqualTo []) then {
         _weapons = [_weapons];
     };
 
-    // Get magazines compatible with weapons
-    private _weapon = "";
+    // Get magazinewells for the weapons
     private _keys = [];
-    private _muzzles = [];
-    private _magazineWells = [];
     private _cfgWeapons = configFile >> "CfgWeapons";
     private _cfgMagazineWells = configFile >> "CfgMagazineWells";
 
     {
-        _magazineWells = getArray (_cfgWeapons >> _x >> "magazineWell");
-        _muzzles = ((getArray (_cfgWeapons >> _x >> "muzzles")) apply {toLowerANSI _x}) - ["this"];
+        private _magazineWells = getArray (_cfgWeapons >> _x >> "magazineWell");
+        private _muzzles = ((getArray (_cfgWeapons >> _x >> "muzzles")) apply {toLowerANSI _x}) - ["this"];
 
         if (_muzzles isNotEqualTo []) then {
-            _weapon = _x;
+            private _weapon = _x;
 
             {
                 _magazineWells append (getArray (_cfgWeapons >> _weapon >> _x >> "magazineWell"));
@@ -84,7 +81,6 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
     lbClear _ctrlListMagazines;
 
     private _cfgMagazines = configFile >> "CfgMagazines";
-    private _addedIndex = -1;
 
     // Add magazines from currently selected category
     {
@@ -94,7 +90,7 @@ _ctrlListCategories ctrlAddEventHandler ["LBSelChanged", {
         };
 
         // Name is magazine display name, picture is magazine icon & tooltip is classname
-        _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
+        private _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _x >> "displayName"));
         _ctrlListMagazines lbSetPicture [_addedIndex, getText (_cfgMagazines >> _x >> "picture")];
         _ctrlListMagazines lbSetTooltip [_addedIndex, _x];
         _ctrlListMagazines lbSetValue [_addedIndex, 0];
@@ -241,14 +237,12 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
 
     // Get new list
     private _ctrlListSelected = _display displayCtrl IDC_LIST_SELECTED;
-    private _addedIndex = -1;
-    private _toolTip = "";
     private _cfgMagazines = configFile >> "CfgMagazines";
 
     {
         // Name is magazine display name, picture is magazine icon & tooltip is classname
-        _toolTip = _ctrlListMagazines lbTooltip _x;
-        _addedIndex = _ctrlListSelected lbAdd (getText (_cfgMagazines >> _toolTip >> "displayName"));
+        private _toolTip = _ctrlListMagazines lbTooltip _x;
+        private _addedIndex = _ctrlListSelected lbAdd (getText (_cfgMagazines >> _toolTip >> "displayName"));
         _ctrlListSelected lbSetPicture [_addedIndex, _ctrlListMagazines lbPicture _x];
         _ctrlListSelected lbSetTooltip [_addedIndex, _toolTip];
     } forEach _selectedArray;
@@ -277,18 +271,16 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
 
     // Get new list
     private _ctrlListMagazines = _display displayCtrl IDC_LIST_MAGAZINES;
-    private _addedIndex = -1;
-    private _toolTip = "";
     private _cfgMagazines = configFile >> "CfgMagazines";
     private _currentlySelected = GETUVAR(QGVAR(magazinesHashmap),createHashMap) getOrDefault [GETUVAR(QGVAR(sortedKeysMagazines),[]) param [lbCurSel (_display displayCtrl IDC_LIST_CATEGORIES), ""], ""];
 
     {
-        _toolTip = _ctrlListSelected lbTooltip _x;
+        private _toolTip = _ctrlListSelected lbTooltip _x;
 
         // Move magazines back into selection if correct category
         if (_toolTip in _currentlySelected) then {
             // Name is magazine display name, picture is magazine icon & tooltip is classname
-            _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _toolTip >> "displayName"));
+            private _addedIndex = _ctrlListMagazines lbAdd (getText (_cfgMagazines >> _toolTip >> "displayName"));
             _ctrlListMagazines lbSetPicture [_addedIndex, _ctrlListSelected lbPicture _x];
             _ctrlListMagazines lbSetTooltip [_addedIndex, _toolTip];
         };
@@ -351,11 +343,10 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _inc = ([1, 5] select _shift) * ([1, 10] select _control);
 
     private _cfgMagazines = configFile >> "CfgMagazines";
-    private _value = 0;
 
     {
         // Get old value and increment it
-        _value = (_ctrlListSelected lbValue _x) + _inc;
+        private _value = (_ctrlListSelected lbValue _x) + _inc;
         _ctrlListSelected lbSetValue [_x, _value];
         _ctrlListSelected lbSetText [_x, format ["%1x %2", _value, getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
     } forEach _selectedArray;
@@ -378,11 +369,10 @@ _ctrlButtonMoveOutOf ctrlAddEventHandler ["ButtonClick", {
     private _dec = ([-1, -5] select _shift) * ([1, 10] select _control);
 
     private _cfgMagazines = configFile >> "CfgMagazines";
-    private _value = 0;
 
     {
         // Get old value and decrement it; If below 0, set to 0; Do not show "0x"
-        _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
+        private _value = ((_ctrlListSelected lbValue _x) + _dec) max 0;
         _ctrlListSelected lbSetValue [_x, _value];
         _ctrlListSelected lbSetText [_x, format ["%1%2", ["", format ["%1x ", _value]] select (_value != 0), getText (_cfgMagazines >> _ctrlListSelected lbTooltip _x >> "displayName")]];
     } forEach _selectedArray;

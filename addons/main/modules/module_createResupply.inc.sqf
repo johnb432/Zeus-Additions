@@ -36,7 +36,11 @@
         if (_emptyInventory == 0) then {
             _object = "Box_NATO_Ammo_F" createVehicle _pos;
             _object call zen_common_fnc_updateEditableObjects;
+
+            clearItemCargoGlobal _object;
             clearMagazineCargoGlobal _object;
+            clearWeaponCargoGlobal _object;
+            clearBackpackCargoGlobal _object;
 
             if (isNil "ace_dragging") exitWith {};
 

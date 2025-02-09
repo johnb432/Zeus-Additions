@@ -3,10 +3,10 @@
 [h2]Modules[/h2]
 [list]
 [*] ACE Drag and Carry
-[*] ACE Drag Bodies
+[*] ACE Drag Bodies (hidden if you're using ACE 3.18.0 as it's now native to ACE)
 [*] ACE Medical Injuries
 [*] ACE Medical Resupply
-[*] AI Crew Behaviour (does not work fully with ACE Vehicle Damage enabled)
+[*] AI Crew Behaviour
 [*] AI Driver
 [*] Ammo Resupply for Players
 [*] Ammo Resupply for Players (Selection)
@@ -39,7 +39,7 @@
 [*] Toggle Consciousness (Forced)
 [*] Unit Death Tracking
 [*] Unload ACE Cargo
-[*] Vehicle Explosion Prevention
+[*] Vehicle Explosion Prevention (incompatible with ACE Advanced Vehicle Damage enabled)
 [/list]
 
 For more detailed information on the modules and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].

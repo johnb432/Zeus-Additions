@@ -21,6 +21,7 @@
         ["SLIDER", LSTRING_ACE(medical_Treatment,epinephrine_Display), [0, 50, GETPRVAR(QGVAR(epinephrine),30), 0], true],
         ["SLIDER", LSTRING_ACE(medical_Treatment,morphine_Display), [0, 50, GETPRVAR(QGVAR(morphine),30), 0], true],
         ["SLIDER", LSTRING_ACE(medical_Treatment,adenosine_Display), [0, 50, GETPRVAR(QGVAR(adenosine),0), 0], true],
+        ["SLIDER", LSTRING_ACE(medical_Treatment,painkillers_display), [0, 100, GETPRVAR(QGVAR(painkillers),0), 0], true],
         ["SLIDER", LSTRING_ACE(medical_Treatment,splint_Display), [0, 100, GETPRVAR(QGVAR(splint),50), 0], true],
         ["SLIDER", LSTRING_ACE(medical_Treatment,tourniquet_Display), [0, 100, GETPRVAR(QGVAR(tourniquet),40), 0], true],
         ["SLIDER", LSTRING_ACE(medical_Treatment,bodybag_Display), [0, 50, GETPRVAR(QGVAR(bodybag),20), 0], true],
@@ -51,6 +52,7 @@
             SETPRVAR(QGVAR(epinephrine),30);
             SETPRVAR(QGVAR(morphine),30);
             SETPRVAR(QGVAR(adenosine),0);
+            SETPRVAR(QGVAR(painkillers),30);
             SETPRVAR(QGVAR(splint),50);
             SETPRVAR(QGVAR(tourniquet),40);
             SETPRVAR(QGVAR(bodybag),20);
@@ -73,7 +75,11 @@
             // Spawn medical crate
             _object = "ACE_medicalSupplyCrate_advanced" createVehicle _pos;
             _object call zen_common_fnc_updateEditableObjects;
+
             clearItemCargoGlobal _object;
+            clearMagazineCargoGlobal _object;
+            clearWeaponCargoGlobal _object;
+            clearBackpackCargoGlobal _object;
 
             if (isNil "ace_dragging") exitWith {};
 
@@ -110,7 +116,7 @@
             [QGVAR(blood1000),"ACE_bloodIV"], [QGVAR(blood500),"ACE_bloodIV_500"], [QGVAR(blood250),"ACE_bloodIV_250"],
             [QGVAR(plasma1000),"ACE_plasmaIV"], [QGVAR(plasma500),"ACE_plasmaIV_500"], [QGVAR(plasma250),"ACE_plasmaIV_250"],
             [QGVAR(saline1000),"ACE_salineIV"], [QGVAR(saline500),"ACE_salineIV_500"], [QGVAR(saline250),"ACE_salineIV_250"],
-            [QGVAR(epinephrine),"ACE_epinephrine"], [QGVAR(morphine),"ACE_morphine"], [QGVAR(adenosine),"ACE_adenosine"],
+            [QGVAR(epinephrine),"ACE_epinephrine"], [QGVAR(morphine),"ACE_morphine"], [QGVAR(adenosine),"ACE_adenosine"], [QGVAR(painkillers),"ACE_painkillers"],
             [QGVAR(splint),"ACE_splint"], [QGVAR(tourniquet),"ACE_tourniquet"],
             [QGVAR(bodybag),"ACE_bodyBag"], [QGVAR(surgical),"ACE_surgicalKit"], [QGVAR(suture),"ACE_suture"], [QGVAR(PAK),"ACE_personalAidKit"]
         ];

@@ -68,7 +68,6 @@
         private _behaviour = ["COMBAT", "AWARE"] select _allowTurnOut;
         _stayCrew = !_stayCrew;
 
-        // ACE Vehicle Damage forces AI crew to dismount if critical hit; Can't be fixed until ACE adds something
         {
             [QGVAR(executeFunction), [QFUNC(setBehaviourVehicleCrew), [_object, _x, _stayCrew, _allowTurnOut, _behaviour]], _x] call CBA_fnc_targetEvent;
         } forEach ((crew _object) select {alive _x && {!isPlayer _x}});
