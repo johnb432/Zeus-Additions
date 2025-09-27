@@ -3,7 +3,6 @@
 [h2]Modules[/h2]
 [list]
 [*] ACE Drag and Carry
-[*] ACE Drag Bodies (hidden if you're using ACE 3.18.0 as it's now native to ACE)
 [*] ACE Medical Injuries
 [*] ACE Medical Resupply
 [*] AI Crew Behaviour

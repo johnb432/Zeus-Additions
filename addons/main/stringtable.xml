@@ -25,12 +25,6 @@
         <Key ID="STR_zeus_additions_main_addedAiDriverMessage">
             <English>Added AI driver</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_addedDragToBodies">
-            <English>Added ACE Drag Body to all bodies</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_addedDragToBody">
-            <English>Added ACE Drag Body to body</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_aiBehaviourModuleName">
             <English>AI Crew Behaviour</English>
         </Key>
@@ -42,9 +36,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_aiDriverModuleName">
             <English>[WIP] AI Driver</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_allDeadUnits">
-            <English>All Dead Units</English>
         </Key>
         <Key ID="STR_zeus_additions_main_ammoResupplyAmountDesc">
             <English>Spawns in x amount of each weapon compatible magazines for each unit (not x total!).</English>
@@ -75,12 +66,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_ammunitionSettingDesc">
             <English>Used for the 'Spawn Ammo Resupply Crate' module. Must be an array of strings.</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_applyToFutureUnits">
-            <English>Apply to all future dead units</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_applyToFutureUnitsDesc">
-            <English>Enables/Disables the dragging of all future dead bodies.\nTakes 'Include Player corpses' setting into account.</English>
         </Key>
         <Key ID="STR_zeus_additions_main_assembleStaticWeapon">
             <English>Assemble Static Weapon</English>
@@ -117,9 +102,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_categoriesDesc">
             <English>Allows you select different categories of magazines.</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_changeSelectionDesc">
-            <English>Changes ACE body dragging on selected corpse only or all dead units.</English>
         </Key>
         <Key ID="STR_zeus_additions_main_changeYourself">
             <English>Change yourself</English>
@@ -304,12 +286,6 @@
         <Key ID="STR_zeus_additions_main_disableVehicleExplosionPreventionMessage">
             <English>Vehicle explosion prevention has been disabled</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_disabledDragFromAllFutureBodies">
-            <English>Disabled ACE Drag Body from all future bodies</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_disabledDragFromAllFuturePlayerBodies">
-            <English>Enabled ACE Drag Body on all future player bodies</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_dogAttackDamageDesc">
             <English>How much damage the dog deals.</English>
         </Key>
@@ -342,9 +318,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_dragAndCarryModuleName">
             <English>ACE Drag and Carry</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_dragBodiesModuleName">
-            <English>ACE Drag Bodies</English>
         </Key>
         <Key ID="STR_zeus_additions_main_driverAlreadyPresentMessage">
             <English>A non-AI driver is already present</English>
@@ -430,9 +403,6 @@
         <Key ID="STR_zeus_additions_main_enableDeadmanSwitchDesc">
             <English>If the unit has a dead man switch, the unit will detonate its explosives if the unit goes unconscious or dies.</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_enableDragBodiesDesc">
-            <English>Enables the dragging of a dead body.</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_enableDragDesc">
             <English>Enables the dragging of an object.</English>
         </Key>
@@ -496,12 +466,6 @@
         <Key ID="STR_zeus_additions_main_enableVehicleExplosionPreventionMessage">
             <English>Vehicle explosion prevention has been enabled</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_enabledDragToAllFutureBodies">
-            <English>Added ACE Drag Body to all future bodies</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_enabledDragToAllFuturePlayerBodies">
-            <English>Enabled ACE Drag Body on all future player bodies</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_explosionSizeDesc">
             <English>Changes the size of the explosion.</English>
         </Key>
@@ -519,12 +483,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_includeGroupDesc">
             <English>Includes the entire group of the AI on which the module was placed.</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_includePlayerCorpses">
-            <English>Include Player corpses</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_includePlayerCorpsesDesc">
-            <English>If selected, player corpses will also be able to be dragged.</English>
         </Key>
         <Key ID="STR_zeus_additions_main_increaseDesc">
             <English>Shift = +5, Ctrl = +10, Shift + Ctrl = +50</English>
@@ -733,20 +691,8 @@
         <Key ID="STR_zeus_additions_main_moveOutOfSelected">
             <English>Move out of selected</English>
         </Key>
-        <Key ID="STR_zeus_additions_main_noDeadBodiesFound">
-            <English>No dead bodies were found</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_noDeadBodiesWithDragFound">
-            <English>No dead bodies with ACE Drag Body were found</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_noDeadBodiesWithoutDragFound">
-            <English>No dead bodies without ACE Drag Body were found</English>
-        </Key>
         <Key ID="STR_zeus_additions_main_objectHasNoInventory">
             <English>Object has no valid inventory</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_objectOnly">
-            <English>Object only</English>
         </Key>
         <Key ID="STR_zeus_additions_main_paradropActionAdded">
             <English>Added paradrop action to object</English>
@@ -840,12 +786,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_removedAiDriverMessage">
             <English>Removed AI driver</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_removedDragToBodies">
-            <English>Removed ACE Drag Body from all bodies</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_removedDragToBody">
-            <English>Removed ACE Drag Body from body</English>
         </Key>
         <Key ID="STR_zeus_additions_main_removedGrenadesGroupMessage">
             <English>Removed grenades from units in group</English>

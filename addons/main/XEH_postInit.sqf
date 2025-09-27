@@ -26,11 +26,6 @@ if (!hasInterface) exitWith {};
     if (GETMVAR("CBA_settings_ready",false)) then {
         [QGVAR(buildingDestruction), getPlayerUID player, GVAR(enableBuildingDestructionHandling), QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
     };
-
-    // Add Drag Bodies module
-    if (!isNil "ace_dragging" && {getNumber (_cfgPatches >> "ace_main" >> "version") < 3.18}) then {
-        #include "modules\module_dragBodies.inc.sqf"
-    };
 }] call CBA_fnc_addEventHandlerArgs;
 
 // Add functionality

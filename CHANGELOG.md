@@ -3,6 +3,7 @@
 1.6.11.0
 - Fixed paradrop module not selecting units.
 - Added "Assemble Static Weapon" context menu option that makes AI set up static weapons.
+- Removed "ACE Drag Bodies" module, as Zeus Additions now requires ACE 3.18.0, ACE having added native body dragging.
 
 # Changelog for Zeus Additions 9.2.2025
 
