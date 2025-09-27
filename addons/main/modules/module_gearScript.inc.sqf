@@ -45,7 +45,7 @@ GVAR(loadoutTypes) = ["Default", "Leader", "AT", "AA", "AR", "Medic", "Engineer"
                     "ace" callExtension ["clipboard:complete", []];
                 };
             } else {
-                copyToClipboard _export
+                copyToClipboard _export;
             };
 
             [LSTRING(loadoutPresetExportedMessage), _selectedPreset] call zen_common_fnc_showMessage;

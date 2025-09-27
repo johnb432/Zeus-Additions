@@ -16,6 +16,9 @@
  * Return Value:
  * None
  *
+ * Example:
+ * [cursorObject, west, [], false, false, 0, 1, 2] call zeus_additions_main_fnc_garrisonBuilding
+ *
  * Public: No
  */
 

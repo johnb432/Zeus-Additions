@@ -82,6 +82,12 @@
         <Key ID="STR_zeus_additions_main_applyToFutureUnitsDesc">
             <English>Enables/Disables the dragging of all future dead bodies.\nTakes 'Include Player corpses' setting into account.</English>
         </Key>
+        <Key ID="STR_zeus_additions_main_assembleStaticWeapon">
+            <English>Assemble Static Weapon</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_assembleStaticWeaponHere">
+            <English>Assemble Static Weapon Here</English>
+        </Key>
         <Key ID="STR_zeus_additions_main_blacklistSetting">
             <English>Blacklist for ammo resupply</English>
         </Key>
@@ -247,6 +253,18 @@
         <Key ID="STR_zeus_additions_main_decreaseDesc">
             <English>Shift = -5, Ctrl = -10, Shift + Ctrl = -50</English>
         </Key>
+        <Key ID="STR_zeus_additions_main_deepCopy">
+            <English>Deep Copy</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deepCopyDesc">
+            <English>Identical as ZEN's Deep Copy, but additionally copies AI features (e.g. pathing, FSM, etc.).</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deepPaste">
+            <English>Deep Paste</English>
+        </Key>
+        <Key ID="STR_zeus_additions_main_deepPasteDesc">
+            <English>Identical as ZEN's Deep Paste, but places units under the cursor instead.</English>
+        </Key>
         <Key ID="STR_zeus_additions_main_deleteObjectMessage">
             <English>Deleted %1</English>
         </Key>
@@ -343,6 +361,9 @@
         <Key ID="STR_zeus_additions_main_dustStormNothingChangedMessage">
             <English>Nothing was changed</English>
         </Key>
+        <Key ID="STR_zeus_additions_main_dustStormTurnOffPlayerMessage">
+            <English>Turned Dust Storm Script off for player</English>
+        </Key>
         <Key ID="STR_zeus_additions_main_dustStormTurnOffPlayersMessage">
             <English>Turned Dust Storm Script off for selected players</English>
         </Key>
@@ -354,9 +375,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_dustStormWeatherDesc">
             <English>If yes, it will open another dialog after this one is closed to change the weather.</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_dustTurnOffPlayerStormMessage">
-            <English>Turned Dust Storm Script off for player</English>
         </Key>
         <Key ID="STR_zeus_additions_main_enableAiDriverDesc">
             <English>Spawns an AI driver that is controlled by the commander of the vehicle.\nRequires a player commander.</English>
@@ -462,12 +480,6 @@
         </Key>
         <Key ID="STR_zeus_additions_main_enableTimePauseMessage">
             <English>Time paused</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_enableUnconsciousLeavingSetting">
-            <English>Enable leave unconscious unit</English>
-        </Key>
-        <Key ID="STR_zeus_additions_main_enableUnconsciousLeavingSettingDesc">
-            <English>Allows Zeuses to leave an unconscious remote controlled unit by pressing the ESCAPE key.</English>
         </Key>
         <Key ID="STR_zeus_additions_main_enableUnitDeathTrackingMessage">
             <English>Unit is being tracked</English>

@@ -51,13 +51,17 @@ Inputs are arrays of strings.
 * **Enable ACE Medical missing addon hint:** If enabled, it will hint if ACE Medical is missing.
 * **Enable TFAR missing addon hint:** If enabled, it will hint if TFAR is missing.
 * **Enable RHS missing addon hint:** If enabled, it will hint if RHS is missing.
-* **Enable JIP features:** If enabled, it will add JIP functionality to the server, if the player is a curator.
 * **Enable Building Destruction handling:** If enabled, it will make floating objects near a building upon destruction fall to the ground.
 * **Enable Mission Object Counter:** This will only work if the player is a curator. If enabled, it will count what you have placed down as a curator. If disabled, it will remove the counter, but not reset it.
 
 This mod also adds:
     - the ability to drag dead corpses as Zeus. In order to do so, you must be in the map screen.
     - gravity to objects that don't have gravity, when a building is destroyed. This must be enabled in the CBA settings.
+
+<h2>CBA Keybinds</h2>
+
+* **Deep Copy** (default: **Ctrl-Alt-C**): Identical as ZEN's Deep Copy, but additionally copies AI features (e.g. pathing, FSM, etc.).
+* **Deep Paste** (default: **Ctrl-Alt-V**): Identical as ZEN's Deep Paste, but places units under the cursor instead.
 
 <h2>How to - Spawn Ammo Resupply</h2>
 
@@ -74,7 +78,7 @@ This mod also adds:
     * "Control" + "shift" modifies the amount by 50.
 * When you press ok, it will spawn the magazines.
 
-<h2>JIP & Building destruction features</h2>
+<h2>Building destruction feature</h2>
 
 Only 1 client needs it to be enabled for it to be added to the server. If multiple clients have Zeus Additions and one or more have it turned on but the others not, the feature will still be enabled.
 

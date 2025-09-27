@@ -145,7 +145,7 @@ _ctrlListMagazines ctrlAddEventHandler ["KeyDown", {
             "ace" callExtension ["clipboard:complete", []];
         };
     } else {
-        copyToClipboard _export
+        copyToClipboard _export;
     };
 
     true
@@ -192,7 +192,7 @@ _ctrlListSelected ctrlAddEventHandler ["KeyDown", {
             "ace" callExtension ["clipboard:complete", []];
         };
     } else {
-        copyToClipboard _export
+        copyToClipboard _export;
     };
 
     true

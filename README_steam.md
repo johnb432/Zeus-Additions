@@ -52,6 +52,14 @@ This mod also adds:
 [*] gravity to objects that don't have gravity, when a building is destroyed. This must be enabled in the CBA settings.
 [/list]
 
+[h2]CBA Keybinds[/h2]
+[list]
+[*] Deep Copy (default: [b]Ctrl-Alt-C[/b])
+[*] Deep Paste (default: [b]Ctrl-Alt-V[/b])
+[/list]
+
+For more detailed information on the keybinds and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
+
 [h2]Links[/h2]
 [list]
 [*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2387297579]Steam Workshop[/url]

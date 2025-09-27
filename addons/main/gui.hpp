@@ -1,7 +1,5 @@
 class RscText;
 class RscTextMulti;
-class RscButton;
-class RscStructuredText;
 class RscButtonMenu;
 class RscButtonMenuOK;
 class RscButtonMenuCancel;
@@ -163,7 +161,6 @@ class ctrlButtonPictureKeepAspect;
 
 class zen_common_RscLabel;
 class zen_common_RscBackground;
-class zen_common_RscEdit;
 class zen_modules_RscSidesCombo;
 
 class zen_common_RscDisplay {

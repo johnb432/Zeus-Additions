@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 27.9.2025
+
+1.6.11.0
+- Fixed paradrop module not selecting units.
+- Added "Assemble Static Weapon" context menu option that makes AI set up static weapons.
+
 # Changelog for Zeus Additions 9.2.2025
 
 1.6.10.0
@@ -9,7 +15,7 @@
 - Updated to use 2.18 commands.
 - Raised limit for automatic parachute deployment from 100 m to 150 m.
 - Updated to support ACE 3.18.0
-- Fixed bug with VBIED where vehicle could blow up numerous time in rapid succession.
+- Fixed bug with VBIED where vehicle could blow up numerous times in rapid succession.
 
 # Changelog for Zeus Additions 6.5.2024
 
@@ -64,7 +70,7 @@
 1.6.3.13
 - Added support for 2.12.
 - Changed "Remote Control (Switch Unit)" module method of going back into Zeus from pressing getting into the pause menu to pressing the Zeus interface keybind.
-- Unconscious and create injuries module doesn't notify players anymore.
+- Unconscious and create injuries modules don't notify players anymore.
 - Fixed numerous bugs.
 
 # Changelog for Zeus Additions 26.11.2022

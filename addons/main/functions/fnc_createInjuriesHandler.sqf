@@ -15,7 +15,7 @@
  * Example:
  * [player,
  *    [[0, 4, false], [0, 0, false], [0, 0, false], [0, 0, false], [0, 0, false], [0, 0, false]],
- * "Avulsion"] call zeus_additions_main_fnc_createInjuriesHandler
+ * "Avulsion"] call zeus_additions_main_fnc_createInjuriesHandler;
  * --> 4 Minor avulsions to the Head
  *
  * Public: No

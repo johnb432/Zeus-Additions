@@ -10,6 +10,8 @@ if (isNil QGVAR(functionsSent)) then {
 
 if (!hasInterface) exitWith {};
 
+#include "initKeybinds.inc.sqf"
+
 // Add mission counter only if player is curator; However, check every time the zeus interface is opened
 ["zen_curatorDisplayLoaded", {
     // Wait until CBA settings have been initialised
