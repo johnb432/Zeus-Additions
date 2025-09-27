@@ -17,6 +17,14 @@ class zen_context_menu_actions {
         statement = QUOTE([ARR_2(_objects,'enableAI')] call FUNC(pathingStatement));
     };
 
+    class GVAR(assembleStaticWeapon) {
+        condition = QUOTE(true);
+        displayName = CSTRING(assembleStaticWeapon);
+        icon = "\A3\ui_f\data\map\vehicleicons\iconStaticMG_ca.paa";
+        insertChildren = QUOTE([_objects] call FUNC(assembleStaticWeaponActions));
+        priority = 50;
+    };
+
     #if __has_include("\z\ace\addons\medical_gui\script_component.hpp")
         class GVAR(openMedicalMenuContextMenu) {
             condition = QUOTE(_hoveredEntity isEqualType objNull && {private _object = ([ARR_2(_hoveredEntity,effectiveCommander _hoveredEntity)] select (alive _hoveredEntity)); _object isKindOf 'CAManBase' && {[ARR_2(objNull,_object)] call ace_medical_gui_fnc_canOpenMenu}});
@@ -28,7 +36,7 @@ class zen_context_menu_actions {
     #endif
 
     class GVAR(selectParadropContextMenu) {
-        condition = QUOTE(private _object = objNull; (_objects select {alive _x}) findIf {_object = _x; [ARR_4('LandVehicle','Ship','CAManBase','Thing')] findIf {_object isKindOf _x} != -1} != -1);
+        condition = QUOTE((_objects select {alive _x}) findIf {private _object = _x; [ARR_4('LandVehicle','Ship','CAManBase','Thing')] findIf {_object isKindOf _x} != -1} != -1);
         displayName = CSTRING(selectParadropContextMenu);
         icon = ICON_PARADROP;
         priority = 10;
@@ -41,7 +49,7 @@ class zen_context_menu_actions {
         };
 
         class GVAR(selectParadropVehiclesContextMenu) {
-            condition = QUOTE(private _object = objNull; (_objects select {alive _x}) findIf {_object = _x; [ARR_2('LandVehicle','Ship')] findIf {_object isKindOf _x} != -1} != -1);
+            condition = QUOTE((_objects select {alive _x}) findIf {private _object = _x; [ARR_2('LandVehicle','Ship')] findIf {_object isKindOf _x} != -1} != -1);
             displayName = CSTRING(selectParadropVehiclesContextMenu);
             icon = ICON_PARADROP;
             statement = QUOTE([ARR_2(_objects,PARADROP_VEHICLES)] call FUNC(unitParadropContextMenu));

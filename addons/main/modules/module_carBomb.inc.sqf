@@ -100,7 +100,7 @@
 
                         // If unit still alive, kill
                         if (alive _this) then {
-                            _this call ace_medical_status_fnc_setDead;
+                            call ace_medical_status_fnc_setDead;
                         };
                     } else {
                         {

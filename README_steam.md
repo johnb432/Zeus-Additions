@@ -3,7 +3,6 @@
 [h2]Modules[/h2]
 [list]
 [*] ACE Drag and Carry
-[*] ACE Drag Bodies (hidden if you're using ACE 3.18.0 as it's now native to ACE)
 [*] ACE Medical Injuries
 [*] ACE Medical Resupply
 [*] AI Crew Behaviour
@@ -51,6 +50,14 @@ This mod also adds:
 [*] the ability to drag dead corpses as Zeus. In order to do so, you must be in the map screen.
 [*] gravity to objects that don't have gravity, when a building is destroyed. This must be enabled in the CBA settings.
 [/list]
+
+[h2]CBA Keybinds[/h2]
+[list]
+[*] Deep Copy (default: [b]Ctrl-Alt-C[/b])
+[*] Deep Paste (default: [b]Ctrl-Alt-V[/b])
+[/list]
+
+For more detailed information on the keybinds and what they do, click [url=https://github.com/johnb432/Zeus-Additions#readme]here[/url].
 
 [h2]Links[/h2]
 [list]

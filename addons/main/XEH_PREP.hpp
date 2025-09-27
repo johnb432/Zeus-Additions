@@ -1,3 +1,5 @@
+PREP(assembleStaticWeapon);
+PREP(assembleStaticWeaponActions);
 PREP(compileSanitisedFunction);
 PREP(getRole);
 PREP(globalEventJIP);

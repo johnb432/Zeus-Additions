@@ -13,7 +13,7 @@
  * None
  *
  * Example:
- * ["x\zeus_additions\addons\main\functions\fnc_compileSanitisedFunction.sqf", "zeus_additions_main_fnc_compileSanitisedFunction"] call zeus_additions_main_fnc_compileSanitisedFunction
+ * ["x\zeus_additions\addons\main\functions\fnc_compileSanitisedFunction.sqf", "zeus_additions_main_fnc_compileSanitisedFunction"] call zeus_additions_main_fnc_compileSanitisedFunction;
  *
  * Public: No
  */

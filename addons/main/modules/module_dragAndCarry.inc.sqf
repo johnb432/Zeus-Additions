@@ -48,21 +48,26 @@
         private _distance = 0.75 + ([_dY / 2, _dX / 2] select _isWiderThanLonger) + ([_yCenter, _xCenter] select _isWiderThanLonger);
 
         private _config = configOf _object;
+        private _offset = [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger;
 
-        if (isNil QFUNC(setDraggableAndCarryable)) then {
-            DFUNC(setDraggableAndCarryable) = [{
-                params ["_object", "_config", "_results", "_offset", "_isWiderThanLonger"];
+        // Dragging & Carrying
+        [
+            _object,
+            _results select 0,
+            [_config, "ace_dragging_dragPosition", _offset] call BIS_fnc_returnConfigEntry,
+            [_config, "ace_dragging_dragDirection", [0, 90] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry,
+            _results select 2,
+            true
+        ] call ace_dragging_fnc_setDraggable;
 
-                // Dragging & Carrying
-                [_object, _results select 0, [_config, "ace_dragging_dragPosition", _offset] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", [0, 90] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 2] call ace_dragging_fnc_setDraggable;
-                [_object, _results select 1, [_config, "ace_dragging_carryPosition", _offset] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", [90, 0] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry, _results select 3] call ace_dragging_fnc_setCarryable;
-            }, true, true] call FUNC(sanitiseFunction);
-
-            SEND_MP(setDraggableAndCarryable);
-        };
-
-        // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-        [[QGVAR(executeFunction), [QFUNC(setDraggableAndCarryable), [_object, _config, _results, [[0, _distance, 0], [_distance, 0, 0]] select _isWiderThanLonger, _isWiderThanLonger]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
+        [
+            _object,
+            _results select 1,
+            [_config, "ace_dragging_carryPosition", _offset] call BIS_fnc_returnConfigEntry,
+            [_config, "ace_dragging_carryDirection", [90, 0] select _isWiderThanLonger] call BIS_fnc_returnConfigEntry,
+            _results select 3,
+            true
+        ] call ace_dragging_fnc_setCarryable;
 
         [LSTRING(changedDragAndCarryMessage)] call zen_common_fnc_showMessage;
     }, {}, _object] call zen_dialog_fnc_create;

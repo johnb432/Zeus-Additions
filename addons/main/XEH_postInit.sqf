@@ -10,6 +10,8 @@ if (isNil QGVAR(functionsSent)) then {
 
 if (!hasInterface) exitWith {};
 
+#include "initKeybinds.inc.sqf"
+
 // Add mission counter only if player is curator; However, check every time the zeus interface is opened
 ["zen_curatorDisplayLoaded", {
     // Wait until CBA settings have been initialised
@@ -23,11 +25,6 @@ if (!hasInterface) exitWith {};
     // Add the building destruction functionality; If CBA settings haven't been initialised yet, just let CBA settings handle reason changing
     if (GETMVAR("CBA_settings_ready",false)) then {
         [QGVAR(buildingDestruction), getPlayerUID player, GVAR(enableBuildingDestructionHandling), QFUNC(handleBuildingDestruction)] call FUNC(changeReason);
-    };
-
-    // Add Drag Bodies module
-    if (!isNil "ace_dragging" && {getNumber (_cfgPatches >> "ace_main" >> "version") < 3.18}) then {
-        #include "modules\module_dragBodies.inc.sqf"
     };
 }] call CBA_fnc_addEventHandlerArgs;
 

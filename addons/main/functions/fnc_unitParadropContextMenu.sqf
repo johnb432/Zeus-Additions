@@ -44,7 +44,7 @@ if (_filterMode == PARADROP_MISC) exitWith {
     [LSTRING(selectedParadropObjectsContextMenu), count _misc] call zen_common_fnc_showMessage;
 };
 
-private _units = _objects select {_x isKindOf "CAManBase" && {getNumber ((configOf _unit) >> "isPlayableLogic") == 0}};
+private _units = _objects select {_x isKindOf "CAManBase" && {getNumber ((configOf _x) >> "isPlayableLogic") == 0}};
 
 [LSTRING(paradropContextMenu), [
     ["TOOLBOX:YESNO", [LSTRING(paradropContextMenuIncludeGroup), LSTRING(paradropContextMenuIncludeGroupDesc)], false, true],

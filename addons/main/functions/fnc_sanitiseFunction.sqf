@@ -11,7 +11,7 @@
  * Sanitised function <CODE> <STRING>
  *
  * Example:
- * {nil} call zeus_additions_main_fnc_sanitiseFunction
+ * {nil} call zeus_additions_main_fnc_sanitiseFunction;
  *
  * Public: No
  */

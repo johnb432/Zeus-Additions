@@ -44,20 +44,9 @@
 
             if (isNil "ace_dragging") exitWith {};
 
-            if (isNil QFUNC(setResupplyDraggable)) then {
-                DFUNC(setResupplyDraggable) = [{
-                    params ["_object", "_config"];
-
-                    // Dragging & Carrying
-                    [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
-                    [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-                }, true] call FUNC(sanitiseFunction);
-
-                SEND_MP(setResupplyDraggable);
-            };
-
-            // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-            [[QGVAR(executeFunction), [QFUNC(setResupplyDraggable), [_object, configOf _object]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
+            // Dragging & Carrying
+            [_object, true, nil, nil, true, true] call ace_dragging_fnc_setDraggable;
+            [_object, true, nil, nil, true, true] call ace_dragging_fnc_setCarryable;
         };
 
         if (_numPrim == 0 && {_numHand == 0} && {_numSec == 0}) exitWith {
@@ -137,20 +126,9 @@
 
             if (isNil "ace_dragging") exitWith {};
 
-            if (isNil QFUNC(setResupplyDraggable)) then {
-                DFUNC(setResupplyDraggable) = [{
-                    params ["_object", "_config"];
-
-                    // Dragging & Carrying
-                    [_object, true, [_config, "ace_dragging_dragPosition", [0, 1.25, 0]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_dragDirection", 0] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setDraggable;
-                    [_object, true, [_config, "ace_dragging_carryPosition", [0, 1.25, 0.5]] call BIS_fnc_returnConfigEntry, [_config, "ace_dragging_carryDirection", 90] call BIS_fnc_returnConfigEntry, true] call ace_dragging_fnc_setCarryable;
-                }, true] call FUNC(sanitiseFunction);
-
-                SEND_MP(setResupplyDraggable);
-            };
-
-            // Make crate draggable and carryable, with correct offsets to position and direction, along with overweight dragging possibility; Overwrite previous entry in JIP queue
-            [[QGVAR(executeFunction), [QFUNC(setResupplyDraggable), [_object, configOf _object]], QGVAR(dragging_) + hashValue _object] call FUNC(globalEventJIP), _object] call FUNC(removeGlobalEventJIP);
+            // Dragging & Carrying
+            [_object, true, nil, nil, true, true] call ace_dragging_fnc_setDraggable;
+            [_object, true, nil, nil, true, true] call ace_dragging_fnc_setCarryable;
         };
 
         // Clear all content of other types of inventories
