@@ -67,8 +67,6 @@ private _pings = _curatorObjects getOrDefault ["pings", createHashMap];
 
 // Log pings
 if (_pings isNotEqualTo createHashMap) then {
-    call _addLines;
-
     private _unit = objNull;
 
     _logEntries pushBack "Pings:";

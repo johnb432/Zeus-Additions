@@ -11,8 +11,6 @@
 #define SETUVAR(var1,var2) (uiNamespace setVariable [ARR_2(var1,var2)])
 #define SETMVAR(var1,var2,var3) (missionNamespace setVariable [ARR_3(var1,var2,var3)])
 
-#define OPTION_ARRAY [1, 1, 4, [LSTRING_ZEN(common,disabled), "STR_A3_Multiplayer_Text1", "str_usract_voice_over_net", LSTRING_ZEN(common,enabled)]]
-
 #define MAGAZINES_DESC localize "STR_GEAR_MAGAZINES"
 
 #define PARADROP_UNITS 0
@@ -95,7 +93,10 @@
 #define DFUNC(var1) TRIPLES(ADDON,fnc,var1)
 
 #undef PREP
+
+#ifdef PREP_MP
 #undef PREP_MP
+#endif
 
 #ifdef DISABLE_COMPILE_CACHE
     #define PREP(fncName) DFUNC(fncName) = compile preprocessFileLineNumbers QPATHTOF(functions\DOUBLES(fnc,fncName).sqf)
