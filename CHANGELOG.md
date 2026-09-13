@@ -1,3 +1,9 @@
+# Changelog for Zeus Additions 13.9.2026
+
+1.6.12.0
+- Updated channels module for 2.22.
+- Fixed minor bugs.
+
 # Changelog for Zeus Additions 27.9.2025
 
 1.6.11.0

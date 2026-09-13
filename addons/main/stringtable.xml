@@ -143,7 +143,7 @@
             <English>Multipliers set on yourself</English>
         </Key>
         <Key ID="STR_zeus_additions_main_channelVisibilityChangeChannelDesc">
-            <English>Allows the changing of '%1' chat &amp; VON.</English>
+            <English>Allows the enabling/disabling of '%1' chat, VON &amp; map marker editing.\nThe booleans in the array correspond to chat, VON, map marker placement and map marker drawing (in that specific order).</English>
         </Key>
         <Key ID="STR_zeus_additions_main_channelVisibilityModuleName">
             <English>Channel Visibility</English>

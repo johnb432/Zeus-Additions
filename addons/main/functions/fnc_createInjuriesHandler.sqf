@@ -168,7 +168,7 @@ if (_createdWounds) then {
 
     ["ace_medical_injured", [_unit, _painLevel]] call CBA_fnc_localEvent;
 
-    if (_critialDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
+    if (_criticalDamage || {_painLevel > ace_medical_const_painUnconscious}) then {
         _unit call ace_medical_damage_fnc_handleIncapacitation;
     };
 };
